@@ -1,0 +1,32 @@
+
+.li-index {
+	float: left;
+	padding:8px 0px 0px 3px;
+	margin: 0px;
+	text-align:right;
+	font-size: 12px;
+	width: 20px;
+	max-width: 30px;
+}
+
+.ui-header .ui-btn-corner-all {
+	-moz-border-radius: .4em ;
+	-webkit-border-radius: .4em ;
+	border-radius: .4em ;
+}
+.ui-header .ui-btn-icon-notext {
+	top: 8px;
+}
+.header-navi {
+	display: inline;
+	position: absolute;
+	top: 0px;
+	right: 5px;
+}
+.header-navi .ui-btn-icon-notext {
+	margin-left: 5px;
+}
+
+.form-buttons {
+	text-align: center;
+}

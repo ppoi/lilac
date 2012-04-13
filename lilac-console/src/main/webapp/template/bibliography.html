@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="content-type" content="text/html" charset="UTF-8" /></head><body><div id="templates">
+
+<div id="page-template" data-role="page" data-theme="b" data-title="りら">
+	<div data-role="header" data-theme="b">
+		<a data-rel="back" data-icon="back" data-iconpos="notext">戻る</a>
+		<h1>書籍情報</h1>
+		<div class="header-navi">
+			<a href="#admin" data-role="button" data-inline="true" data-icon="gear" data-iconpos="notext">admin</a>
+			<a href="#main" data-role="button" data-inline="true" data-icon="home" data-iconpos="notext">menu</a>
+		</div>
+	</div>
+	<div data-role="content">
+		<div class="ui-body ui-body-d">
+			<small id="bibliography-label"></small>
+			<p><strong id="bibliography-title"></strong><br /><small id="bibliography-subtitle"></small></p>
+
+			<hr />
+
+			<ul id="bibliography-authors" data-role="listview" data-inset="true" data-theme="d">
+				<li data-role="list-divider">著者</li>
+			</ul>
+
+			<ul id="bibliography-detail" data-role="listview" data-inset="true" data-theme="d">
+				<li data-role="list-divider">詳細情報</li>
+				<li><label>ISBN:</label> <span id="bibliography-isbn">123-1234567890</span></li>
+				<li><label>価格:</label> <span id="bibliography-plice">\600</span>
+				<li><label>刊行日:</label> <span id="bibliography-publicationDate">2011/01/01</span>
+			</ul>
+
+			<ul id="bibliography-location" data-role="listview" data-inset="true" data-theme="d">
+				<li data-role="list-divider">蔵書情報</li>
+				<li><span id="bibliography-location">[ppoi]その他</span></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+</div></body></html>

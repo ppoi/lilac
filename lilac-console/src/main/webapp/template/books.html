@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="content-type" content="text/html" charset="UTF-8" /></head><body><div id="templates">
+
+<div id="page-template" data-role="page" data-theme="b" data-title="りら">
+	<div data-role="header" data-theme="b">
+		<a data-rel="back" data-icon="back" data-iconpos="notext">戻る</a>
+		<h1>蔵書検索</h1>
+		<div class="header-navi">
+			<a href="#admin" data-role="button" data-inline="true" data-icon="gear" data-iconpos="notext">admin</a>
+			<a href="#main" data-role="button" data-inline="true" data-icon="home" data-iconpos="notext">menu</a>
+		</div>
+	</div>
+	<div data-role="content">
+		<div data-role="collapsible" data-theme="e" data-content-theme="c">
+			<h3 id="booksearch">検索条件</h3>
+			<form id="booksearchform" data-ajax="false">
+				<label>キーワード</label><input type="search" name="keyword" /><br />
+				<label>著者</label><input type="search" name="author" /><br />
+				<label>レーベル</label><select id="labeloptions" name="label" data-theme="c">
+					<option value=""> </option>
+				</select><br />
+				<input type="submit" value="検索" data-theme="b" />
+			</form>
+		</div>
+		<div class="booklist-holder"></div>
+	</div>
+</div>
+
+</div></body></html>
