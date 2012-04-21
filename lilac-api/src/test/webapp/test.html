@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="contet-type" content="text/html" charset="UTF-8" />
+	</head>
+	<body>
+		<form id="ajaxform">
+			<label for="mehotd">Method</label>
+			<select id="method">
+				<option value="GET">GET</option>
+				<option value="POST">POST</option>
+			</select><br />
+			<label for="contentType">Content-Type:</label>
+			<select id="contentType">
+				<option value="application/json">application/json</option>
+				<option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+			</select><br />
+			<label for="data">データ:</label><br />
+			<textarea id="data" rows="5" cols="40"></textarea>
+			<input type="submit" />
+		</form>
+		<hr />
+		<script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript">
+			$('#ajaxform').submit(function(event) {
+				event.preventDefault();
+				var method = $('#method').attr("value");
+				var contentType = $('#contentType').attr("value");
+				var data = $('#data').attr("value");
+				confirm("method:" + method + ", contentType: " + contentType + ", data: " + data);
+				$.ajax({
+					url: "/api/test/object",
+					contentType: contentType,
+					data: data,
+					dataType: "json",
+					processData: false,
+					type: method
+				}).done(function(data, textStaus, jqXHR){
+					if(contentType == "application/json") {
+						data = JSON.stringify(data);
+					}
+					alert("[" + textStaus +"]" + data);
+				}).fail(function(jqXHR, textStatus, errorThrown){
+					alert("[" + textStatus + "]" + jqXHR.status);
+				});
+				return false;
+			});
+		</script>
+	</body>
+</html>

@@ -2,11 +2,5 @@
 <!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN" 
 	"http://www.seasar.org/dtd/components24.dtd">
 <components>
-	<include path="cubby-converters.dicon" />
-
-	<component name="defaultRequestParser" class="org.seasar.cubby.controller.impl.DefaultRequestParser" />
 	<component name="jsonRequestParser" class="org.tsukuba_bunko.lilac.web.controller.JsonRequestParser" />
-	<component name="requestParsers">
-		{ jsonRequestParser, defaultRequestParser }
-	</component>
 </components>
