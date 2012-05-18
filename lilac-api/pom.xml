@@ -62,16 +62,14 @@
   		<version>${cubby.version}</version>
   	</dependency>
   	<dependency>
-  		<groupId>junit</groupId>
-  		<artifactId>junit</artifactId>
-  		<version>4.9</version>
-  		<scope>test</scope>
+  		<groupId>org.apache.poi</groupId>
+  		<artifactId>poi</artifactId>
+  		<version>${poi.version}</version>
   	</dependency>
   	<dependency>
   		<groupId>org.apache.poi</groupId>
-  		<artifactId>poi</artifactId>
-  		<version>3.7</version>
-  		<scope>test</scope>
+  		<artifactId>poi-ooxml</artifactId>
+  		<version>${poi.version}</version>
   	</dependency>
   	<dependency>
   		<groupId>org.seasar.cubby</groupId>
@@ -97,6 +95,12 @@
   		<groupId>ch.qos.logback</groupId>
   		<artifactId>logback-classic</artifactId>
   		<version>1.0.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>4.9</version>
+  		<scope>test</scope>
   	</dependency>
   	<dependency>
   		<groupId>org.easymock</groupId>
@@ -141,5 +145,6 @@
   	<s2.version>2.4.45</s2.version>
   	<cubby.version>2.0.9</cubby.version>
   	<slf4j.version>1.6.4</slf4j.version>
+  	<poi.version>3.8</poi.version>
   </properties>
 </project>
