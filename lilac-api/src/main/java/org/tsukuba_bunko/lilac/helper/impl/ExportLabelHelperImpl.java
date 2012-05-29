@@ -77,6 +77,17 @@ public class ExportLabelHelperImpl extends ExportEntityHelperBase<Label> {
 	}
 
 	/**
+	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#processHeaderRow(org.apache.poi.xssf.usermodel.XSSFRow)
+	 */
+	@Override
+	protected void processHeaderRow(XSSFRow row) {
+		createHeaderCell(row, 0, null);
+		createHeaderCell(row, 1, "レーベル名");
+		createHeaderCell(row, 2, "備考");
+		createHeaderCell(row, 3, "Webサイト");
+	}
+
+	/**
 	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#processRow(java.lang.Object, org.apache.poi.xssf.usermodel.XSSFRow, int)
 	 */
 	@Override

@@ -23,8 +23,14 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -46,6 +52,8 @@ public abstract class ExportEntityHelperBase<ENTITY> implements ExportEntityHelp
 	public JdbcManager jdbcManager;
 
 	protected XSSFSheet sheet;
+	
+	protected XSSFCellStyle headerCellStyle;
 
 	private int rowCount;
 
@@ -55,7 +63,23 @@ public abstract class ExportEntityHelperBase<ENTITY> implements ExportEntityHelp
 	@Override
 	public void exportAll(XSSFWorkbook book) {
 		sheet = book.createSheet(getSheetName());
+
+		XSSFFont font = book.createFont();
+		font.setBold(true);
+		font.setColor(IndexedColors.WHITE.index);
+
+		headerCellStyle = book.createCellStyle();
+		headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+		headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		headerCellStyle.setFillForegroundColor(new XSSFColor(new byte[]{(byte)256, (byte)0, (byte)112, (byte)192}));
+		headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerCellStyle.setFont(font);
+
 		prepare(book);
+
+		XSSFRow row = sheet.createRow(rowCount++);
+		processHeaderRow(row);
+
 		buildQuery().iterate(this);
 		finish(book);
 	}
@@ -96,11 +120,23 @@ public abstract class ExportEntityHelperBase<ENTITY> implements ExportEntityHelp
 	 */
 	protected abstract void processRow(ENTITY entity, XSSFRow row, int index);
 
+	protected abstract void processHeaderRow(XSSFRow row);
+
 	/**
 	 * 後処理を実行します。
 	 * @param book OOXMLワークブック
 	 */
 	protected abstract void finish(XSSFWorkbook book);
+
+	/**
+	 * 
+	 */
+	protected XSSFCell createHeaderCell(XSSFRow row, int index, String label) {
+		XSSFCell cell = row.createCell(index);
+		cell.setCellStyle(headerCellStyle);
+		setCellValue(cell, label);
+		return cell;
+	}
 
 	/**
 	 * セルを作成します。

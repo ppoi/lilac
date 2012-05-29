@@ -76,6 +76,22 @@ public class ExportBookHelperImpl extends ExportEntityHelperBase<Bibliography> {
 	}
 
 	/**
+	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#processHeaderRow(org.apache.poi.xssf.usermodel.XSSFRow)
+	 */
+	@Override
+	protected void processHeaderRow(XSSFRow row) {
+		createHeaderCell(row, 0, null);
+		createHeaderCell(row, 1, "ID");
+		createHeaderCell(row, 2, "ISBN");
+		createHeaderCell(row, 3, "レーベル");
+		createHeaderCell(row, 4, "タイトル");
+		createHeaderCell(row, 5, "サブタイトル");
+		createHeaderCell(row, 6, "著者");
+		createHeaderCell(row, 7, "出版日");
+		createHeaderCell(row, 8, "定価");
+	}
+
+	/**
 	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#buildQuery()
 	 */
 	@Override
