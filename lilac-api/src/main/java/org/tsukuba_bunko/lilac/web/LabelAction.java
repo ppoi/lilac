@@ -27,8 +27,11 @@ import org.seasar.cubby.action.Json;
 import org.seasar.cubby.action.Path;
 import org.seasar.cubby.action.RequestMethod;
 import org.seasar.cubby.action.RequestParameter;
+import org.seasar.framework.beans.util.Beans;
+import org.tsukuba_bunko.lilac.annotation.Auth;
 import org.tsukuba_bunko.lilac.entity.Label;
 import org.tsukuba_bunko.lilac.service.LabelService;
+import org.tsukuba_bunko.lilac.web.converter.NoopConverter;
 
 
 /**
@@ -42,17 +45,43 @@ public class LabelAction {
 
 	public LabelService labelService;
 
-	@RequestParameter
+	@RequestParameter(converter=NoopConverter.class)
 	public String name;
+
+	@RequestParameter
+	public Object requestData;
 
 	public ActionResult index() {
 		List<Label> labels = labelService.list();
 		return new Json(labels);
 	}
 
-	@Path("{name}")
+	@Path("{name,.+}")
 	public ActionResult get() {
 		Label label = labelService.get(name);
+		return new Json(label);
+	}
+
+	@Accept(RequestMethod.POST)
+	@Path("new")
+	@Auth
+	public ActionResult create() {
+		Label label = new Label();
+		Beans.copy(requestData, label).execute();
+		labelService.create(label);
+		return new Json(label);
+	}
+
+	@Accept(RequestMethod.PUT)
+	@Path("{name,.+}")
+	@Auth
+	public ActionResult update() {
+		Label label = labelService.get(name);
+		Beans.copy(requestData, label).execute();
+		if(!name.equals(label.name)) {
+			//TODO: validation error
+		}
+		labelService.update(label);
 		return new Json(label);
 	}
 }
