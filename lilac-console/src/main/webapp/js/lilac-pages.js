@@ -178,13 +178,13 @@ LoginPage.prototype.customizePage = function(page){
 		var userId = $('#login-userid');
 		var password = $('#login-password');
 		$.mobile.showPageLoadingMsg();
-		lilac.api.session.open(userId.attr('value'), password.attr('value'))
+		lilac.api.session.login(userId.attr('value'), password.attr('value'))
 		.done(function(data, status, jqXHR){
 			$.mobile.hidePageLoadingMsg();
 			$.mobile.showPageLoadingMsg("a", "ログインに成功しました", true );
 			setTimeout(function() {
 				$.mobile.hidePageLoadingMsg();
-				lilac.logedin = true;
+				lilac.session = data;
 				var toPage = self.next.toPage;
 				var options = self.next.options;
 				options.transition = 'pop';

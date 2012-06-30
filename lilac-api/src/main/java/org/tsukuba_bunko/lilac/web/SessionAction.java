@@ -20,15 +20,20 @@ package org.tsukuba_bunko.lilac.web;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.seasar.cubby.action.Accept;
 import org.seasar.cubby.action.ActionClass;
 import org.seasar.cubby.action.ActionResult;
+import org.seasar.cubby.action.Direct;
 import org.seasar.cubby.action.Json;
 import org.seasar.cubby.action.Path;
 import org.seasar.cubby.action.RequestMethod;
 import org.seasar.cubby.action.RequestParameter;
+import org.seasar.framework.beans.util.BeanMap;
 import org.tsukuba_bunko.lilac.entity.UserSession;
+import org.tsukuba_bunko.lilac.helper.auth.UserSessionHelper;
 import org.tsukuba_bunko.lilac.service.UserSessionService;
 
 
@@ -43,36 +48,48 @@ public class SessionAction {
 	@Resource
 	public UserSessionService userSessionService;
 
+	@Resource
+	public UserSessionHelper userSessionHelper;
+
+	@Resource
+	public HttpServletRequest request;
+
+	@Resource
+	public HttpServletResponse response;
+
 	@RequestParameter
 	public String userId;
 	
 	@RequestParameter
 	public String password;
-	
-	@RequestParameter
-	public String sessionId;
 
-	@Accept({RequestMethod.POST})
 	public ActionResult index() {
-		return new Json(userSessionService.getValidSession(sessionId));
+		String sessionId = userSessionHelper.getSessionId();
+		if(sessionId != null) {
+			try {
+				return new Json(userSessionService.getValidSession(sessionId));
+			}
+			catch(NoResultException nre) {
+				//セッションが無効の場合，セッションクッキーを削除する
+				userSessionHelper.setSessionId(null);
+			}
+		}
+		return new Json(new BeanMap());
 	}
 
 	@Accept({RequestMethod.POST})
 	public ActionResult login() {
 		UserSession session = userSessionService.open(userId, password);
+		userSessionHelper.setSessionId(session.id);
 		return new Json(session);
 	}
 
-	@Accept({RequestMethod.POST})
-	public ActionResult validate() {
-		boolean result = false;
-		try {
-			userSessionService.getValidSession(sessionId);
-			result = true;
+	public ActionResult logout() {
+		String sessionId = userSessionHelper.getSessionId();
+		if(sessionId != null) {
+			userSessionService.invalidate(sessionId);
+			userSessionHelper.setSessionId(null);
 		}
-		catch(NoResultException nre) {
-			result = false;
-		}
-		return new Json(result);
+		return new Direct();
 	}
 }

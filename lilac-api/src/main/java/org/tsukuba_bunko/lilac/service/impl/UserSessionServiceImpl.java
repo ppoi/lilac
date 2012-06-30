@@ -22,6 +22,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 import org.seasar.extension.jdbc.JdbcManager;
 import org.seasar.extension.jdbc.where.SimpleWhere;
 import org.seasar.framework.util.Base64Util;
@@ -32,11 +34,16 @@ import org.tsukuba_bunko.lilac.service.UserSessionService;
 
 
 /**
+ * 認証サービス実装
  * @author $Author: $
  * @version $Revision: $ $Date: $
  */
 public class UserSessionServiceImpl implements UserSessionService {
 
+	/**
+	 * S2JDBC
+	 */
+	@Resource
 	public JdbcManager jdbcManager;
 
 	/**
@@ -66,7 +73,7 @@ public class UserSessionServiceImpl implements UserSessionService {
 	public UserSession getValidSession(String sessionId) {
 		return jdbcManager.from(UserSession.class).where(new SimpleWhere()
 			.eq("id", sessionId)
-		).getSingleResult();
+		).disallowNoResult().getSingleResult();
 	}
 
 	/**
@@ -76,9 +83,14 @@ public class UserSessionServiceImpl implements UserSessionService {
 	public void invalidate(String sessionId) {
 		UserSession session = new UserSession();
 		session.id = sessionId;
-		jdbcManager.delete(session);
+		jdbcManager.delete(session).execute();
 	}
 
+	/**
+	 * パスワードのダイジェスト文字列を取得します。
+	 * @param password パスワード
+	 * @return ダイジェスト結果
+	 */
 	public String digestPassword(String password) {
 		MessageDigest md = MessageDigestUtil.getInstance("SHA-1");
 		try {

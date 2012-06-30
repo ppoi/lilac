@@ -42,9 +42,10 @@ var lilac = {
 	actions: [],
 
 	/**
-	 * ログインフラグ
+	 * セッション
 	 */
-	logedin: false,
+	session: null,
+
 
 	/**
 	 * jQM初期化イベントハンドラ
@@ -67,11 +68,17 @@ var lilac = {
 	 *      - 正常終了したら、ページロードダイアログを消し、アクション実行結果に遷移
 	 *      - 失敗したら、ページロードダイアログを消し、エラーダイアログを表示
 	 *    3. イベントの無効化
-	 * @param pagebeforechangeイベントオブジェクト
-	 * @param options jQMイベントオプション
+	 * @param event pagebeforechangeイベントオブジェクト
+	 * @param options jQMイベントデータ
 	 */
 	pagebeforechangeHandler: function(event, data) {
 		if(typeof data.toPage != 'string') {
+			return;
+		}
+
+		if(!lilac.session) {
+			event.preventDefault();
+			lilac.initialize(data);
 			return;
 		}
 
@@ -80,7 +87,7 @@ var lilac = {
 			var action = lilac.actions[i];
 			var m = XRegExp('(?<path>' + action.path + ')(?:\\?(?<params>.*))?').exec(url.hash);
 			if(m) {
-				if(action.secure && !lilac.logedin) {
+				if(action.secure && !lilac.session.id) {
 					var loginData = {
 						transition: 'pop',
 						changeHash: false,
@@ -105,6 +112,14 @@ var lilac = {
 				break;
 			}
 		}
+	},
+
+	initialize: function(eventData) {
+		lilac.api.session.get()
+			.done(function(session) {
+				lilac.session = session;
+				$.mobile.changePage(eventData.toPage, eventData.options);
+			});
 	},
 
 	/**
@@ -228,7 +243,7 @@ lilac.api = {
 		}
 	},
 	session: {
-		open: function(userId, password) {
+		login: function(userId, password) {
 			return $.ajax('/api/session/login', {
 				cache: false,
 				data: {
@@ -239,14 +254,11 @@ lilac.api = {
 				type: 'POST'
 			});
 		},
-		get: function(sessionId) {
+		get: function() {
 			return $.ajax('/api/session', {
 				cache: false,
-				data: {
-					sessionId: sessionId
-				},
 				dataType: 'json',
-				type: 'POST'
+				type: 'GET'
 			});
 		},
 		validate: function(sessionId) {

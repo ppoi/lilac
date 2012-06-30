@@ -49,8 +49,7 @@ public class LabelServiceImpl implements LabelService {
 	 */
 	@Override
 	public void create(Label label) {
-		jdbcManager.insert(label);
-
+		jdbcManager.insert(label).execute();
 	}
 
 	/**
@@ -58,7 +57,7 @@ public class LabelServiceImpl implements LabelService {
 	 */
 	@Override
 	public void update(Label label) {
-		jdbcManager.update(label);
+		jdbcManager.update(label).execute();
 	}
 
 	/**

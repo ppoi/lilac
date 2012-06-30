@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html" charset="UTF-8">
+		<title>API Test</title>
+	</head>
+	<body>
+		<h1>Session API</h1>
+		<h2 id="login">login</h2>
+		<div>
+			<form id="login-form">
+				<label for="login-username">ユーザ名</label><input type="text" id="login-username" size="32" /><br />
+				<label for="login-password">パスワード</label><input type="text" id="login-password" size="32" /><br />
+				<button id="execute-login">実行</button>
+				<div id="login-result">
+					<textarea rows="4" cols="60"></textarea>
+				</div>
+			</form>
+		</div>
+		<hr />
+		<h2 id="logout">logout</h2>
+		<div>
+			<form id="logout-form">
+				<button id="execute-logout">実行</button>
+				<div id="logout-result">
+					<textarea rows="4" cols="60"></textarea>
+				</div>
+			</form>
+		</div>
+		<hr />
+		<h2 id="get">Get</h2>
+		<div>
+			<form id="get-form">
+				<button id="execute-get">実行</button>
+				<div id="get-result">
+					<textarea rows="4" cols="60"></textarea>
+				</div>
+			</form>
+		</div>
+		<script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript">
+			function showErrorMsg(jqXHR, textStatus, errorThrown) {
+				alert(textStatus + ":" + errorThrown);
+			}
+
+			$("#login-form").submit(function(event) {
+				event.preventDefault();
+				var params = {
+					userId: $('#login-username').val(),
+					password: $('#login-password').val()
+				};
+				$.ajax("/api/session/login", {
+					dataType: 'json',
+					data: params,
+					type: 'POST'
+				}).done(function(data, textStatus, jqXHR) {
+					$("#login-result textarea").val(JSON.stringify(data));
+				}).fail(showErrorMsg);
+				return false;
+			});
+
+			$("#logout-form").submit(function(event) {
+				event.preventDefault();
+				$.ajax("/api/session/logout", {
+					dataType: 'json',
+					type: 'GET'
+				}).done(function(data, textStatus, jqXHR) {
+					$("#logout-result textarea").val(JSON.stringify(data));
+				}).fail(showErrorMsg);
+				return false;
+			});
+
+			$("#get-form").submit(function(event) {
+				event.preventDefault();
+				$.ajax("/api/session", {
+					dataType: 'json',
+					type: 'GET'
+				}).done(function(data, textStatus, jqXHR) {
+					$("#get-result textarea").val(JSON.stringify(data));
+				}).fail(showErrorMsg);
+				return false;
+			});
+		</script>
+	</body>
+</html>
