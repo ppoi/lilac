@@ -1,56 +1,9 @@
 
-/**
- * ページ共通
- */
-function PageBase(self, id, template) {
-	self.id = id;
-	self.templateURL = template;
-	self.page = null;
-};
-PageBase.prototype = {};
-PageBase.prototype.initialize = function () {
-	var deferred = $.Deferred();
-	if(this.page) {
-		deferred.resolve();
-	}
-	else {
-		lilac.templates.get(this.templateURL)
-			.done($.proxy(function(templates){
-				var page = $('#page-template', templates);
-				if(page.length) {
-					this.page = page.clone().attr('id', this.id).appendTo($.mobile.pageContainer);
-					this.customizePage(this.page);
-					this.page.page();
-					deferred.resolve();
-				}
-				else {
-					deferred.reject();
-				}
-			}, this))
-			.fail(function(){
-				deferred.reject();
-			});
-	}
-	return deferred.promise();	
-};
-PageBase.prototype.customizePage = $.noop;
-PageBase.prototype.prepare = function (path, options) {
-	return $.Deferred().resolve(this.page).promise();
-};
-PageBase.prototype.remove= function() {
-	this.finalize();
-	this.page.remove();
-	this.page = null;
-};
-PageBase.prototype.finalize = $.noop;
-PageBase.prototype.prefixedId = function(attrName) {
-	return '#' + this.id + "-" + attrName;		
-};
 
 /**
  * 書籍一覧ページ共通
  */
-BookListPageBase = lilac.extend(PageBase, function(self, id, template) {
+BookListPageBase = lilac.extend(Page, function(self, id, template) {
 	this.__super__.constructor(self, id, template);
 	self.search = {
 		condition: null,
@@ -160,14 +113,14 @@ BookListPageBase.prototype.makeResultList = function(result, clear) {
 /**
  * メインメニュー
  */
-MainPage = lilac.extend(PageBase, function(id) {
+MainPage = lilac.extend(Page, function(id) {
 	this.__super__.constructor(this, id, 'template/main.html');
 });
 
 /**
  * ログインダイアログ
  */
-LoginPage = lilac.extend(PageBase, function(id){
+LoginPage = lilac.extend(Page, function(id){
 	this.__super__.constructor(this, id, 'template/loginform.html');
 });
 LoginPage.prototype.customizePage = function(page){
@@ -232,7 +185,7 @@ LoginPage.prototype.prepare = function(path, options){
 /**
  * 管理メニュー
  */
-AdminPage = lilac.extend(PageBase, function(id) {
+AdminPage = lilac.extend(Page, function(id) {
 	this.__super__.constructor(this, id, 'template/admin.html');
 });
 
@@ -299,7 +252,7 @@ BookSearchPage.prototype.updateLabelOptions = function() {
 	return deferred.promise();
 };
 
-BibliographyPage = lilac.extend(PageBase, function(id){
+BibliographyPage = lilac.extend(Page, function(id){
 	this.__super__.constructor(this, id, 'template/bibliography.html');
 	this.rendered = false;
 });
@@ -420,6 +373,8 @@ AuthorPage.prototype.setAuthorProperty = function(entity, key, defaultValue) {
 	$(this.prefixedId(key)).text(value);
 };
 
+
+// Action定義
 lilac.actions = [
 	new Action('#main', MainPage),
 	new Action('#list', BookSearchPage),

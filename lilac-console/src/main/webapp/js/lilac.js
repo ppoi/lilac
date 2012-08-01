@@ -1,4 +1,6 @@
 
+///////////////////////////////////////////////////////////
+// Action
 function Action(path, pageClass, secure) {
 	this.path = path;
 	this.pageClass = pageClass;
@@ -35,6 +37,57 @@ Action.prototype = {
 	}
 };
 
+///////////////////////////////////////////////////////////
+// Page
+function Page(self, id, template) {
+	self.id = id;
+	self.templateURL = template;
+	self.page = null;
+};
+Page.prototype = {};
+Page.prototype.initialize = function () {
+	var deferred = $.Deferred();
+	if(this.page) {
+		deferred.resolve();
+	}
+	else {
+		lilac.templates.get(this.templateURL)
+			.done($.proxy(function(templates){
+				var page = $('#page-template', templates);
+				if(page.length) {
+					this.page = page.clone().attr('id', this.id).appendTo($.mobile.pageContainer);
+					this.customizePage(this.page);
+					this.page.page();
+					deferred.resolve();
+				}
+				else {
+					deferred.reject();
+				}
+			}, this))
+			.fail(function(){
+				deferred.reject();
+			});
+	}
+	return deferred.promise();	
+};
+Page.prototype.customizePage = $.noop;
+Page.prototype.prepare = function (path, options) {
+	return $.Deferred().resolve(this.page).promise();
+};
+Page.prototype.remove= function() {
+	this.finalize();
+	this.page.remove();
+	this.page = null;
+};
+Page.prototype.finalize = $.noop;
+Page.prototype.prefixedId = function(attrName) {
+	return '#' + this.id + "-" + attrName;		
+};
+
+
+
+///////////////////////////////////////////////////////////
+// Controller
 var lilac = {
 	/**
 	 * アクションリスト
@@ -144,9 +197,9 @@ var lilac = {
 	}
 };
 
-/**
- * ページキャッシュ
- */
+
+///////////////////////////////////////////////////////////
+// ページキャッシュ
 function PageCache(capacity) {
 	this.capacity = capacity;
 	this.cache = new Array(this.capacity);
@@ -184,7 +237,8 @@ PageCache.prototype = {
 };
 lilac.cache = new PageCache(10);
 
-
+///////////////////////////////////////////////////////////
+// Templates
 function TemplateManager(){
 	this.templates = {};
 };
@@ -211,72 +265,9 @@ TemplateManager.prototype = {
 };
 lilac.templates = new TemplateManager();
 
-/**
- * Lilac API
- */
-lilac.api = {
-	book: {
-		get: function(id) {
-			return $.ajax('/api/book/' + id, {
-				dataType: 'json',
-			});
-		},
-		list: function(params, page) {
-			return $.ajax('/api/book/list/' + page, {
-				data: params,
-				dataType: 'json',
-			});
-		}
-	},
-	author: {
-		get: function(id) {
-			return $.ajax('/api/author/' + id, {
-				dataType: 'json'
-			});
-		}
-	},
-	label: {
-		list: function() {
-			return $.ajax('/api/label', {
-				dataType: 'json'
-			});
-		}
-	},
-	session: {
-		login: function(userId, password) {
-			return $.ajax('/api/session/login', {
-				cache: false,
-				data: {
-					userId: userId,
-					password: password
-				},
-				dataType: 'json',
-				type: 'POST'
-			});
-		},
-		get: function() {
-			return $.ajax('/api/session', {
-				cache: false,
-				dataType: 'json',
-				type: 'GET'
-			});
-		},
-		validate: function(sessionId) {
-			return $.ajax('/api/session/validate', {
-				cache: false,
-				data: {
-					sessionId: sessionId
-				},
-				dataType: 'json',
-				type: 'POST'
-			});
-		}
-	}
-};
 
-/**
- * 初期化フック
- */
+///////////////////////////////////////////////////////////
+// 初期フック
 (function() {
 	$(document).bind('mobileinit', lilac.mobileinitHandler);
 })();
