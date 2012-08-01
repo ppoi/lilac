@@ -3,7 +3,7 @@
   <parent>
     <artifactId>lilac</artifactId>
     <groupId>org.tsukuba-bunko.lilac</groupId>
-    <version>2012.02</version>
+    <version>2012.03-SNAPSHOT</version>
 	<relativePath>../lilac</relativePath>
   </parent>
   <artifactId>lilac-api</artifactId>
