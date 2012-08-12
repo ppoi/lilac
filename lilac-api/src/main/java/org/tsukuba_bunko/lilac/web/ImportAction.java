@@ -18,47 +18,34 @@
  */
 package org.tsukuba_bunko.lilac.web;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.seasar.cubby.action.ActionClass;
 import org.seasar.cubby.action.ActionResult;
-import org.seasar.cubby.action.Direct;
 import org.seasar.cubby.action.Json;
 import org.seasar.cubby.action.Path;
+import org.seasar.cubby.action.RequestParameter;
 import org.tsukuba_bunko.lilac.annotation.Auth;
-import org.tsukuba_bunko.lilac.service.ExportService;
 
 
 /**
- * りらDBエクスポートAPI。
+ * りらDBインポートAPI
  * @author $Author: $
  * @version $Revision: $ $Date: $
  */
 @ActionClass
-@Path("export")
-public class ExportAction {
+@Path("/import")
+public class ImportAction {
 
-	@Resource
-	public HttpServletRequest request;
+	@RequestParameter
+	public String fileId;
 
-	@Resource
-	public HttpServletResponse response;
-
-	@Resource
-	public ExportService exportService;
-
-	public ActionResult index() throws Exception {
-		return new Json(new String[]{"all"});
+	@Auth
+	public ActionResult upload() {
+		return new Json(Boolean.FALSE);
 	}
 
 	@Auth
-	@Path("all")
-	public ActionResult all() throws Exception {
-		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-		response.setHeader("content-disposition", "attachment; filename=lilacCatalog-all.xlsx");
-		exportService.exportAll(response.getOutputStream());
-		return new Direct();
+	@Path("/{id,[a-zA-Z0-9]+}")
+	public ActionResult importAll() {
+		return new Json(Boolean.FALSE);
 	}
 }

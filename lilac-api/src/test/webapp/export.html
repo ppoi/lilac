@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html" charset="UTF-8">
+		<title>API Test</title>
+	</head>
+	<body>
+		<h1>Export API</h1>
+		<h2 id="catalog">catalog(index)</h2>
+		<div>
+			<form id="index-form">
+				<button id="execute-index">実行</button>
+				<div id="index-result">
+					<textarea rows="4" cols="60"></textarea>
+				</div>
+			</form>
+		</div>
+		<hr />
+		<h2 id="logout">export</h2>
+		<div>
+			<form id="export-form">
+				<select id="export-type">
+					<option>all</option>
+				</select>
+				<button id="execute-export">実行</button>
+			</form>
+		</div>
+		<script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript">
+			function showErrorMsg(jqXHR, textStatus, errorThrown) {
+				alert(textStatus + ":" + errorThrown);
+			}
+
+			$("#index-form").submit(function(event) {
+				event.preventDefault();
+				$.ajax("/api/export", {
+					dataType: 'json',
+					type: 'GET'
+				}).done(function(data, textStatus, jqXHR) {
+					$("#index-result textarea").val(JSON.stringify(data));
+				}).fail(showErrorMsg);
+				return false;
+			});
+
+			$("#export-form").submit(function(event) {
+				event.preventDefault();
+				var exportType = $('#export-type').val();
+				location.href = "/api/export/" + exportType;
+				return false;
+			});
+		</script>
+	</body>
+</html>
