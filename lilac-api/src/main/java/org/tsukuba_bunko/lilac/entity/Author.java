@@ -26,12 +26,22 @@ public class Author {
 	public String website;
 	
 	/**
-	 * 備考
+	 * 作者Twitterアカウント
 	 */
-	public String note;
-	
+	public String twitter;
+
 	/**
 	 * シノニムキー
 	 */
 	public Integer synonymKey;
+	
+	/**
+	 * 備考
+	 */
+	public String note;
+
+	/**
+	 * エンティティバージョン
+	 */
+	public Integer version;
 }

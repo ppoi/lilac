@@ -4,6 +4,13 @@
 <components>
 	<include path="default-customizer.dicon"/>
 
+	<!-- Serviceカスタマイザ -->
+	<component name="serviceCustomizer"  class="org.seasar.framework.container.customizer.CustomizerChain">
+		<initMethod name="addCustomizer">
+			<arg>requiredTxCustomizer</arg>
+    	</initMethod>
+    </component>
+
 	<!-- Actionカスタマイザ -->
 	<component name="actionCustomizer" class="org.seasar.framework.container.customizer.CustomizerChain">
 		<initMethod name="addCustomizer">

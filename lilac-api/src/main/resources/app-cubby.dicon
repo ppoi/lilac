@@ -5,8 +5,21 @@
 	<include path="cubby-converters.dicon" />
 
 	<component name="defaultRequestParser" class="org.seasar.cubby.controller.impl.DefaultRequestParser" />
+	<component name="multipartRequestParser" class="org.seasar.cubby.controller.impl.MultipartRequestParser" />
 	<component name="jsonRequestParser" class="org.tsukuba_bunko.lilac.web.controller.JsonRequestParser" />
 	<component name="requestParsers">
-		{ jsonRequestParser, defaultRequestParser }
+		{ jsonRequestParser, multipartRequestParser, defaultRequestParser }
 	</component>
+
+	<component class="org.apache.commons.fileupload.servlet.ServletFileUpload" instance="prototype">
+		<property name="fileItemFactory">
+			<component class="org.apache.commons.fileupload.disk.DiskFileItemFactory">
+				<property name="sizeThreshold">4096</property>
+			</component>
+		</property>
+		<property name="fileSizeMax">10000000</property>
+	</component>
+
+	<component class="org.apache.commons.fileupload.servlet.ServletRequestContext" instance="prototype"/>
+
 </components>

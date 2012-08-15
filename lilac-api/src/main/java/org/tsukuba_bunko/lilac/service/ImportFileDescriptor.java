@@ -18,19 +18,13 @@
  */
 package org.tsukuba_bunko.lilac.service;
 
-import java.io.OutputStream;
-
 
 /**
- * Lilac DBの内容をExcel(OOXML)形式でエクスポートします。
  * @author $Author: $
  * @version $Revision: $ $Date: $
  */
-public interface ExportService {
+public class ImportFileDescriptor {
 
-	/**
-	 * Lilac DBの全内容をExcel(OOXML)形式でエクスポートします。
-	 * @param target　エキスポートデータの出力先ストリーム
-	 */
-	public void exportAll(OutputStream target);
+	public Integer id;
+
 }

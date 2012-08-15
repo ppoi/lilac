@@ -4,11 +4,9 @@
 <components>
 	<include path="convention.dicon" />
 	<include path="aop.dicon" />
+	<include path="j2ee.dicon"/>
 	<include path="s2jdbc.dicon" />
 	<include path="cubby.dicon" />
 	<include path="app-cubby.dicon" />
-
-	<component name="secureCookie">
-		!@org.seasar.framework.util.ResourceUtil@isExist("insecure_cookie")
-	</component>
+	<include path="lilac-api.dicon" />
 </components>

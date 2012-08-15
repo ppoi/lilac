@@ -16,21 +16,32 @@
  *
  * $Id:　$
  */
-package org.tsukuba_bunko.lilac.service;
+package org.tsukuba_bunko.lilac.entity;
 
-import java.io.OutputStream;
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 
 /**
- * Lilac DBの内容をExcel(OOXML)形式でエクスポートします。
  * @author $Author: $
  * @version $Revision: $ $Date: $
  */
-public interface ExportService {
+@Entity
+public class ImportFile {
 
-	/**
-	 * Lilac DBの全内容をExcel(OOXML)形式でエクスポートします。
-	 * @param target　エキスポートデータの出力先ストリーム
-	 */
-	public void exportAll(OutputStream target);
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	public Integer id;
+
+	public String fileName;
+
+	@Column(name="\"user\"")
+	public String user;
+
+	public Timestamp createdTimestamp;
 }

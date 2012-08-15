@@ -8,46 +8,93 @@
 		<h1>Import API</h1>
 		<h2 id="upload">upload</h2>
 		<div>
-			<form id="index-form">
-				<button id="execute-index">実行</button>
-				<div id="index-result">
+			<form id="upload-form">
+				<label for="upload-file">アップロードファイル</label><input id="upload-file" name="upload-file" type="file"><br />
+				<button id="execute-upload">実行</button>
+				<div id="upload-result">
 					<textarea rows="4" cols="60"></textarea>
 				</div>
 			</form>
 		</div>
 		<hr />
-		<h2 id="import">import</h2>
+		<h2 id="list">list</h2>
 		<div>
-			<form id="export-form">
-				<select id="export-type">
-					<option>all</option>
-				</select>
-				<button id="execute-export">実行</button>
+			<form id="list-form">
+				<button id="execute-list">実行</button>
+				<div id="list-result">
+					<textarea rows="4" cols="60"></textarea>
+				</div>
+			</form>
+		</div>
+		<hr />
+		<h2 id="import">importData</h2>
+		<div>
+			<form id="import-form">
+				<label for="import-file-id">ファイルID</label><input type="number" id="import-file-id" /><br />
+				<button id="execute-import">実行</button>
+				<div id="import-result">
+					<textarea rows="4" cols="60"></textarea>
+				</div>
+			</form>
+		</div>
+		<hr />
+		<h2 id="cancel">cancel</h2>
+		<div>
+			<form id="cancel-form">
+				<label for="cancel-file-id">ファイルID</label><input type="number" id="cancel-file-id" /><br />
+				<button id="execute-cancel">実行</button>
+				<div id="cancel-result">
+					<textarea rows="4" cols="60"></textarea>
+				</div>
 			</form>
 		</div>
 		<script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="js/lib/jquery.upload-1.0.2.min.js"></script>
 		<script type="text/javascript">
 			function showErrorMsg(jqXHR, textStatus, errorThrown) {
 				alert(textStatus + ":" + errorThrown);
 			}
 
-			$("#index-form").submit(function(event) {
+			$("#list-form").submit(function(event) {
 				event.preventDefault();
-				$.ajax("/api/export", {
+				$.ajax("/api/import", {
 					dataType: 'json',
 					type: 'GET'
 				}).done(function(data, textStatus, jqXHR) {
-					$("#index-result textarea").val(JSON.stringify(data));
+					$("#list-result textarea").val(JSON.stringify(data));
 				}).fail(showErrorMsg);
 				return false;
 			});
-
-			$("#export-form").submit(function(event) {
+			
+			$('#import-form').submit(function(event){
 				event.preventDefault();
-				var exportType = $('#export-type').val();
-				location.href = "/api/export/" + exportType;
+				var fileId = $('#import-file-id').val();
+				$.ajax("/api/import/" + fileId, {
+					dataType: 'json',
+					type: 'PUT'
+				}).done(function(data, textStatus, jqXHR){
+					$('#import-result textarea').val(JSON.stringify(data));
+				}).fail(showErrorMsg);
+			});
+
+			$("#execute-upload").click(function(event) {
+				event.preventDefault();
+				$('#upload-file').upload("/api/import", function(data){
+					$("#upload-result textarea").val(data);
+				}, "html");
 				return false;
 			});
-		</script>
+
+			$('#cancel-form').submit(function(event){
+				event.preventDefault();
+				var fileId = $('#cancel-file-id').val();
+				$.ajax("/api/import/" + fileId, {
+					dataType: 'json',
+					type: 'DELETE'
+				}).done(function(data, textStatus, jqXHR){
+					$('#cancel-result textarea').val(JSON.stringify(data));
+				}).fail(showErrorMsg);
+			});
+			</script>
 	</body>
 </html>

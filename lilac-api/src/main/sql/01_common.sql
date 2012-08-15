@@ -31,6 +31,15 @@ CREATE TABLE user_session(
 	created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- インポートファイル
+CREATE TABLE import_file(
+	"id"	serial NOT NULL PRIMARY KEY,
+	"user"	varchar(256) NOT NULL REFERENCES "user" ON DELETE CASCADE,
+	created_timestamp	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_import_file_user ON import_file("user");
+CREATE INDEX idx_import_file_timestamp ON import_file("created_timestamp");
+
 -- 変更ログ
 CREATE TABLE change_log(
 	"id"	bigserial	NOT NULL PRIMARY KEY,

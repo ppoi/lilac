@@ -38,5 +38,5 @@ public class UserSession {
 	@Column(name="\"user\"")
 	public String user;
 
-	public Timestamp created_timestamp;
+	public Timestamp createdTimestamp;
 }
