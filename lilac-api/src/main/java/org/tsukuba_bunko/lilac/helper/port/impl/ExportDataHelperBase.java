@@ -16,7 +16,7 @@
  *
  * $Id:　$
  */
-package org.tsukuba_bunko.lilac.helper.impl;
+package org.tsukuba_bunko.lilac.helper.port.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,15 +38,25 @@ import org.seasar.extension.jdbc.AutoSelect;
 import org.seasar.extension.jdbc.IterationCallback;
 import org.seasar.extension.jdbc.IterationContext;
 import org.seasar.extension.jdbc.JdbcManager;
-import org.tsukuba_bunko.lilac.helper.ExportEntityHelper;
+import org.seasar.framework.util.StringUtil;
+import org.tsukuba_bunko.lilac.entity.UserSession;
+import org.tsukuba_bunko.lilac.helper.auth.UserSessionHelper;
+import org.tsukuba_bunko.lilac.helper.port.ExportDataHelper;
+import org.tsukuba_bunko.lilac.service.UserSessionService;
 
 
 /**
- * {@link ExportEntityHelper} 共通基底クラス。
+ * {@link ExportDataHelper} 共通基底クラス。
  * @author $Author: $
  * @version $Revision: $ $Date: $
  */
-public abstract class ExportEntityHelperBase<ENTITY> implements ExportEntityHelper, IterationCallback<ENTITY, Integer> {
+public abstract class ExportDataHelperBase<ENTITY> implements ExportDataHelper, IterationCallback<ENTITY, Integer> {
+
+	@Resource
+	public UserSessionHelper userSessionHelper;
+
+	@Resource
+	public UserSessionService userSessionService;
 
 	@Resource
 	public JdbcManager jdbcManager;
@@ -58,10 +68,10 @@ public abstract class ExportEntityHelperBase<ENTITY> implements ExportEntityHelp
 	private int rowCount;
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.ExportEntityHelper#exportAll(org.apache.poi.xssf.usermodel.XSSFWorkbook)
+	 * @see org.tsukuba_bunko.lilac.helper.port.ExportDataHelper#exportData(org.apache.poi.xssf.usermodel.XSSFWorkbook)
 	 */
 	@Override
-	public void exportAll(XSSFWorkbook book) {
+	public void exportData(XSSFWorkbook book) {
 		sheet = book.createSheet(getSheetName());
 
 		XSSFFont font = book.createFont();
@@ -202,5 +212,14 @@ public abstract class ExportEntityHelperBase<ENTITY> implements ExportEntityHelp
 			cell.setCellType(XSSFCell.CELL_TYPE_BLANK);
 		}
 		return cell;
+	}
+
+	protected String getCurrentSessionUser() {
+		String sessionId = userSessionHelper.getSessionId();
+		if(StringUtil.isNotBlank(sessionId)) {
+			UserSession session = userSessionService.getValidSession(sessionId);
+			return session.user;
+		}
+		return null;
 	}
 }

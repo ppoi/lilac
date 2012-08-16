@@ -28,9 +28,26 @@ import java.io.OutputStream;
  */
 public interface ExportService {
 
+	public static enum ExportTarget {
+		Label,
+		Author,
+		Bibliography,
+		Bookshelf,
+		Book,
+		ReadingRecord,
+		All
+	}
+
 	/**
 	 * Lilac DBの全内容をExcel(OOXML)形式でエクスポートします。
 	 * @param target　エキスポートデータの出力先ストリーム
 	 */
 	public void exportAll(OutputStream target);
+
+	/**
+	 * Lilac DBの全内容をExcel(OOXML)形式でエクスポートします。
+	 * @param target　エキスポートデータの出力先ストリーム
+	 * @param exportTargets エキスポートするデータ種別リスト
+	 */
+	public void exportData(OutputStream target, ExportTarget...exportTargets);
 }

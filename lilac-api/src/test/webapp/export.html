@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html" charset="UTF-8">
-		<title>API Test</title>
+		<title>API Test(export)</title>
 	</head>
 	<body>
 		<h1>Export API</h1>
@@ -19,7 +19,13 @@
 		<h2 id="logout">export</h2>
 		<div>
 			<form id="export-form">
-				<select id="export-type">
+				<select id="export-type" multiple="multiple">
+					<option>label</option>
+					<option>author</option>
+					<option>bibliography</option>
+					<option>bookshelf</option>
+					<option>book</option>
+					<option>reading-record</option>
 					<option>all</option>
 				</select>
 				<button id="execute-export">実行</button>
@@ -45,7 +51,7 @@
 			$("#export-form").submit(function(event) {
 				event.preventDefault();
 				var exportType = $('#export-type').val();
-				location.href = "/api/export/" + exportType;
+				location.href = "/api/export/" + exportType.join('+');
 				return false;
 			});
 		</script>

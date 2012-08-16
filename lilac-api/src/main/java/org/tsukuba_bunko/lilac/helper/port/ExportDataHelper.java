@@ -16,17 +16,21 @@
  *
  * $Id:　$
  */
-package org.tsukuba_bunko.lilac.helper;
+package org.tsukuba_bunko.lilac.helper.port;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 /**
- * レーベル情報エクスポートHelper
+ * りらDBエクスポートHelper
  * @author $Author: $
  * @version $Revision: $ $Date: $
  */
-public interface ExportEntityHelper {
+public interface ExportDataHelper {
 
-	public void exportAll(XSSFWorkbook book);
+	/**
+	 * Excel(OOXML)形式インポートファイルにデータをエクスポートします。
+	 * @param book Excel(OOXML)形式インポートファイル
+	 */
+	public void exportData(XSSFWorkbook book);
 }

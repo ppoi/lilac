@@ -1,6 +1,6 @@
 /*
  * All Rights Reserved.
- * Copyright (C) 2011 Tsukuba Bunko.
+ * Copyright (C) 2012 Tsukuba Bunko.
  *
  * Licensed under the BSD License ("the License"); you may not use
  * this file except in compliance with the License.
@@ -30,15 +30,14 @@ import javax.persistence.TemporalType;
 
 
 /**
- * 蔵書情報
  * @author $Author: $
  * @version $Revision: $ $Date: $
  */
 @Entity
-public class Book {
+public class ReadingRecord {
 
 	/**
-	 * 蔵書情報ID
+	 * 履歴ID
 	 */
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -56,31 +55,21 @@ public class Book {
 	public Bibliography bibliography;
 
 	/**
-	 * 所蔵書棚ID
+	 * 読者
 	 */
-	public Integer locationId;
+	public String reader;
 
 	/**
-	 * 所蔵書棚
-	 */
-	@ManyToOne
-	public Bookshelf location;
-
-	/**
-	 * 購入日
+	 * 開始日
 	 */
 	@Temporal(TemporalType.DATE)
-	public Date acquisitionDate;
+	public Date beginDate;
 
 	/**
-	 * 購入店舗
+	 * 読了日
 	 */
-	public String purchaseShop;
-
-	/**
-	 * 所有者
-	 */
-	public String owner;
+	@Temporal(TemporalType.DATE)
+	public Date completionDate;
 
 	/**
 	 * 備考

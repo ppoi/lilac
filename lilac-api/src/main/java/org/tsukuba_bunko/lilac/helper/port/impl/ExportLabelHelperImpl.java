@@ -16,7 +16,7 @@
  *
  * $Id:　$
  */
-package org.tsukuba_bunko.lilac.helper.impl;
+package org.tsukuba_bunko.lilac.helper.port.impl;
 
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -26,15 +26,15 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.seasar.extension.jdbc.AutoSelect;
 import org.tsukuba_bunko.lilac.entity.Label;
-import org.tsukuba_bunko.lilac.helper.ExportEntityHelper;
+import org.tsukuba_bunko.lilac.helper.port.ExportDataHelper;
 
 
 /**
- * レーベル情報をエクスポートする {@link ExportEntityHelper} 実装です。
+ * レーベル情報をエクスポートする {@link ExportDataHelper} 実装です。
  * @author $Author: $
  * @version $Revision: $ $Date: $
  */
-public class ExportLabelHelperImpl extends ExportEntityHelperBase<Label> {
+public class ExportLabelHelperImpl extends ExportDataHelperBase<Label> {
 
 	private XSSFCellStyle flagCellStyle;
 
@@ -43,7 +43,7 @@ public class ExportLabelHelperImpl extends ExportEntityHelperBase<Label> {
 	private int maxLabelNameLength;
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#getSheetName()
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#getSheetName()
 	 */
 	@Override
 	protected String getSheetName() {
@@ -51,7 +51,7 @@ public class ExportLabelHelperImpl extends ExportEntityHelperBase<Label> {
 	}
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#prepare(org.apache.poi.xssf.usermodel.XSSFWorkbook)
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#prepare(org.apache.poi.xssf.usermodel.XSSFWorkbook)
 	 */
 	@Override
 	protected void prepare(XSSFWorkbook book) {
@@ -69,7 +69,7 @@ public class ExportLabelHelperImpl extends ExportEntityHelperBase<Label> {
 	}
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#buildQuery()
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#buildQuery()
 	 */
 	@Override
 	protected AutoSelect<Label> buildQuery() {
@@ -77,18 +77,18 @@ public class ExportLabelHelperImpl extends ExportEntityHelperBase<Label> {
 	}
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#processHeaderRow(org.apache.poi.xssf.usermodel.XSSFRow)
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#processHeaderRow(org.apache.poi.xssf.usermodel.XSSFRow)
 	 */
 	@Override
 	protected void processHeaderRow(XSSFRow row) {
-		createHeaderCell(row, 0, null);
+		createHeaderCell(row, 0, "S");
 		createHeaderCell(row, 1, "レーベル名");
 		createHeaderCell(row, 2, "備考");
 		createHeaderCell(row, 3, "Webサイト");
 	}
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#processRow(java.lang.Object, org.apache.poi.xssf.usermodel.XSSFRow, int)
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#processRow(java.lang.Object, org.apache.poi.xssf.usermodel.XSSFRow, int)
 	 */
 	@Override
 	protected void processRow(Label entity, XSSFRow row, int index) {
@@ -108,7 +108,7 @@ public class ExportLabelHelperImpl extends ExportEntityHelperBase<Label> {
 	}
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#finish(org.apache.poi.xssf.usermodel.XSSFWorkbook)
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#finish(org.apache.poi.xssf.usermodel.XSSFWorkbook)
 	 */
 	@Override
 	protected void finish(XSSFWorkbook book) {

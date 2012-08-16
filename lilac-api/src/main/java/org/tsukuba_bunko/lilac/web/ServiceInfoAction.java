@@ -29,8 +29,4 @@ public class ServiceInfoAction {
 	public ActionResult session() {
 		return new Forward(SessionAction.class);
 	}
-
-	public ActionResult export() {
-		return new Forward(ExportAction.class);
-	}
 }

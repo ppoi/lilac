@@ -16,7 +16,7 @@
  *
  * $Id:　$
  */
-package org.tsukuba_bunko.lilac.helper.impl;
+package org.tsukuba_bunko.lilac.helper.port.impl;
 
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -26,15 +26,15 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.seasar.extension.jdbc.AutoSelect;
 import org.tsukuba_bunko.lilac.entity.Author;
-import org.tsukuba_bunko.lilac.helper.ExportEntityHelper;
+import org.tsukuba_bunko.lilac.helper.port.ExportDataHelper;
 
 
 /**
- * 著者情報をエクスポートする {@link ExportEntityHelper} 実装です。
+ * 著者情報をエクスポートする {@link ExportDataHelper} 実装です。
  * @author $Author: $
  * @version $Revision: $ $Date: $
  */
-public class ExportAuthorHelperImpl extends ExportEntityHelperBase<Author> {
+public class ExportAuthorHelperImpl extends ExportDataHelperBase<Author> {
 
 	private XSSFCellStyle flagCellStyle;
 	private XSSFCellStyle idCellStyle;
@@ -42,7 +42,7 @@ public class ExportAuthorHelperImpl extends ExportEntityHelperBase<Author> {
 	private XSSFCellStyle noteCellStyle;
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#getSheetName()
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#getSheetName()
 	 */
 	@Override
 	protected String getSheetName() {
@@ -50,7 +50,7 @@ public class ExportAuthorHelperImpl extends ExportEntityHelperBase<Author> {
 	}
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#prepare(org.apache.poi.xssf.usermodel.XSSFWorkbook)
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#prepare(org.apache.poi.xssf.usermodel.XSSFWorkbook)
 	 */
 	@Override
 	protected void prepare(XSSFWorkbook book) {
@@ -74,20 +74,21 @@ public class ExportAuthorHelperImpl extends ExportEntityHelperBase<Author> {
 	}
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#processHeaderRow(org.apache.poi.xssf.usermodel.XSSFRow)
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#processHeaderRow(org.apache.poi.xssf.usermodel.XSSFRow)
 	 */
 	@Override
 	protected void processHeaderRow(XSSFRow row) {
-		createHeaderCell(row, 0, null);
+		createHeaderCell(row, 0, "S");
 		createHeaderCell(row, 1, "ID");
 		createHeaderCell(row, 2, "著者名");
 		createHeaderCell(row, 3, "Webサイト");
-		createHeaderCell(row, 4, "備考");
-		createHeaderCell(row, 5, "シノニムキー");
+		createHeaderCell(row, 4, "Twitter");
+		createHeaderCell(row, 5, "備考");
+		createHeaderCell(row, 6, "SYN");
 	}
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#buildQuery()
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#buildQuery()
 	 */
 	@Override
 	protected AutoSelect<Author> buildQuery() {
@@ -95,7 +96,7 @@ public class ExportAuthorHelperImpl extends ExportEntityHelperBase<Author> {
 	}
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#processRow(java.lang.Object, org.apache.poi.xssf.usermodel.XSSFRow, int)
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#processRow(java.lang.Object, org.apache.poi.xssf.usermodel.XSSFRow, int)
 	 */
 	@Override
 	protected void processRow(Author entity, XSSFRow row, int index) {
@@ -107,17 +108,25 @@ public class ExportAuthorHelperImpl extends ExportEntityHelperBase<Author> {
 		setCellValue(createCell(row, 2, commonCellStyle), entity.name);
 		//Webサイト
 		setCellValue(createCell(row, 3, noteCellStyle), entity.website);
+		//Twitter
+		setCellValue(createCell(row, 4, noteCellStyle), entity.twitter);
 		//備考
-		setCellValue(createCell(row, 4, noteCellStyle), entity.note);
+		setCellValue(createCell(row, 5, noteCellStyle), entity.note);
 		//シノニムキー
-		setCellValue(createCell(row, 5, noteCellStyle), entity.synonymKey);
+		setCellValue(createCell(row, 6, commonCellStyle), entity.synonymKey);
 	}
 
 	/**
-	 * @see org.tsukuba_bunko.lilac.helper.impl.ExportEntityHelperBase#finish(org.apache.poi.xssf.usermodel.XSSFWorkbook)
+	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ExportDataHelperBase#finish(org.apache.poi.xssf.usermodel.XSSFWorkbook)
 	 */
 	@Override
 	protected void finish(XSSFWorkbook book) {
-		// TODO Auto-generated method stub		
+		sheet.setColumnWidth(0, 768);
+		sheet.setColumnWidth(1, 8 * 256);
+		sheet.setColumnWidth(2, 20 * 256);
+		sheet.setColumnWidth(3, 20 * 256);
+		sheet.setColumnWidth(4, 10 * 256);
+		sheet.setColumnWidth(5, 20 * 256);
+		sheet.setColumnWidth(6, 4 * 256);
 	}
 }

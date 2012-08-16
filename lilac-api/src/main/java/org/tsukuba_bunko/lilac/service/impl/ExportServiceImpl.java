@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.seasar.framework.exception.IORuntimeException;
-import org.tsukuba_bunko.lilac.helper.ExportEntityHelper;
+import org.tsukuba_bunko.lilac.helper.port.ExportDataHelper;
 import org.tsukuba_bunko.lilac.service.ExportService;
 
 
@@ -36,26 +36,73 @@ import org.tsukuba_bunko.lilac.service.ExportService;
  */
 public class ExportServiceImpl implements ExportService {
 
-	@Resource(name="exportLabelHelper")
-	public ExportEntityHelper exportLabelHelper;
+	@Resource(name="port_exportLabelHelper")
+	public ExportDataHelper exportLabelHelper;
 
-	@Resource(name="exportAuthorHelper")
-	public ExportEntityHelper exportAuthorHelper;
+	@Resource(name="port_exportAuthorHelper")
+	public ExportDataHelper exportAuthorHelper;
 
-	@Resource(name="exportBookHelper")
-	public ExportEntityHelper exportBookHelper;
+	@Resource(name="port_exportBibliographyHelper")
+	public ExportDataHelper exportBibliographyHelper;
 
+	@Resource(name="port_exportBookshelfHelper")
+	public ExportDataHelper exportBookshelfHelper;
+
+	@Resource(name="port_exportBookHelper")
+	public ExportDataHelper exportBookHelper;
+
+	@Resource(name="port_exportReadingRecordHelper")
+	public ExportDataHelper exportReadingRecordHelper;
 
 	/**
 	 * @see org.tsukuba_bunko.lilac.service.ExportService#exportAll(OutputStream)
 	 */
 	@Override
 	public void exportAll(OutputStream target) {
+		exportData(target, ExportTarget.All);
+	}
+
+	/**
+	 * @see org.tsukuba_bunko.lilac.service.ExportService#exportData(java.io.OutputStream, org.tsukuba_bunko.lilac.service.ExportService.ExportTarget[])
+	 */
+	@Override
+	public void exportData(OutputStream target, ExportTarget... exportTargets) {
+		if(exportTargets.length == 0) {
+			exportData(target, ExportTarget.All);
+		}
+
 		XSSFWorkbook book = new XSSFWorkbook();
 
-		exportLabelHelper.exportAll(book);
-		exportAuthorHelper.exportAll(book);
-		exportBookHelper.exportAll(book);
+		for(ExportTarget exportTarget : exportTargets) {
+			switch(exportTarget) {
+				case Label:
+					exportLabelHelper.exportData(book);
+					break;
+				case Author:
+					exportAuthorHelper.exportData(book);
+					break;
+				case Bibliography:
+					exportBibliographyHelper.exportData(book);
+					break;
+				case Bookshelf:
+					exportBookshelfHelper.exportData(book);
+					break;
+				case Book:
+					exportBookHelper.exportData(book);
+					break;
+				case ReadingRecord:
+					exportReadingRecordHelper.exportData(book);
+					break;
+				case All:
+					exportLabelHelper.exportData(book);
+					exportAuthorHelper.exportData(book);
+					exportBibliographyHelper.exportData(book);
+					exportBookshelfHelper.exportData(book);
+					exportBookHelper.exportData(book);
+					exportReadingRecordHelper.exportData(book);
+					break;
+			}
+		}
 
 		try {
 			book.write(target);

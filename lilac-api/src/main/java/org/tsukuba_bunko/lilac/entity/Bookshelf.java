@@ -48,4 +48,9 @@ public class Bookshelf {
 	 * 所有者
 	 */
 	public String owner;
+
+	/**
+	 * 備考
+	 */
+	public String note;
 }
