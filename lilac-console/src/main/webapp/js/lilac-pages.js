@@ -124,9 +124,8 @@ LoginPage = lilac.extend(Page, function(id){
 	this.__super__.constructor(this, id, 'template/loginform.html');
 });
 LoginPage.prototype.customizePage = function(page){
-	var self = this;
 	//ログイン実行
-	$('#login-form').bind('submit', function(event){
+	$('#login-form').bind('submit', $.proxy(function(event){
 		event.preventDefault();
 		var userId = $('#login-userid');
 		var password = $('#login-password');
@@ -138,11 +137,11 @@ LoginPage.prototype.customizePage = function(page){
 			setTimeout(function() {
 				$.mobile.hidePageLoadingMsg();
 				lilac.session = data;
-				var toPage = self.next.toPage;
-				var options = self.next.options;
+				var toPage = this.next.toPage;
+				var options = this.next.options;
 				options.transition = 'pop';
 				options.reverse = true;
-				options.fromPage = self.page;
+				options.fromPage = this.page;
 				$.mobile.changePage(toPage, options);
 			}, 1500 );
 		}).fail(function(jqXHR, status){
@@ -150,7 +149,7 @@ LoginPage.prototype.customizePage = function(page){
 			lilac.showErrorMsg('ログインに失敗しました');
 		});
 		return false;
-	});
+	}, this));
 	//キャンセル
 	$('#login-cancel', page).click(function(event){
 		if(self.previousPage) {
@@ -173,7 +172,7 @@ LoginPage.prototype.customizePage = function(page){
 		self.previousPage = null;
 	});
 };
-LoginPage.prototype.prepare = function(path, options){
+LoginPage.prototype.prepare = function(path, options) {
 	this.next = {
 		toPage: options.originalToPage,
 		options: options.originalOptions
@@ -189,6 +188,125 @@ AdminPage = lilac.extend(Page, function(id) {
 	this.__super__.constructor(this, id, 'template/admin.html');
 });
 
+/**
+ * エクスポート
+ */
+ExportPage = lilac.extend(Page, function(id) {
+	this.__super__.constructor(this, id, 'template/export.html');
+});
+ExportPage.prototype.customizePage = function(page) {
+	$('#export-all').change(function(event){
+		if($('#export-all:checked').length) {
+			$('#export-targets input:checkbox').checkboxradio('disable');
+			$('#export-data').button('enable');
+		}
+		else {
+			$('#export-targets input:checkbox').checkboxradio('enable');
+			if($('#export-targets input:checkbox:checked').length) {
+				$('#export-data').button('enable');
+			}
+			else {
+				$('#export-data').button('disable');
+			}
+		}
+	});
+	$('#export-targets input:checkbox').change(function(event){
+		if($('#export-targets input:checkbox:checked').length) {
+			$('#export-data').button('enable');
+		}
+		else {
+			$('#export-data').button('disable');
+		}
+	});
+	$('#export-form').submit(function(event){
+		var exportTargets = new Array();
+		if($('#export-all:checked').length) {
+			exportTargets[0] = "all";
+		}
+		else {
+			$('#export-targets input:checkbox:checked').each(function(index, item){
+				exportTargets[index] = $(item).val();
+			});
+		}
+		if(exportTargets.length) {
+			location.href = "/api/export/" + exportTargets.join('+');
+		}
+		return false;
+	});
+};
+ExportPage.prototype.prepare = function(path, options) {
+	if($('#export-all:checked').length || $('#export-targets input:checkbox:checked').length) {
+		$('#export-data').button('enable');
+	}
+	else {
+		$('#export-data').button('disable');
+	}
+	return new $.Deferred().resolve(this.page).promise();
+};
+
+/**
+ * インポート
+ */
+ImportPage = lilac.extend(Page, function(id) {
+	this.__super__.constructor(this, id, 'template/import.html');
+});
+ImportPage.prototype.customizePage = function(page) {
+	$("#execute-upload").click($.proxy(function(event) {
+		event.preventDefault();
+		$('#upload-file').upload("/api/import", $.proxy(function(data){
+			lilac.api.import.list()
+				.done($.proxy(function(data, textStatus, jqXHR) {
+					this.refleshFileList(data);
+				}, this))
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					window.alert("インポートファイルの取得に失敗: " + textStatus);
+				});
+		}, this), "html");
+		return false;
+	}, this));
+	$('#import-form').submit($.proxy(function(event) {
+		var selectedItem = $('#import-files input:radio:checked');
+		if(selectedItem.length) {
+			var fileId= selectedItem.val();
+			lilac.api.import.importData(fileId);
+			lilac.api.import.list()
+				.done($.proxy(function(data, textStatus, jqXHR) {
+					this.refleshFileList(data);
+				}, this))
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					window.alert("インポートファイルの取得に失敗: " + textStatus);
+				});
+		}
+		return false;
+	}, this));
+};
+ImportPage.prototype.prepare = function(path, option) {
+	var deferred = new $.Deferred();
+	lilac.api.import.list()
+		.done($.proxy(function(data, textStatus, jqXHR) {
+			this.refleshFileList(data);
+			deferred.resolve(this.page);
+		}, this))
+		.fail(function (jqXHR, textStatus, errorThrown) {
+			window.alert("インポートファイルの取得に失敗: " + textStatus);
+			deferred.reject();
+		});
+	return deferred.promise();
+};
+ImportPage.prototype.refleshFileList = function(data) {
+	var container = $('#import-files');
+	$('input:radio,label', container).remove();
+	$.each(data, function(index, item) {
+		container.append($('<input type="radio" />').attr({
+			name: "fileId",
+			"id": 'importfile-' + item.id,
+			value: item.id
+		}));
+		container.append($('<label>').attr('for', "importfile-" + item.id)
+				.text("[" + item.id + "] " + item.fileName + " (" + item.createdTimestamp + ")"));
+	});
+	this.page.trigger("create");
+};
 
 /**
  * 書籍検索
@@ -381,5 +499,7 @@ lilac.actions = [
 	new Action('#bib(?<bid>\\d+)', BibliographyPage),
 	new Action('#author(?<aid>\\d+)', AuthorPage),
 	new Action('#login', LoginPage),
-	new Action('#admin', AdminPage, true)
+	new Action('#admin', AdminPage, true),
+	new Action('#export', ExportPage, true),
+	new Action('#import', ImportPage, true)
 ];

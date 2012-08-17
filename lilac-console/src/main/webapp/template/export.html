@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="content-type" content="text/html" charset="UTF-8" /></head><body><div id="templates">
+
+<div id="page-template" data-role="page" data-theme="b" data-title="管理メニュー">
+	<div data-role="header" data-theme="b">
+		<a data-rel="back" data-icon="back" data-iconpos="notext">戻る</a>
+		<h1>データエクスポート</h1>
+		<div class="header-navi">
+			<a href="#admin" data-role="button" data-inline="true" data-icon="gear" data-iconpos="notext">admin</a>
+			<a href="#main" data-role="button" data-inline="true" data-icon="home" data-iconpos="notext">menu</a>
+		</div>
+	</div>
+	<div data-role="content">
+		<form id="export-form">
+			<div class="ui-body ui-body-d">
+				<fieldset id="export-targets" data-role="controlgroup">
+					<input type="checkbox" id="export-label" value="label" /><label for="export-label">レーベル情報</label>
+					<input type="checkbox" id="export-author" value="author" /><label for="export-author">著者情報</label>
+					<input type="checkbox" id="export-bibliography" value="bibliography" /><label for="export-bibliography">書誌情報</label>
+					<input type="checkbox" id="export-bookshelf" value="bookshelf" /><label for="export-bookshelf">書棚情報</label>
+					<input type="checkbox" id="export-book" value="book" /><label for="export-book">蔵書情報</label>
+					<input type="checkbox" id="export-reading-record" value="reading-record" /><label for="export-reading-record">読書履歴</label>
+				</fieldset>
+				<input type="checkbox" id="export-all" value="all" /><label for="export-all">全部</label>
+			</div>
+			<button id="export-data">実行</button>
+		</form>
+	</div>
+</div>
+
+</div></body></html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="content-type" content="text/html" charset="UTF-8" /></head><body><div id="templates">
+
+<div id="page-template" data-role="page" data-theme="b" data-title="管理メニュー">
+	<div data-role="header" data-theme="b">
+		<a data-rel="back" data-icon="back" data-iconpos="notext">戻る</a>
+		<h1>データインポート</h1>
+		<div class="header-navi">
+			<a href="#admin" data-role="button" data-inline="true" data-icon="gear" data-iconpos="notext">admin</a>
+			<a href="#main" data-role="button" data-inline="true" data-icon="home" data-iconpos="notext">menu</a>
+		</div>
+	</div>
+	<div data-role="content">
+		<div data-role="collapsible" data-theme="e" data-content-theme="c">
+			<h3>ファイルアップロード</h3>
+			<form id="upload-form" data-ajax="false">
+				<input type="file" name="upload-file" id="upload-file" /> 
+				<button id="execute-upload">アップロード</button>
+			</form>
+		</div>
+		<form id="import-form">
+			<div class="ui-body ui-body-d">
+				<fieldset id="import-files" data-role="controlgroup">
+				</fieldset>
+			</div>
+			<button id="export-data">実行</button>
+		</form>
+	</div>
+</div>
+
+</div></body></html>

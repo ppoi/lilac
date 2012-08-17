@@ -75,3 +75,31 @@ lilac.api.session = {
 		});
 	}
 };
+
+///////////////////////////////////////////////////////////
+// Import API
+lilac.api.import = {
+	list: function() {
+		return $.ajax('/api/import', {
+			cache: false,
+			dataType: 'json',
+			type: 'GET'
+		});
+	},
+
+	importData: function(fileId) {
+		return $.ajax('/api/import/' + fileId, {
+			cache: false,
+			dataType: 'json',
+			type: 'PUT'
+		});
+	},
+
+	cancel: function(fileId) {
+		return $.ajax('/api/import/' + fileId, {
+			cache: false,
+			dataType: 'json',
+			type: 'DELETE'
+		});
+	}
+};
