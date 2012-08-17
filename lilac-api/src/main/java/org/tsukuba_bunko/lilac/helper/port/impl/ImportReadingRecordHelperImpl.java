@@ -23,21 +23,25 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.seasar.extension.jdbc.JdbcManager;
+import org.seasar.extension.jdbc.where.SimpleWhere;
 import org.seasar.framework.beans.util.Beans;
-import org.tsukuba_bunko.lilac.entity.Bookshelf;
+import org.tsukuba_bunko.lilac.entity.Bibliography;
+import org.tsukuba_bunko.lilac.entity.ReadingRecord;
 
 
 /**
  * @author $Author: $
  * @version $Revision: $ $Date: $
  */
-public class ImportBookshelfHelperImpl extends ImportDataHelperBase {
+public class ImportReadingRecordHelperImpl extends ImportDataHelperBase {
 
 	protected static final Map<String, String> propertyNameMap = new java.util.HashMap<String, String>();
 	static {
 		propertyNameMap.put("S", "status");
 		propertyNameMap.put("ID", "id");
-		propertyNameMap.put("ラベル", "label");
+		propertyNameMap.put("ISBN", "isbn");
+		propertyNameMap.put("開始日", "beginDate");
+		propertyNameMap.put("読了日", "completionDate");
 		propertyNameMap.put("備考", "note");
 	}
 
@@ -52,15 +56,25 @@ public class ImportBookshelfHelperImpl extends ImportDataHelperBase {
 		return propertyNameMap;
 	}
 
+	protected Integer getBibliographyId(String isbn) {
+		Bibliography bibliography = jdbcManager.from(Bibliography.class)
+				.where(new SimpleWhere()
+					.eq("isbn", isbn)
+				).disallowNoResult().getSingleResult();
+		return bibliography.id;
+	}
 	/**
 	 * @see org.tsukuba_bunko.lilac.helper.port.impl.ImportDataHelperBase#insertRecord(java.util.Map)
 	 */
 	@Override
 	protected void insertRecord(Map<String, String> record) {
-		Bookshelf bookshelf = new Bookshelf();
-		bookshelf.owner = getCurrentSessionUser();
-		Beans.copy(record, bookshelf).excludes("id").excludesNull().execute();
-		jdbcManager.insert(bookshelf).execute();
+		ReadingRecord entity = new ReadingRecord();
+		Beans.copy(record, entity).excludes("id", "isbn")
+				.dateConverter("yyyy/MM/dd", "beginDate", "completionDate")
+				.excludesNull().execute();
+		entity.bibliographyId = getBibliographyId(record.get("isbn"));
+		entity.reader = getCurrentSessionUser();
+		jdbcManager.insert(entity).execute();
 	}
 
 	/**
@@ -68,10 +82,13 @@ public class ImportBookshelfHelperImpl extends ImportDataHelperBase {
 	 */
 	@Override
 	protected void updateRecord(Map<String, String> record) {
-		Bookshelf bookshelf = new Bookshelf();
-		bookshelf.owner = getCurrentSessionUser();
-		Beans.copy(record, bookshelf).excludesNull().execute();
-		jdbcManager.update(bookshelf).execute();
+		ReadingRecord entity = new ReadingRecord();
+		Beans.copy(record, entity).excludes("isbn")
+				.dateConverter("yyyy/MM/dd", "beginDate", "completionDate")
+			.excludesNull().execute();
+		entity.bibliographyId = getBibliographyId(record.get("isbn"));
+		entity.reader = getCurrentSessionUser();
+		jdbcManager.update(entity).execute();
 	}
 
 	/**
@@ -79,9 +96,13 @@ public class ImportBookshelfHelperImpl extends ImportDataHelperBase {
 	 */
 	@Override
 	protected void deleteRecord(Map<String, String> record) {
-		Bookshelf bookshelf = new Bookshelf();
-		Beans.copy(record, bookshelf).excludesNull().execute();
-		jdbcManager.delete(bookshelf).execute();
+		ReadingRecord entity = new ReadingRecord();
+		Beans.copy(record, entity).excludes("isbn")
+				.dateConverter("yyyy/MM/dd", "beginDate", "completionDate")
+			.excludesNull().execute();
+		entity.bibliographyId = getBibliographyId(record.get("isbn"));
+		entity.reader = getCurrentSessionUser();
+		jdbcManager.delete(entity).execute();
 	}
 
 }

@@ -23,4 +23,4 @@ CREATE TABLE book(
 );
 CREATE INDEX idx_book_owner ON book(owner);
 CREATE INDEX idx_book_bibliography ON book(bibliography_id);
-CREATE INDEX idx_book_location ON book(location_id)
+CREATE INDEX idx_book_location ON book(location_id);

@@ -59,14 +59,23 @@ public class ImportServiceImpl implements ImportService {
 	@Resource
 	public UserSessionHelper userSessionHelper;
 
-	@Resource(name="port_importBookshelfHelper")
-	public ImportDataHelper importBookshelfHelper;
-
 	@Resource(name="port_importLabelHelper")
 	public ImportDataHelper importLabelHelper;
 
 	@Resource(name="port_importAuthorHelper")
 	public ImportDataHelper importAuthorHelper;
+
+	@Resource(name="port_importBibliographyHelper")
+	public ImportDataHelper importBibliographyHelper;
+
+	@Resource(name="port_importBookshelfHelper")
+	public ImportDataHelper importBookshelfHelper;
+
+	@Resource(name="port_importBookHelper")
+	public ImportDataHelper importBookHelper;
+
+	@Resource(name="port_importReadingRecordHelper")
+	public ImportDataHelper importReadingRecordHelper;
 
 	@Resource
 	public JdbcManager jdbcManager;
@@ -92,12 +101,7 @@ public class ImportServiceImpl implements ImportService {
 			source = new FileInputStream(importFile);
 			XSSFWorkbook book = new XSSFWorkbook(source);
 
-			XSSFSheet sheet = book.getSheet("書棚");
-			if(sheet != null) {
-				importBookshelfHelper.importData(sheet);
-			}
-
-			sheet = book.getSheet("レーベル");
+			XSSFSheet sheet = book.getSheet("レーベル");
 			if(sheet != null) {
 				importLabelHelper.importData(sheet);
 			}
@@ -107,11 +111,25 @@ public class ImportServiceImpl implements ImportService {
 				importAuthorHelper.importData(sheet);
 			}
 
-			sheet = book.getSheet("蔵書");
+			sheet = book.getSheet("書誌情報");
 			if(sheet != null) {
-				//import books
+				importBibliographyHelper.importData(sheet);
 			}
 
+			sheet = book.getSheet("書棚");
+			if(sheet != null) {
+				importBookshelfHelper.importData(sheet);
+			}
+
+			sheet = book.getSheet("蔵書");
+			if(sheet != null) {
+				importBookHelper.importData(sheet);
+			}
+
+			sheet = book.getSheet("読書履歴");
+			if(sheet != null) {
+				importReadingRecordHelper.importData(sheet);
+			}
 		}
 		catch(IOException ioe) {
 			throw new IORuntimeException(ioe);

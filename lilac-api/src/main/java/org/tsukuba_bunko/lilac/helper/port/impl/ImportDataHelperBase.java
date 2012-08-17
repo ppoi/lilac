@@ -21,12 +21,17 @@ package org.tsukuba_bunko.lilac.helper.port.impl;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.seasar.framework.util.StringUtil;
+import org.tsukuba_bunko.lilac.entity.UserSession;
+import org.tsukuba_bunko.lilac.helper.auth.UserSessionHelper;
 import org.tsukuba_bunko.lilac.helper.port.ImportDataHelper;
+import org.tsukuba_bunko.lilac.service.UserSessionService;
 
 
 /**
@@ -71,12 +76,7 @@ public abstract class ImportDataHelperBase implements ImportDataHelper {
 		for(Cell cell : headerRow) {
 			String header = getCellValue(cell);
 			String propertyName = propertyNameMap.get(header);
-			if(propertyName != null) {
-				properties.add(propertyName);
-			}
-			else {
-				properties.add(header);
-			}
+			properties.add(propertyName);
 		}
 		return properties;
 	}
@@ -86,13 +86,17 @@ public abstract class ImportDataHelperBase implements ImportDataHelper {
 		int propertyCount = properties.size();
 		boolean emptyRecord = true;
 		for(int i = 0; i < propertyCount; ++i) {
+			String propertyName = properties.get(i);
+			if(StringUtil.isBlank(propertyName)) {
+				continue;
+			}
 			XSSFCell cell = row.getCell(i);
 			if(cell != null) {
 				String value = getCellValue(cell);
 				if(!StringUtil.isBlank(value)) {
 					emptyRecord = false;
 				}
-				record.put(properties.get(i), getCellValue(cell));
+				record.put(propertyName, value);
 			}
 		}
 		if(emptyRecord) {
@@ -120,4 +124,21 @@ public abstract class ImportDataHelperBase implements ImportDataHelper {
 	protected abstract void insertRecord(Map<String, String> record);
 	protected abstract void updateRecord(Map<String, String> record);
 	protected abstract void deleteRecord(Map<String, String> record);
+
+
+
+	@Resource
+	public UserSessionService userSessionService;
+
+	@Resource
+	public UserSessionHelper userSessionHelper;
+
+	public String getCurrentSessionUser() {
+		String sessionId = userSessionHelper.getSessionId();
+		if(StringUtil.isNotBlank(sessionId)) {
+			UserSession session = userSessionService.getValidSession(sessionId);
+			return session.user;
+		}
+		return null;
+	}
 }

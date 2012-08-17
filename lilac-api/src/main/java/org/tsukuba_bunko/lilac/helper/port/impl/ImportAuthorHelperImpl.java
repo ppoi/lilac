@@ -41,7 +41,7 @@ public class ImportAuthorHelperImpl extends ImportDataHelperBase {
 		propertyNameMap.put("著者名", "name");
 		propertyNameMap.put("Webサイト", "website");
 		propertyNameMap.put("Twitter", "twitter");
-		propertyNameMap.put("シノニムキー", "synonymKey");
+		propertyNameMap.put("SYN", "synonymKey");
 		propertyNameMap.put("備考", "note");
 	}
 
@@ -63,7 +63,7 @@ public class ImportAuthorHelperImpl extends ImportDataHelperBase {
 	protected void insertRecord(Map<String, String> record) {
 		Author entity = new Author();
 		Beans.copy(record, entity).excludesNull().execute();
-		jdbcManager.insert(entity).excludesNull().execute();
+		jdbcManager.insert(entity).execute();
 	}
 
 	/**
@@ -89,9 +89,11 @@ public class ImportAuthorHelperImpl extends ImportDataHelperBase {
 		Beans.copy(record, entity).excludesNull().execute();
 		Author current = jdbcManager.from(Author.class).where(new SimpleWhere()
 					.eq("id", entity.id)
-				).disallowNoResult().getSingleResult();
-		entity.version = current.version;
-		jdbcManager.delete(entity).execute();
+				).getSingleResult();
+		if(current != null) {
+			entity.version = current.version;
+			jdbcManager.delete(entity).execute();
+		}
 	}
 
 }

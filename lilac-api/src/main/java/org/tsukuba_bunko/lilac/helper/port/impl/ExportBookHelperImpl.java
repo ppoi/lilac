@@ -83,11 +83,10 @@ public class ExportBookHelperImpl extends ExportDataHelperBase<Book> {
 		createHeaderCell(row, 1, "ID");
 		createHeaderCell(row, 2, "ISBN");
 		createHeaderCell(row, 3, "タイトル");
-		createHeaderCell(row, 4, "サブタイトル");
-		createHeaderCell(row, 5, "書棚");
-		createHeaderCell(row, 6, "購入日");
-		createHeaderCell(row, 7, "購入店舗");
-		createHeaderCell(row, 8, "備考");
+		createHeaderCell(row, 4, "書棚");
+		createHeaderCell(row, 5, "購入日");
+		createHeaderCell(row, 6, "購入店舗");
+		createHeaderCell(row, 7, "備考");
 	}
 
 	/**
@@ -112,10 +111,10 @@ public class ExportBookHelperImpl extends ExportDataHelperBase<Book> {
 		sheet.setColumnWidth(1, 20);
 		sheet.setColumnWidth(2, 20 * 256);
 		sheet.setColumnWidth(3, 48 * 256);
-		sheet.setColumnWidth(4, 32 * 256);
-		sheet.setColumnWidth(5, 32 * 256);
-		sheet.setColumnWidth(6, 32 * 256);
-		sheet.setColumnWidth(7, 32 * 256);
+		sheet.setColumnWidth(4, 20 * 256);
+		sheet.setColumnWidth(5, 16 * 256);
+		sheet.setColumnWidth(6, 16 * 256);
+		sheet.setColumnWidth(7, 20 * 256);
 	}
 
 	/**
@@ -133,7 +132,11 @@ public class ExportBookHelperImpl extends ExportDataHelperBase<Book> {
 		setCellValue(createCell(row, 3, commonCellStyle), entity.bibliography.title
 				+ (StringUtil.isNotBlank(entity.bibliography.subtitle) ? " - " + entity.bibliography.subtitle : ""));
 		//書棚
-		setCellValue(createCell(row, 4, commonCellStyle), entity.purchaseShop);
+		String bookshelf = null;
+		if(entity.locationId != null) {
+			bookshelf = "(" + entity.locationId + ")" + entity.location.label;
+		}
+		setCellValue(createCell(row, 4, commonCellStyle), bookshelf);
 		//購入日
 		setCellValue(createCell(row, 5, dateCellStyle), entity.acquisitionDate);
 		//購入店舗
