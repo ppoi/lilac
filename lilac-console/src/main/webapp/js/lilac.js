@@ -108,7 +108,8 @@ var lilac = {
 	mobileinitHandler: function() {
 		$(document).bind("pagebeforechange", lilac.pagebeforechangeHandler);
 		$('#init').bind("pageshow", function(event, data) {
-			$.mobile.changePage('#main');
+			var url = $.mobile.path.parseUrl(location.href);
+			$.mobile.changePage(url.hash ? url.hash : '#main');
 		});
 	},
 
