@@ -405,7 +405,7 @@ BibliographyPage.prototype.prepare = function(path, options) {
 				this.setBookProperty(data, "subtitle", " ");
 				this.setBookProperty(data, "isbn");
 				this.setBookProperty(data, "publicationDate");
-				this.setBookProperty(data, "plice");
+				this.setBookProperty(data, "price");
 	
 				var authorList = $(this.prefixedId('authors'), this.page);
 				$.each(data.authors, function(index, entity){

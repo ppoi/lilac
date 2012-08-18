@@ -83,7 +83,9 @@ public class BibliographyAction {
 	public ActionResult get() {
 		Bibliography bib = bibliographyService.get(id);
 
-		BeanMap bibDto = Beans.createAndCopy(BeanMap.class, bib).excludes("authors", "books").execute();
+		BeanMap bibDto = Beans.createAndCopy(BeanMap.class, bib)
+				.dateConverter("yyyy/MM/dd", "publicationDate")
+				.excludes("authors", "books").execute();
 		List<BeanMap> authors = new java.util.ArrayList<BeanMap>(); 
 		for(BibAuthor bibauth : bib.authors) {
 			BeanMap bibauthDto = new BeanMap();
@@ -117,7 +119,9 @@ public class BibliographyAction {
 
 		List<BeanMap> bibDtoList = new java.util.ArrayList<BeanMap>();
 		for(Bibliography bib : result.items) {
-			BeanMap bibDto = Beans.createAndCopy(BeanMap.class, bib).excludes("authors", "books").execute();
+			BeanMap bibDto = Beans.createAndCopy(BeanMap.class, bib)
+					.dateConverter("yyyy/MM/dd", "publicationDate")
+					.excludes("authors", "books").execute();
 			List<BeanMap> authors = new java.util.ArrayList<BeanMap>(); 
 			for(BibAuthor bibauth : bib.authors) {
 				BeanMap bibauthDto = new BeanMap();
