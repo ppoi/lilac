@@ -35,6 +35,7 @@ CREATE TABLE user_session(
 CREATE TABLE import_file(
 	"id"	serial NOT NULL PRIMARY KEY,
 	"user"	varchar(256) NOT NULL REFERENCES "user" ON DELETE CASCADE,
+	file_name	varchar(256) NOT NULL,
 	created_timestamp	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX idx_import_file_user ON import_file("user");

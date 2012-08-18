@@ -131,23 +131,23 @@ LoginPage.prototype.customizePage = function(page){
 		var password = $('#login-password');
 		$.mobile.showPageLoadingMsg();
 		lilac.api.session.login(userId.attr('value'), password.attr('value'))
-		.done(function(data, status, jqXHR){
-			$.mobile.hidePageLoadingMsg();
-			$.mobile.showPageLoadingMsg("a", "ログインに成功しました", true );
-			setTimeout(function() {
+			.done($.proxy(function(data, status, jqXHR){
 				$.mobile.hidePageLoadingMsg();
-				lilac.session = data;
-				var toPage = this.next.toPage;
-				var options = this.next.options;
-				options.transition = 'pop';
-				options.reverse = true;
-				options.fromPage = this.page;
-				$.mobile.changePage(toPage, options);
-			}, 1500 );
-		}).fail(function(jqXHR, status){
-			alert(status);
-			lilac.showErrorMsg('ログインに失敗しました');
-		});
+				$.mobile.showPageLoadingMsg("a", "ログインに成功しました", true );
+				setTimeout($.proxy(function() {
+					$.mobile.hidePageLoadingMsg();
+					lilac.session = data;
+					var toPage = this.next.toPage;
+					var options = this.next.options;
+					options.transition = 'pop';
+					options.reverse = true;
+					options.fromPage = this.page;
+					$.mobile.changePage(toPage, options);
+				}, this), 1500 );
+			}, this)).fail(function(jqXHR, status){
+				alert(status);
+				lilac.showErrorMsg('ログインに失敗しました');
+			});
 		return false;
 	}, this));
 	//キャンセル
@@ -264,18 +264,28 @@ ImportPage.prototype.customizePage = function(page) {
 		}, this), "html");
 		return false;
 	}, this));
+	$('#import-data').click($.proxy(function(event) {
+		this.action = 'importData';
+	}, this));
+	$('#cancel').click($.proxy(function(event) {
+		this.action = 'cancel';
+	}, this));
 	$('#import-form').submit($.proxy(function(event) {
 		var selectedItem = $('#import-files input:radio:checked');
 		if(selectedItem.length) {
 			var fileId= selectedItem.val();
-			lilac.api.import.importData(fileId);
-			lilac.api.import.list()
-				.done($.proxy(function(data, textStatus, jqXHR) {
-					this.refleshFileList(data);
-				}, this))
-				.fail(function (jqXHR, textStatus, errorThrown) {
-					window.alert("インポートファイルの取得に失敗: " + textStatus);
-				});
+			var fileLabel = $('label[for="importfile-' + fileId + '"]').text();
+			var confirmMessage = this.action == 'importData' ? "以下のファイルをインポートします" : "以下のファイルを削除します";
+			if(window.confirm(confirmMessage + "\n" + fileLabel)) {
+				lilac.api.import[this.action](fileId);
+					lilac.api.import.list()
+					.done($.proxy(function(data, textStatus, jqXHR) {
+						this.refleshFileList(data);
+					}, this))
+					.fail(function (jqXHR, textStatus, errorThrown) {
+						window.alert("インポートファイルの取得に失敗: " + textStatus);
+					});
+			}
 		}
 		return false;
 	}, this));
