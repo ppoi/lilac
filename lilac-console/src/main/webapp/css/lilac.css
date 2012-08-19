@@ -9,24 +9,37 @@
 	max-width: 30px;
 }
 
-.ui-header .ui-btn-corner-all {
+.header-buttons {
+	display: inline;
+	top: 1px;
+	position: absolute;
+}
+.header-buttons-right {
+	text-align: right;
+	right: 5px;
+}
+.header-buttons-left {
+	text-align: right;
+	left: 5px;
+}
+.header-buttons .ui-corner-all {
 	-moz-border-radius: .4em ;
 	-webkit-border-radius: .4em ;
 	border-radius: .4em ;
 }
-.ui-header .ui-btn-icon-notext {
-	top: 8px;
+.header-buttons .ui-corner-left {
+	-moz-border-radius-topleft: .4em ;
+	-moz-border-radius-bottomleft: .4em ;
+	-webkit-border-top-left-radius: .4em ;
+	-webkit-border-bottom-left-radius: .4em ;
+	border-top-left-radius: .4em ;
+	border-bottom-left-radius: .4em ;
 }
-.header-navi {
-	display: inline;
-	position: absolute;
-	top: 0px;
-	right: 5px;
-}
-.header-navi .ui-btn-icon-notext {
-	margin-left: 5px;
-}
-
-.form-buttons {
-	text-align: center;
+.header-buttons .ui-corner-right {
+	-moz-border-radius-topright: .4em ;
+	-moz-border-radius-bottomright: .4em ;
+	-webkit-border-top-right-radius: .4em ;
+	-webkit-border-bottom-right-radius: .4em ;
+	border-top-right-radius: .4em ;
+	border-bottom-right-radius: .4em ;
 }

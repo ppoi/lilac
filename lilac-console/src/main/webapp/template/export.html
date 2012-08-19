@@ -3,11 +3,13 @@
 
 <div id="page-template" data-role="page" data-theme="b" data-title="管理メニュー">
 	<div data-role="header" data-theme="b">
-		<a data-rel="back" data-icon="back" data-iconpos="notext">戻る</a>
+		<div class="header-buttons header-buttons-left" data-role="controlgroup" data-mini="true" data-type="horizontal">
+			<a data-rel="back" data-role="button" data-icon="back" data-iconpos="notext" data-theme="d">戻る</a>
+		</div>
 		<h1>データエクスポート</h1>
-		<div class="header-navi">
-			<a href="#admin" data-role="button" data-inline="true" data-icon="gear" data-iconpos="notext">admin</a>
-			<a href="#main" data-role="button" data-inline="true" data-icon="home" data-iconpos="notext">menu</a>
+		<div class="header-buttons header-buttons-right" data-role="controlgroup" data-mini="true" data-type="horizontal">
+			<a href="#admin" data-role="button" data-icon="gear" data-iconpos="notext" data-theme="d">admin</a>
+			<a href="#main" data-role="button" data-icon="home" data-iconpos="notext" data-theme="d">menu</a>
 		</div>
 	</div>
 	<div data-role="content">
