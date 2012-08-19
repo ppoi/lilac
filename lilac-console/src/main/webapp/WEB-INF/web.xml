@@ -16,6 +16,11 @@
 		</jsp-property-group>
 	</jsp-config>
 
+	<mime-mapping>
+		<extension>appcache</extension>
+		<mime-type>text/cache-manifest</mime-type>
+	</mime-mapping>
+
 	<welcome-file-list>
 		<welcome-file>main.html</welcome-file>
 	</welcome-file-list>
