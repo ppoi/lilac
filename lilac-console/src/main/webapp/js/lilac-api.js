@@ -73,6 +73,14 @@ lilac.api.session = {
 			dataType: 'json',
 			type: 'POST'
 		});
+	},
+
+	logout: function() {
+		return $.ajax('/api/session/logout', {
+			cache: false,
+			dataType: 'json',
+			type: 'GET'
+		});
 	}
 };
 

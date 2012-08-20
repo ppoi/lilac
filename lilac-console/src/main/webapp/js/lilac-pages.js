@@ -189,7 +189,51 @@ LoginPage.prototype.prepare = function(path, options) {
  */
 AdminPage = lilac.extend(Page, function(id) {
 	this.__super__.constructor(this, id, 'template/admin.html');
+	this.loginButton = $('<button id="login-button" data-theme="b">').text("ログイン");
+	this.logoutButton = $('<button id="logout-button" data-theme="a">').text("ログアウト");
 });
+AdminPage.prototype.prepare = function(path, option) {
+	var deferred = $.Deferred();
+	this.resetAuthInfo();
+	return deferred.resolve(this.page).promise();
+};
+AdminPage.prototype.resetAuthInfo = function() {
+	if(lilac.session.id) {
+		$('#account-name').text(lilac.session.user);
+		this.loginButton.unbind();
+		$('#authbuttonfolder').empty().append(this.logoutButton);
+		this.logoutButton.click($.proxy(function(event){
+			event.preventDefault();
+			lilac.api.session.logout()
+				.done($.proxy(function(){
+					lilac.session = {};
+					this.resetAuthInfo();
+				}, this));
+			return false;
+		}, this));
+		this.logoutButton.button();
+	}
+	else {
+		$('#account-name').text("(未ログイン)");
+		this.logoutButton.unbind();
+		$('#authbuttonfolder').empty().append(this.loginButton);
+		this.loginButton.click($.proxy(function(event){
+			event.preventDefault();
+			var loginData = {
+					transition: 'pop',
+					changeHash: false,
+					originalToPage: '#admin',
+					originalOptions: {
+						allowSamePageTransition: true
+					},
+					previousPage: $.mobile.activePage
+				};
+			$.mobile.changePage('#login', loginData);
+			return false;
+		}, this));
+		this.loginButton.button();
+	}
+};
 
 /**
  * エクスポート
