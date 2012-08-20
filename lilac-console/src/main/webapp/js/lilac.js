@@ -152,13 +152,13 @@ var lilac = {
 					$.mobile.changePage('#login', loginData);
 				}
 				else {
-					$.mobile.showPageLoadingMsg();
+					$.mobile.loading('hide');
 					action.execute(m, data.options).done(function(page){
 						page.jqmData("url", url.hash);
-						$.mobile.hidePageLoadingMsg();
+						$.mobile.loading('hide');
 						$.mobile.changePage(page, data.options);
 					}).fail(function(message){
-						$.mobile.hidePageLoadingMsg();
+						$.mobile.loading('hide');
 						lilac.showErrorMsg(message, data.options);
 					});
 				}
@@ -183,8 +183,14 @@ var lilac = {
 	 */
 	showErrorMsg: function(message) {
 		message = message || $.mobile.pageLoadErrorMessage; 
-		$.mobile.showPageLoadingMsg( $.mobile.pageLoadErrorMessageTheme, message, true );
-		setTimeout( $.mobile.hidePageLoadingMsg, 1500 );
+		$.mobile.loading('show', {
+			theme: $.mobile.pageLoadErrorMessageTheme,
+			text: message,
+			textVisible: true,
+			textonly: true});
+		setTimeout(function() {
+			$.mobile.loading('hide');
+		}, 1500 );
 	},
 
 	extend: function(base, sub) {

@@ -40,7 +40,7 @@ BookListPageBase.prototype.listBooks = function(options) {
 	var deferred = $.Deferred();
 
 	if(options.showLoadingMsg) {
-		$.mobile.showPageLoadingMsg();
+		$.mobile.loading('show');
 	}
 
 	lilac.api.book.list(options.condition, options.page)
@@ -49,7 +49,7 @@ BookListPageBase.prototype.listBooks = function(options) {
 			this.search.condition = options.condition;
 			this.search.page = options.page + 1;
 			if(options.showLoadingMsg) {
-				$.mobile.hidePageLoadingMsg();
+				$.mobile.loading('hide');
 			}
 			deferred.resolve();
 		}, this))
@@ -129,13 +129,17 @@ LoginPage.prototype.customizePage = function(page){
 		event.preventDefault();
 		var userId = $('#login-userid');
 		var password = $('#login-password');
-		$.mobile.showPageLoadingMsg();
+		$.mobile.loading('show');
 		lilac.api.session.login(userId.attr('value'), password.attr('value'))
 			.done($.proxy(function(data, status, jqXHR){
-				$.mobile.hidePageLoadingMsg();
-				$.mobile.showPageLoadingMsg("a", "ログインに成功しました", true );
+				$.mobile.loading('hide');
+				$.mobile.loading('show', {
+					theme: "a",
+					text: "ログインに成功しました",
+					textVisible: true,
+					textonly: true});
 				setTimeout($.proxy(function() {
-					$.mobile.hidePageLoadingMsg();
+					$.mobile.loading('hide');
 					lilac.session = data;
 					var toPage = this.next.toPage;
 					var options = this.next.options;
@@ -145,32 +149,31 @@ LoginPage.prototype.customizePage = function(page){
 					$.mobile.changePage(toPage, options);
 				}, this), 1500 );
 			}, this)).fail(function(jqXHR, status){
-				alert(status);
 				lilac.showErrorMsg('ログインに失敗しました');
 			});
 		return false;
 	}, this));
 	//キャンセル
-	$('#login-cancel', page).click(function(event){
-		if(self.previousPage) {
+	$('#login-cancel', page).click($.proxy(function(event){
+		if(this.previousPage) {
 			var options = {
 				transition: 'pop',
 				reverse: true,
-				fromPage: self.page
+				fromPage: this.page
 			};
-			$.mobile.changePage(self.previousPage, options);
+			$.mobile.changePage(this.previousPage, options);
 		}
 		else {
 			window.history.back();
 		}
-	});
+	}, this));
 	//後始末
-	page.bind('pagehide', function(event){
+	page.bind('pagehide', $.proxy(function(event){
 		$('#login-userid').attr('value', '');
 		$('#login-password').attr('value', '');
-		self.next = null;
-		self.previousPage = null;
-	});
+		this.next = null;
+		this.previousPage = null;
+	}, this));
 };
 LoginPage.prototype.prepare = function(path, options) {
 	this.next = {
@@ -509,7 +512,7 @@ lilac.actions = [
 	new Action('#bib(?<bid>\\d+)', BibliographyPage),
 	new Action('#author(?<aid>\\d+)', AuthorPage),
 	new Action('#login', LoginPage),
-	new Action('#admin', AdminPage, true),
+	new Action('#admin', AdminPage),
 	new Action('#export', ExportPage, true),
 	new Action('#import', ImportPage, true)
 ];
