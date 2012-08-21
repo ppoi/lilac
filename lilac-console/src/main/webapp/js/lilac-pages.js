@@ -204,11 +204,17 @@ AdminPage.prototype.resetAuthInfo = function() {
 		$('#authbuttonfolder').empty().append(this.logoutButton);
 		this.logoutButton.click($.proxy(function(event){
 			event.preventDefault();
+			$.mobile.loading('show');
 			lilac.api.session.logout()
 				.done($.proxy(function(){
 					lilac.session = {};
+					$.mobile.loading('hide');
 					this.resetAuthInfo();
-				}, this));
+				}, this))
+				.fail(function() {
+					$.mobile.loading('hide');
+					lilac.showErrorMsg('ERROR');
+				});
 			return false;
 		}, this));
 		this.logoutButton.button();

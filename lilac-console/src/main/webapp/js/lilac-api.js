@@ -64,17 +64,6 @@ lilac.api.session = {
 		});
 	},
 
-	validate: function(sessionId) {
-		return $.ajax('/api/session/validate', {
-			cache: false,
-			data: {
-				sessionId: sessionId
-			},
-			dataType: 'json',
-			type: 'POST'
-		});
-	},
-
 	logout: function() {
 		return $.ajax('/api/session/logout', {
 			cache: false,
