@@ -152,7 +152,7 @@ var lilac = {
 					$.mobile.changePage('#login', loginData);
 				}
 				else {
-					$.mobile.loading('hide');
+					$.mobile.loading('show');
 					action.execute(m, data.options).done(function(page){
 						page.jqmData("url", url.hash);
 						$.mobile.loading('hide');
