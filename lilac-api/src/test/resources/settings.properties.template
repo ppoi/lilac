@@ -1,0 +1,7 @@
+# DB settings
+lilac.db.url=@lilac.db.url@
+lilac.db.user=@lilac.db.user@
+lilac.db.password=@lilac.db.password@
+
+# Import file management settings
+lilac.api.importFileStore=@lilac.api.importFileStore@

@@ -4,6 +4,7 @@
 <components namespace="jdbc">
 	<include path="jta.dicon"/>
 	<include path="jdbc-extension.dicon"/>
+	<include path="settings.dicon" />
 
 	<component class="org.seasar.extension.jdbc.impl.BasicResultSetFactory"/>
 	<component class="org.seasar.extension.jdbc.impl.ConfigurableStatementFactory">
@@ -20,9 +21,9 @@
 	<component name="xaDataSource"
 		class="org.seasar.extension.dbcp.impl.XADataSourceImpl">
 		<property name="driverClassName">"org.postgresql.Driver"</property>
-        <property name="URL">"jdbc:postgresql://localhost/lilac"</property>
-        <property name="user">"lilac"</property>
-        <property name="password">"nadesico"</property>
+        <property name="URL">settings.string("lilac.db.url")</property>
+        <property name="user">settings.string("lilac.db.user")</property>
+        <property name="password">settings.string("lilac.db.password")</property>
     </component>
 
 	<component name="connectionPool"

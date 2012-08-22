@@ -9,4 +9,8 @@
 	<include path="cubby.dicon" />
 	<include path="app-cubby.dicon" />
 	<include path="lilac-api.dicon" />
+
+	<component name="configration">
+		@java.util.ResourceBundle@getBundle("environment")
+	</component>
 </components>

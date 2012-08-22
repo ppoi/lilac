@@ -2,11 +2,13 @@
 <!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN" 
 	"http://www.seasar.org/dtd/components24.dtd">
 <components>
+	<include path="settings.dicon" />
+
 	<component name="secureCookie">
 		!@org.seasar.framework.util.ResourceUtil@isExist("insecure_cookie")
 	</component>
 
 	<component name="importFileStore" class="java.io.File">
-		<arg>"C:/Workspace/Lilac/temp"</arg>
+		<arg>settings.string("lilac.api.importFileStore")</arg>
 	</component>
 </components>
