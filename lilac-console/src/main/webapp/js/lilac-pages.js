@@ -307,7 +307,7 @@ ImportPage.prototype.customizePage = function(page) {
 	$("#execute-upload").click($.proxy(function(event) {
 		event.preventDefault();
 		$('#upload-file').upload("/api/import", $.proxy(function(data){
-			lilac.api.import.list()
+			lilac.api.importData.list()
 				.done($.proxy(function(data, textStatus, jqXHR) {
 					this.refleshFileList(data);
 				}, this))
@@ -330,8 +330,8 @@ ImportPage.prototype.customizePage = function(page) {
 			var fileLabel = $('label[for="importfile-' + fileId + '"]').text();
 			var confirmMessage = this.action == 'importData' ? "以下のファイルをインポートします" : "以下のファイルを削除します";
 			if(window.confirm(confirmMessage + "\n" + fileLabel)) {
-				lilac.api.import[this.action](fileId);
-					lilac.api.import.list()
+				lilac.api.importData[this.action](fileId);
+					lilac.api.importData.list()
 					.done($.proxy(function(data, textStatus, jqXHR) {
 						this.refleshFileList(data);
 					}, this))
@@ -345,7 +345,7 @@ ImportPage.prototype.customizePage = function(page) {
 };
 ImportPage.prototype.prepare = function(path, option) {
 	var deferred = new $.Deferred();
-	lilac.api.import.list()
+	lilac.api.importData.list()
 		.done($.proxy(function(data, textStatus, jqXHR) {
 			this.refleshFileList(data);
 			deferred.resolve(this.page);

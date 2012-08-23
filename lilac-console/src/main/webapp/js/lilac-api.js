@@ -75,7 +75,7 @@ lilac.api.session = {
 
 ///////////////////////////////////////////////////////////
 // Import API
-lilac.api.import = {
+lilac.api.importData = {
 	list: function() {
 		return $.ajax('/api/import', {
 			cache: false,
