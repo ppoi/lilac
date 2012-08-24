@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Lilac Build" basedir="../../">
 
-	<property name="lilac.settings" value="lilac-api/src/test/resources/setting.properties" />
+	<property name="lilac.settings" value="lilac-api/src/test/resources/settings.properties" />
 
 	<target name="generate-settings">
 		<copy encoding="UTF-8" filtering="on" overwrite="true"
