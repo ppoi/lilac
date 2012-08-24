@@ -23,6 +23,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.seasar.framework.log.Logger;
 import org.tsukuba_bunko.lilac.helper.auth.UserSessionHelper;
 
 
@@ -37,6 +38,11 @@ public class UserSessionHelperImpl implements UserSessionHelper {
 	 * セッションクッキーのキー名
 	 */
 	public static final String SESSION_COOKIE_KEY = "LILACSESSION";
+
+	/**
+	 * ログ
+	 */
+	private static final Logger log = Logger.getLogger(UserSessionHelperImpl.class);
 
 	/**
 	 * クッキーのセキュリティ設定
@@ -57,6 +63,9 @@ public class UserSessionHelperImpl implements UserSessionHelper {
 	public String getSessionId() {
 		if(request != null) {
 			Cookie[] cookies = request.getCookies();
+			if(log.isDebugEnabled()) {
+				log.debug("Cookies: " + cookies);
+			}
 			if(cookies != null) {
 				for(Cookie cookie : cookies) {
 					if(SESSION_COOKIE_KEY.equals(cookie.getName())) {
