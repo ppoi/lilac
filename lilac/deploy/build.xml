@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Lilac Build">
+
+	<property name="lilac.settings" value="lilac-api/src/test/resources/setting.properties" />
+
+	<target name="generate-settings">
+		<copy encoding="UTF-8" filtering="on" overwrite="true"
+			tofile="${lilac.settings}"
+			file="lilac-api/src/test/resources/settings.properties.template">
+			<filterset>
+				<filtersfile file="${filtersfile}" />
+			</filterset>
+		</copy>
+	</target>
+
+</project>
