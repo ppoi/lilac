@@ -23,6 +23,7 @@
 						<arg>"traceInterceptor"</arg>
 					</initMethod>
 					<property name="pointcut">".*"</property>
+					<property name="useLookupAdapter">true</property>
 				</component>
 			</arg>
 		</initMethod>
