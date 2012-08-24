@@ -251,7 +251,7 @@ InformationPage.prototype.prepare = function(path, options) {
 	$.mobile.loading('show');
 	lilac.api.version()
 		.done($.proxy(function(data){
-			$('#api-version').text("lilac-api " + data.version);
+			$('#api-version').text(data.version);
 			$.mobile.loading('hide');
 			deferred.resolve(this.page);
 		}, this))
