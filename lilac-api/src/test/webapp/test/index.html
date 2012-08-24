@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html" charset="UTF-8">
+		<title>API Test</title>
+	</head>
+	<body>
+		<h1>ServiceInfo API</h1>
+		<h2 id="index">index</h2>
+		<div>
+			<form id="index-form">
+				<button id="execute-index">実行</button>
+				<div id="index-result">
+					<textarea rows="4" cols="60"></textarea>
+				</div>
+			</form>
+		</div>
+		<hr />
+		<h2>Athor APIs</h2>
+		<ul>
+			<li><a href="label.html">Label API</a></li>
+			<li><a href="session.html">Session API</a></li>
+			<li><a href="export.html">Export API</a></li>
+			<li><a href="import.html">Import API</a></li>
+		</ul>
+		<script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript">
+			function showErrorMsg(jqXHR, textStatus, errorThrown) {
+				alert(textStatus + ":" + errorThrown);
+			}
+
+			$("#index-form").submit(function(event) {
+				event.preventDefault();
+				$.ajax("/api", {
+					dataType: 'json',
+					type: 'GET'
+				}).done(function(data, textStatus, jqXHR) {
+					$("#index-result textarea").val(JSON.stringify(data));
+				}).fail(showErrorMsg);
+				return false;
+			});
+		</script>
+	</body>
+</html>

@@ -11,4 +11,6 @@
 	<component name="importFileStore" class="java.io.File">
 		<arg>settings.string("lilac.api.importFileStore")</arg>
 	</component>
+
+	<component name="lilacApiVersion">"@project.version@"</component>
 </components>

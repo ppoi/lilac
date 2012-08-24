@@ -193,9 +193,8 @@ AdminPage = lilac.extend(Page, function(id) {
 	this.logoutButton = $('<button id="logout-button" data-theme="a">').text("ログアウト");
 });
 AdminPage.prototype.prepare = function(path, option) {
-	var deferred = $.Deferred();
 	this.resetAuthInfo();
-	return deferred.resolve(this.page).promise();
+	return $.Deferred().resolve(this.page).promise();
 };
 AdminPage.prototype.resetAuthInfo = function() {
 	if(lilac.session.id) {
@@ -239,6 +238,29 @@ AdminPage.prototype.resetAuthInfo = function() {
 		}, this));
 		this.loginButton.button();
 	}
+};
+
+InformationPage = lilac.extend(Page, function(id) {
+	this.__super__.constructor(this, id, 'template/info.html');
+});
+InformationPage.prototype.customizePage = function(page) {
+	$('#console-version').text(lilac.version);
+};
+InformationPage.prototype.prepare = function(path, options) {
+	var deferred = $.Deferred();
+	$.mobile.loading('show');
+	lilac.api.version()
+		.done($.proxy(function(data){
+			$('#api-version').text("lilac-api " + data.version);
+			$.mobile.loading('hide');
+			deferred.resolve(this.page);
+		}, this))
+		.fail($.proxy(function() {
+			$('#api-version').text("-");
+			$.mobile.loading('hide');
+			deferred.resolve(this.page);
+		}));
+	return deferred.promise();	
 };
 
 /**
@@ -563,6 +585,7 @@ lilac.actions = [
 	new Action('#author(?<aid>\\d+)', AuthorPage),
 	new Action('#login', LoginPage),
 	new Action('#admin', AdminPage),
+	new Action('#info', InformationPage),
 	new Action('#export', ExportPage, true),
 	new Action('#import', ImportPage, true)
 ];

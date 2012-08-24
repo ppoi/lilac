@@ -1,8 +1,17 @@
 /**
  * Lilac APIs
  */
-lilac.api = {};
 
+///////////////////////////////////////////////////////////
+// ServiceInfo API
+lilac.api = {
+	version: function() {
+		return $.ajax('/api', {
+			dataType: 'json',
+			type: 'GET'
+		});
+	}
+};
 
 ///////////////////////////////////////////////////////////
 // Book API

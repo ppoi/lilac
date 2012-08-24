@@ -99,6 +99,10 @@ var lilac = {
 	 */
 	session: null,
 
+	/**
+	 * バージョン
+	 */
+	version: null,
 
 	/**
 	 * jQM初期化イベントハンドラ
@@ -111,6 +115,7 @@ var lilac = {
 			var url = $.mobile.path.parseUrl(location.href);
 			$.mobile.changePage(url.hash ? url.hash : '#main');
 		});
+		lilac.version = $('meta[name="console-version"]').attr('content');
 	},
 
 	/**
