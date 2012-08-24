@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Lilac Build">
+<project name="Lilac Build" basedir="../../">
 
 	<property name="lilac.settings" value="lilac-api/src/test/resources/setting.properties" />
 
