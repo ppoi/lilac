@@ -63,11 +63,11 @@ public class UserSessionHelperImpl implements UserSessionHelper {
 	public String getSessionId() {
 		if(request != null) {
 			Cookie[] cookies = request.getCookies();
-			if(log.isDebugEnabled()) {
-				log.debug("Cookies: " + cookies);
-			}
 			if(cookies != null) {
-				for(Cookie cookie : cookies) {
+				for(Cookie cookie : cookies) {	
+					if(log.isDebugEnabled()) {
+						log.debug("Cookie[" + cookie.getName() + "]=" + cookie.getValue());
+					}
 					if(SESSION_COOKIE_KEY.equals(cookie.getName())) {
 						return cookie.getValue();
 					}

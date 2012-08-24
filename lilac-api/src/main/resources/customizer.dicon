@@ -19,6 +19,9 @@
 					<initMethod name="addInterceptorName">
 						<arg>"authorizationInterceptor"</arg>
 					</initMethod>
+					<initMethod name="addInterceptorName">
+						<arg>"traceInterceptor"</arg>
+					</initMethod>
 					<property name="pointcut">".*"</property>
 				</component>
 			</arg>

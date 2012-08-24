@@ -35,8 +35,4 @@ public class ServiceInfoAction {
 	public ActionResult label() {
 		return new Forward(LabelAction.class);
 	}
-
-	public ActionResult session() {
-		return new Forward(SessionAction.class);
-	}
 }

@@ -5,6 +5,9 @@
 			<pattern>%d{MM/dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
 		</encoder>
 	</appender>
+	<logger name="org.seasar" level="INFO" />
+	<logger name="org.seasar.cubby.filter.CubbyFilter" level="DEBUG" />
+	<logger name="org.seasar.framework.aop.interceptors.TraceInterceptor" level="DEBUG" />
 	<root level="debug">
 		<appender-ref ref="console" />
 	</root>

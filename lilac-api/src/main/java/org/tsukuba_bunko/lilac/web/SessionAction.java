@@ -42,7 +42,6 @@ import org.tsukuba_bunko.lilac.service.UserSessionService;
  * @version $Revision: $ $Date: $
  */
 @ActionClass
-@Path("session")
 public class SessionAction {
 
 	@Resource
@@ -63,6 +62,7 @@ public class SessionAction {
 	@RequestParameter
 	public String password;
 
+	@Path("/session")
 	public ActionResult index() {
 		String sessionId = userSessionHelper.getSessionId();
 		if(sessionId != null) {
@@ -77,6 +77,7 @@ public class SessionAction {
 		return new Json(new BeanMap());
 	}
 
+	@Path("/session/login")
 	@Accept({RequestMethod.POST})
 	public ActionResult login() {
 		UserSession session = userSessionService.open(userId, password);
@@ -84,6 +85,7 @@ public class SessionAction {
 		return new Json(session);
 	}
 
+	@Path("/session/logout")
 	public ActionResult logout() {
 		String sessionId = userSessionHelper.getSessionId();
 		if(sessionId != null) {
