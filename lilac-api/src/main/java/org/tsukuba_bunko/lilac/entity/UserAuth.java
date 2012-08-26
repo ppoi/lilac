@@ -23,14 +23,21 @@ import javax.persistence.Id;
 
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * 認証情報
+ * @author ppoi
+ * @version 2012.04
  */
 @Entity
 public class UserAuth {
 
+	/**
+	 * ユーザ名
+	 */
 	@Id
-	public String user;
+	public String username;
 
+	/**
+	 * パスワード(ハッシュ値)
+	 */
 	public String password;
 }

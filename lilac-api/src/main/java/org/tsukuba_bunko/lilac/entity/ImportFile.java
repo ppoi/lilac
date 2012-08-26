@@ -13,14 +13,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.entity;
 
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,20 +25,32 @@ import javax.persistence.Id;
 
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * インポートファイル情報
+ * @author ppoi
+ * @version 2012.04
  */
 @Entity
 public class ImportFile {
 
+	/**
+	 * インポートファイルID
+	 */
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public Integer id;
 
+	/**
+	 * ファイル名
+	 */
 	public String fileName;
 
-	@Column(name="\"user\"")
-	public String user;
+	/**
+	 * アップロードユーザ名
+	 */
+	public String username;
 
+	/**
+	 * 作成タイムスタンプ
+	 */
 	public Timestamp createdTimestamp;
 }

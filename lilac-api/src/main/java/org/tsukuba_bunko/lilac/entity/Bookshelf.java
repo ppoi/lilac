@@ -1,6 +1,6 @@
 /*
  * All Rights Reserved.
- * Copyright (C) 2011 Tsukuba Bunko.
+ * Copyright (C) 2011-2012 Tsukuba Bunko.
  *
  * Licensed under the BSD License ("the License"); you may not use
  * this file except in compliance with the License.
@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.entity;
 
@@ -26,8 +24,8 @@ import javax.persistence.Id;
 
 /**
  * 書棚情報
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * @author ppoi
+ * @version 2012.04
  */
 @Entity
 public class Bookshelf {

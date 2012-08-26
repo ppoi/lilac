@@ -13,13 +13,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.service.impl;
 
 import javax.annotation.Resource;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.seasar.framework.unit.Seasar2;
 import org.tsukuba_bunko.lilac.entity.UserSession;
@@ -27,8 +27,7 @@ import org.tsukuba_bunko.lilac.entity.UserSession;
 import static org.junit.Assert.*;
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * {@link UserSessionServiceImpl} のテストケース
  */
 @RunWith(Seasar2.class)
 public class UserAuthServiceImplTest {
@@ -36,23 +35,46 @@ public class UserAuthServiceImplTest {
 	@Resource
 	public UserSessionServiceImpl service;
 
-	public void login_getValidSession() throws Exception {
-		String user = "ppoi";
-		String password = "1234567890";
+	@Test
+	public void login() {
+		String user = "testuser1";
+		String password = "password_user1";
 		UserSession session = service.open(user, password);
 		assertNotNull(session);
+		assertEquals(user, session.username);
 		assertNotNull(session.id);
-
-		UserSession refetch = service.getValidSession(session.id);
-		assertNotNull(refetch);
-		assertEquals(session.id, refetch.id);
+		assertNotNull(session.createdTimestamp);
 	}
 
-	public void digestPassword_1() throws Exception {
-		String password = "1234567890";
+	@Test
+	public void get() {
+		String sessionId = "miku39";
+		UserSession session = service.getValidSession(sessionId);
+		assertNotNull(session);
+		assertEquals(sessionId, session.id);
+		assertEquals("testuser1", session.username);
+		assertNotNull(session.createdTimestamp);
+	}
+
+	@Test
+	public void digestPassword() throws Exception {
+		String password = "!$'FSAS123123'SE+*";
 		String result1 = service.digestPassword(password);
-		System.out.println("<" + result1 + ">");
 		String result2 = service.digestPassword(password);
-		System.out.println(result2);
+		assertEquals(result1, result2);
+	}
+
+	@Ignore
+	public void digestPassword_1() throws Exception {
+		System.out.println(service.digestPassword("password_user1"));
+		System.out.println(service.digestPassword("password_user2"));
+		System.out.println(service.digestPassword("password_user3"));
+		System.out.println(service.digestPassword("password_user4"));
+		System.out.println(service.digestPassword("password_user5"));
+		String password = "D$#C#!C0LILACADMINSx510lS";
+		String result1 = service.digestPassword(password);
+		String result2 = service.digestPassword(password);
+		assertEquals(result1, result2);
+		System.out.println(result1);
 	}
 }

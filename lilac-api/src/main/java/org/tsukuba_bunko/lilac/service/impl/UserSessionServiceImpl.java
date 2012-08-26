@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.service.impl;
 
@@ -34,9 +32,9 @@ import org.tsukuba_bunko.lilac.service.UserSessionService;
 
 
 /**
- * 認証サービス実装
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * {@link UserSessionService} 実装
+ * @author ppoi
+ * @version 2012.04
  */
 public class UserSessionServiceImpl implements UserSessionService {
 
@@ -54,16 +52,18 @@ public class UserSessionServiceImpl implements UserSessionService {
 		//認証
 		String digestedPassword = digestPassword(password);
 		jdbcManager.from(UserAuth.class).where(new SimpleWhere()
-			.eq("user", user)
+			.eq("username", user)
 			.eq("password", digestedPassword)
 		).disallowNoResult().getSingleResult();
 
 		//セッション情報の作成
 		UserSession session = new UserSession();
 		session.id = UUID.randomUUID().toString();
-		session.user = user;
+		session.username = user;
 		jdbcManager.insert(session).excludesNull().execute();
-		return session;
+		return jdbcManager.from(UserSession.class)
+				.where("id=?", session.id)
+				.disallowNoResult().getSingleResult();
 	}
 
 	/**

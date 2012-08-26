@@ -20,23 +20,31 @@ package org.tsukuba_bunko.lilac.entity;
 
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * ユーザセッション情報
+ * @author ppoi
+ * @version 2012.04
  */
 @Entity
 public class UserSession {
 
+	/**
+	 * セッションID
+	 */
 	@Id
 	public String id;
 
-	@Column(name="\"user\"")
-	public String user;
+	/**
+	 *　ユーザ名
+	 */
+	public String username;
 
+	/**
+	 * セッション開始タイムスタンプ
+	 */
 	public Timestamp createdTimestamp;
 }

@@ -40,7 +40,7 @@ public class ImportReadingRecordHelperImpl extends ImportDataHelperBase {
 		propertyNameMap.put("S", "status");
 		propertyNameMap.put("ID", "id");
 		propertyNameMap.put("ISBN", "isbn");
-		propertyNameMap.put("開始日", "beginDate");
+		propertyNameMap.put("開始日", "startDate");
 		propertyNameMap.put("読了日", "completionDate");
 		propertyNameMap.put("備考", "note");
 	}
@@ -70,7 +70,7 @@ public class ImportReadingRecordHelperImpl extends ImportDataHelperBase {
 	protected void insertRecord(Map<String, String> record) {
 		ReadingRecord entity = new ReadingRecord();
 		Beans.copy(record, entity).excludes("id", "isbn")
-				.dateConverter("yyyy/MM/dd", "beginDate", "completionDate")
+				.dateConverter("yyyy/MM/dd", "startDate", "completionDate")
 				.excludesNull().execute();
 		entity.bibliographyId = getBibliographyId(record.get("isbn"));
 		entity.reader = getCurrentSessionUser();
@@ -84,7 +84,7 @@ public class ImportReadingRecordHelperImpl extends ImportDataHelperBase {
 	protected void updateRecord(Map<String, String> record) {
 		ReadingRecord entity = new ReadingRecord();
 		Beans.copy(record, entity).excludes("isbn")
-				.dateConverter("yyyy/MM/dd", "beginDate", "completionDate")
+				.dateConverter("yyyy/MM/dd", "startDate", "completionDate")
 			.excludesNull().execute();
 		entity.bibliographyId = getBibliographyId(record.get("isbn"));
 		entity.reader = getCurrentSessionUser();
@@ -98,7 +98,7 @@ public class ImportReadingRecordHelperImpl extends ImportDataHelperBase {
 	protected void deleteRecord(Map<String, String> record) {
 		ReadingRecord entity = new ReadingRecord();
 		Beans.copy(record, entity).excludes("isbn")
-				.dateConverter("yyyy/MM/dd", "beginDate", "completionDate")
+				.dateConverter("yyyy/MM/dd", "startDate", "completionDate")
 			.excludesNull().execute();
 		entity.bibliographyId = getBibliographyId(record.get("isbn"));
 		entity.reader = getCurrentSessionUser();

@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.helper.port.impl;
 
@@ -47,8 +45,8 @@ import org.tsukuba_bunko.lilac.service.UserSessionService;
 
 /**
  * {@link ExportDataHelper} 共通基底クラス。
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * @author ppoi
+ * @version 2012.04
  */
 public abstract class ExportDataHelperBase<ENTITY> implements ExportDataHelper, IterationCallback<ENTITY, Integer> {
 
@@ -218,7 +216,7 @@ public abstract class ExportDataHelperBase<ENTITY> implements ExportDataHelper, 
 		String sessionId = userSessionHelper.getSessionId();
 		if(StringUtil.isNotBlank(sessionId)) {
 			UserSession session = userSessionService.getValidSession(sessionId);
-			return session.user;
+			return session.username;
 		}
 		return null;
 	}

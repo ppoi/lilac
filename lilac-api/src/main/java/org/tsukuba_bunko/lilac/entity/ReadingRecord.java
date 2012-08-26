@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.entity;
 
@@ -30,8 +28,9 @@ import javax.persistence.TemporalType;
 
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * 読書履歴情報
+ * @author ppoi
+ * @version 2012.04
  */
 @Entity
 public class ReadingRecord {
@@ -63,7 +62,7 @@ public class ReadingRecord {
 	 * 開始日
 	 */
 	@Temporal(TemporalType.DATE)
-	public Date beginDate;
+	public Date startDate;
 
 	/**
 	 * 読了日

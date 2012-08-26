@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.entity;
 
@@ -27,8 +25,8 @@ import javax.persistence.ManyToOne;
 
 /**
  * 書誌情報 - 著者情報
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * @author ppoi
+ * @version 2012.04
  */
 @Entity
 public class BibAuthor {

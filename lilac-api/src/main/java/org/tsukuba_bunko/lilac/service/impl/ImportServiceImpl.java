@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.service.impl;
 
@@ -46,8 +44,9 @@ import org.tsukuba_bunko.lilac.service.UserSessionService;
 
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * {@link ImportService} 実装
+ * @author ppoi
+ * @version 2012.04
  */
 public class ImportServiceImpl implements ImportService {
 
@@ -92,7 +91,7 @@ public class ImportServiceImpl implements ImportService {
 		ImportFile importFileEntity = jdbcManager.from(ImportFile.class)
 									.where(new SimpleWhere()
 										.eq("id", fileId)
-										.eq("user", userId)
+										.eq("username", userId)
 									).disallowNoResult().getSingleResult();
 
 		File importFile = new File(importFileStore, String.format("%016d", importFileEntity.id));
@@ -153,7 +152,7 @@ public class ImportServiceImpl implements ImportService {
 		}
 		return jdbcManager.from(ImportFile.class)
 				.where(new SimpleWhere()
-					.eq("user", user)
+					.eq("username", user)
 				)
 				.orderBy("createdTimestamp")
 				.getResultList();
@@ -166,7 +165,7 @@ public class ImportServiceImpl implements ImportService {
 	public ImportFileDescriptor upload(String fileName, InputStream source) {
 		ImportFile importFile = new ImportFile();
 		importFile.fileName = fileName;
-		importFile.user = getCurrentSessionUser();
+		importFile.username = getCurrentSessionUser();
 		jdbcManager.insert(importFile).excludesNull().execute();
 
 		File storedFile = new File(importFileStore, String.format("%016d", importFile.id));
@@ -212,7 +211,7 @@ public class ImportServiceImpl implements ImportService {
 		String sessionId = userSessionHelper.getSessionId();
 		if(StringUtil.isNotBlank(sessionId)) {
 			UserSession session = userSessionService.getValidSession(sessionId);
-			return session.user;
+			return session.username;
 		}
 		return null;
 	}

@@ -129,7 +129,7 @@ public class ExportReadingRecordHelperImpl extends ExportDataHelperBase<ReadingR
 		setCellValue(createCell(row, 3, commonCellStyle), entity.bibliography.title
 				+ (StringUtil.isNotBlank(entity.bibliography.subtitle) ? " - " + entity.bibliography.subtitle : ""));
 		//書棚
-		setCellValue(createCell(row, 4, dateCellStyle), entity.beginDate);
+		setCellValue(createCell(row, 4, dateCellStyle), entity.startDate);
 		//購入日
 		setCellValue(createCell(row, 5, dateCellStyle), entity.completionDate);
 		//備考

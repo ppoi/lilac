@@ -1,6 +1,6 @@
 /*
  * All Rights Reserved.
- * Copyright (C) 2011 Tsukuba Bunko.
+ * Copyright (C) 2011-2012 Tsukuba Bunko.
  *
  * Licensed under the BSD License ("the License"); you may not use
  * this file except in compliance with the License.
@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.entity;
 
@@ -33,8 +31,8 @@ import javax.persistence.Version;
 
 /**
  * 書誌情報
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * @author ppoi
+ * @version 2012.04
  */
 @Entity
 public class Bibliography {
@@ -45,33 +43,28 @@ public class Bibliography {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public Integer id;
-	
+
 	/**
 	 * ISBN
 	 */
 	public String isbn;
-	
+
 	/**
 	 * レーベル
 	 */
 	public String label;
 	
 	/**
-	 * インデックス
-	 */
-	public String index;
-	
-	/**
 	 * 著者情報
 	 */
 	@OneToMany(mappedBy="bibliography")
 	public List<BibAuthor> authors;
-	
+
 	/**
 	 * タイトル
 	 */
 	public String title;
-	
+
 	/**
 	 * サブタイトル
 	 */
@@ -81,18 +74,18 @@ public class Bibliography {
 	 * 概要
 	 */
 	public String description;
-	
+
 	/**
 	 * 価格
 	 */
 	public Integer price;
-	
+
 	/**
 	 * 出版日
 	 */
 	@Temporal(TemporalType.DATE)
 	public Date publicationDate;
-	
+
 	/**
 	 * 備考
 	 */

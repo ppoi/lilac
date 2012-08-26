@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.helper.port.impl;
 
@@ -35,8 +33,9 @@ import org.tsukuba_bunko.lilac.service.UserSessionService;
 
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * {@link ImportDataHelper} 共通基底クラス
+ * @author ppoi
+ * @version 2012.04
  */
 public abstract class ImportDataHelperBase implements ImportDataHelper {
 
@@ -137,7 +136,7 @@ public abstract class ImportDataHelperBase implements ImportDataHelper {
 		String sessionId = userSessionHelper.getSessionId();
 		if(StringUtil.isNotBlank(sessionId)) {
 			UserSession session = userSessionService.getValidSession(sessionId);
-			return session.user;
+			return session.username;
 		}
 		return null;
 	}
