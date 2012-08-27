@@ -6,13 +6,12 @@
 	<property file="${envfile}" />
 	<property file="${settingsfile}" />
 
-	<property name="workspace" value="../.." />
-	<property name="lilac.settings" value="lilac-api/src/test/resources/settings.properties" />
+	<property name="workspace" location="../.." />
+	<property name="lilac.settings" value="${workspace}/lilac-api/src/test/resources/settings.properties" />
 
 	<target name="generate-settings">
 		<copy encoding="UTF-8" filtering="on" overwrite="true"
-			tofile="${lilac.settings}"
-			file="lilac-api/src/test/resources/settings.properties.template">
+			tofile="${lilac.settings}" file="settings.properties.template">
 			<filterset>
 				<filtersfile file="${settingsfile}" />
 			</filterset>
@@ -20,13 +19,10 @@
 	</target>
 
 	<target name="database.create">
-		<echo>${maven.localRepository}/postgresql/postgresql/${database.driver.version}/postgresql-${database.driver.version}.jar</echo>
-		<echo>DROP DATABASE IF EXISTS ${database.name};</echo>
 		<path id="database.classpath">
 			<pathelement location="${maven.localRepository}/postgresql/postgresql/${database.driver.version}/postgresql-${database.driver.version}.jar" />
 		</path>
-		<sql driver="org.postgresql.Driver" classpathref="database.classpath"
-			autocommit="true" expandproperties="true"
+		<sql driver="org.postgresql.Driver" classpathref="database.classpath" autocommit="true"
 			userid="${database.admin.username}" password="${database.admin.password}"
 			url="jdbc:postgresql://localhost/${database.maintenance}">
 			DROP DATABASE IF EXISTS ${database.name};
@@ -34,8 +30,7 @@
 			CREATE USER ${database.username} WITH PASSWORD '${database.password}';
 			CREATE DATABASE ${database.name} WITH OWNER=${database.username} ENCODING='UTF8' TEMPLATE=template0 LC_COLLATE='${database.collate}' LC_CTYPE='${database.ctype}';
 		</sql>
-		<sql driver="org.postgresql.Driver" classpathref="database.classpath"
-			autocommit="true" expandProperties="true"
+		<sql driver="org.postgresql.Driver" classpathref="database.classpath" autocommit="true"
 			userid="${database.admin.username}" password="${database.admin.password}"
 			url="jdbc:postgresql://localhost/${database.name}">
 			CREATE SCHEMA AUTHORIZATION ${database.username}
@@ -48,8 +43,7 @@
 			<arg value="${database.postgresql.share}/contrib/textsearch_senna.sql" />
 			<arg value="${database.name}" />
 		</exec>
-		<sql driver="org.postgresql.Driver" classpathref="database.classpath"
-			autocommit="true" expandproperties="false"
+		<sql driver="org.postgresql.Driver" classpathref="database.classpath" autocommit="true"
 			userid="${database.username}" password="${database.password}"
 			url="jdbc:postgresql://localhost/${database.name}">
 			<path>

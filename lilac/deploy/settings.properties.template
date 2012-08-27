@@ -1,0 +1,7 @@
+# DB settings
+lilac.db.url=jdbc:postgresql://localhost/@database.name@
+lilac.db.user=@database.username@
+lilac.db.password=@database.password@
+
+# Import file management settings
+lilac.api.importFileStore=@lilac.api.importFileStore@

@@ -1,8 +1,9 @@
+# System environment settings (include secret parameters)
 
 database.admin.username=postgres
 database.admin.password=password
 database.maintenance=template1
-database.postgresql.share=C:/Program Files/PostgreSQL/9.0/share
-database.postgresql.psql=C:/Program Files/PostgreSQL/9.0/bin/psql.exe
+database.postgresql.share=/usr/pgsql-9.0/share
+database.postgresql.psql=/usr/pgsql-9.0/bin/psql
 
-maven.localRepository=C:/Users/admin/.m2/repository
+maven.localRepository=/var/keyaki/ci/.m2/repository
