@@ -1,0 +1,8 @@
+
+database.driver.version=9.0-801.jdbc4
+
+database.name=lilac_ct
+database.username=lilac_ct
+database.password=ci.lilac
+database.collate=Japanese_Japan.932
+database.ctype=Japanese_Japan.932

@@ -1,0 +1,8 @@
+
+database.admin.username=postgres
+database.admin.password=password
+database.maintenance=template1
+database.postgresql.share=C:/Program Files/PostgreSQL/9.0/share
+database.postgresql.psql=C:/Program Files/PostgreSQL/9.0/bin/psql.exe
+
+maven.localRepository=C:/Users/admin/.m2/repository
