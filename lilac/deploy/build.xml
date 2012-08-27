@@ -38,6 +38,7 @@
 		<exec executable="${database.postgresql.psql}">
 			<env key="PGUSER" value="${database.admin.username}" />
 			<env key="PGPASSWORD" value="${database.admin.password}" />
+			<env key="PGHOST" value="localhost" />
 			<arg value="-w" />
 			<arg value="-f" />
 			<arg value="${database.postgresql.share}/contrib/textsearch_senna.sql" />
