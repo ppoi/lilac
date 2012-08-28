@@ -8,14 +8,16 @@ CREATE TABLE account(
 	realname varchar(256),
 	email_address varchar(256),
 	library_name varchar(256),
+	version integer NOT NULL DEFAULT 0,
 	note varchar(8192)
 );
 
 -- 認証情報
 CREATE TABLE user_auth(
 	username varchar(256) NOT NULL PRIMARY KEY REFERENCES account ON DELETE CASCADE,
-	password varchar(256) NOT NULL
+	password varchar(256)
 );
+CREATE INDEX idx_user_auth_password ON user_auth(password);
 
 -- 認証済みセッション情報
 CREATE TABLE user_session(

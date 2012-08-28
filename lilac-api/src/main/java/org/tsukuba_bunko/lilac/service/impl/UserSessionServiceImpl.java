@@ -16,19 +16,16 @@
  */
 package org.tsukuba_bunko.lilac.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 
 import org.seasar.extension.jdbc.JdbcManager;
 import org.seasar.extension.jdbc.where.SimpleWhere;
-import org.seasar.framework.util.Base64Util;
-import org.seasar.framework.util.MessageDigestUtil;
 import org.tsukuba_bunko.lilac.entity.UserAuth;
 import org.tsukuba_bunko.lilac.entity.UserSession;
 import org.tsukuba_bunko.lilac.service.UserSessionService;
+import org.tsukuba_bunko.lilac.util.DigestUtil;
 
 
 /**
@@ -50,7 +47,7 @@ public class UserSessionServiceImpl implements UserSessionService {
 	@Override
 	public UserSession open(String user, String password) {
 		//認証
-		String digestedPassword = digestPassword(password);
+		String digestedPassword = DigestUtil.digestText(password);
 		jdbcManager.from(UserAuth.class).where(new SimpleWhere()
 			.eq("username", user)
 			.eq("password", digestedPassword)
@@ -84,21 +81,5 @@ public class UserSessionServiceImpl implements UserSessionService {
 		UserSession session = new UserSession();
 		session.id = sessionId;
 		jdbcManager.delete(session).execute();
-	}
-
-	/**
-	 * パスワードのダイジェスト文字列を取得します。
-	 * @param password パスワード
-	 * @return ダイジェスト結果
-	 */
-	public String digestPassword(String password) {
-		MessageDigest md = MessageDigestUtil.getInstance("SHA-1");
-		try {
-			md.update(password.getBytes("UTF-8"));
-			return Base64Util.encode(md.digest());
-		}
-		catch(UnsupportedEncodingException uee) {
-			throw new IllegalStateException(uee);
-		}
 	}
 }

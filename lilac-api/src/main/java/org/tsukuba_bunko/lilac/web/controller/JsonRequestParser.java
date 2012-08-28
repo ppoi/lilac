@@ -60,6 +60,7 @@ public class JsonRequestParser implements RequestParser {
 		}
 		Map<String, Object[]> parameterMap = new java.util.HashMap<String, Object[]>();
 		parameterMap.put("requestData", new Object[]{requestData});
+		parameterMap.putAll(request.getParameterMap());
 		return parameterMap;
 	}
 

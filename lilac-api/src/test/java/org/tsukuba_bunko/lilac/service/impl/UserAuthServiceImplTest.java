@@ -18,7 +18,6 @@ package org.tsukuba_bunko.lilac.service.impl;
 
 import javax.annotation.Resource;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.seasar.framework.unit.Seasar2;
@@ -54,27 +53,5 @@ public class UserAuthServiceImplTest {
 		assertEquals(sessionId, session.id);
 		assertEquals("testuser1", session.username);
 		assertNotNull(session.createdTimestamp);
-	}
-
-	@Test
-	public void digestPassword() throws Exception {
-		String password = "!$'FSAS123123'SE+*";
-		String result1 = service.digestPassword(password);
-		String result2 = service.digestPassword(password);
-		assertEquals(result1, result2);
-	}
-
-	@Ignore
-	public void digestPassword_1() throws Exception {
-		System.out.println(service.digestPassword("password_user1"));
-		System.out.println(service.digestPassword("password_user2"));
-		System.out.println(service.digestPassword("password_user3"));
-		System.out.println(service.digestPassword("password_user4"));
-		System.out.println(service.digestPassword("password_user5"));
-		String password = "D$#C#!C0LILACADMINSx510lS";
-		String result1 = service.digestPassword(password);
-		String result2 = service.digestPassword(password);
-		assertEquals(result1, result2);
-		System.out.println(result1);
 	}
 }
