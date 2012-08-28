@@ -320,6 +320,8 @@ CredentialPage.prototype.customizePage = function(page) {
 	}, this));
 };
 CredentialPage.prototype.close = function() {
+	$('#credential-password').val("");
+	$('#credential-password-confirm').val("");
 	$.mobile.changePage('#account', {
 		transition: 'pop',
 		reverse: true,
