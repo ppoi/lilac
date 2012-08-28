@@ -69,6 +69,7 @@ public class JsonRequestParserTest {
 		Gson gson = new GsonBuilder().serializeNulls().create();
 		StringReader reader = new StringReader(gson.toJson(requestData));
 		expect(request.getReader()).andReturn(new BufferedReader(reader));
+		expect(request.getParameterMap()).andReturn(new java.util.HashMap<String, String[]>());
 	}
 
 	@Test
