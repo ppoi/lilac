@@ -51,6 +51,28 @@ lilac.api.label = {
 };
 
 ///////////////////////////////////////////////////////////
+// Account API
+lilac.api.account = {
+	get: function(username) {
+		return $.ajax('/api/account/' + username, {
+			cache: false,
+			dataType: 'json',
+			type: 'GET'
+		});
+	},
+
+	setCredential: function(username, credential) {
+		return $.ajax('/api/account/' + username + '/credential', {
+			contentType: 'application/json',
+			dataType: 'json',
+			data: JSON.stringify(credential),
+			processData: false,
+			type: 'POST'
+		});
+	}
+};
+
+///////////////////////////////////////////////////////////
 // Session API
 lilac.api.session = {
 	login: function(userId, password) {

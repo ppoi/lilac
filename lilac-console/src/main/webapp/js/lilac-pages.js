@@ -198,7 +198,7 @@ AdminPage.prototype.prepare = function(path, option) {
 };
 AdminPage.prototype.resetAuthInfo = function() {
 	if(lilac.session.id) {
-		$('#account-name').text(lilac.session.user);
+		$('#admin-current-username').text(lilac.session.username);
 		this.loginButton.unbind();
 		$('#authbuttonfolder').empty().append(this.logoutButton);
 		this.logoutButton.click($.proxy(function(event){
@@ -219,7 +219,7 @@ AdminPage.prototype.resetAuthInfo = function() {
 		this.logoutButton.button();
 	}
 	else {
-		$('#account-name').text("(未ログイン)");
+		$('#admin-current-username').text("(未ログイン)");
 		this.logoutButton.unbind();
 		$('#authbuttonfolder').empty().append(this.loginButton);
 		this.loginButton.click($.proxy(function(event){
@@ -238,6 +238,93 @@ AdminPage.prototype.resetAuthInfo = function() {
 		}, this));
 		this.loginButton.button();
 	}
+};
+
+/**
+ * アカウント情報ページ
+ */
+AccountPage = lilac.extend(Page, function(id) {
+	this.__super__.constructor(this, id, 'template/account.html');
+});
+AccountPage.prototype.customizePage = function(page) {
+	$('#update-credential').click(function(event) {
+		event.preventDefault();
+		$.mobile.changePage('#credential', {
+			transition: 'pop',
+			changeHash: false
+		});
+		return false;
+	});
+};
+AccountPage.prototype.prepare = function(path, options) {
+	var deferred = $.Deferred();
+	lilac.api.account.get(lilac.session.username)
+		.done($.proxy(function(data, textStatus, jqXHR) {
+			this.setAuthorProperty(data, 'username');
+			this.setAuthorProperty(data, 'realname', '(未登録)');
+			this.setAuthorProperty(data, 'emailAddress', '(未登録)');
+			this.setAuthorProperty(data, 'libraryName', '(未登録)');
+			this.setAuthorProperty(data, 'note');
+			deferred.resolve(this.page);
+		}, this))
+		.fail(function(){
+			deferred.reject();
+		});
+	return deferred.promise();
+};
+AccountPage.prototype.setAuthorProperty = function(entity, key, defaultValue) {
+	var value = entity[key];
+	if(value == null) {
+		value = defaultValue || '-';
+	}
+	$(this.prefixedId(key)).text(value);
+};
+
+/**
+ * 認証情報ページ
+ */
+CredentialPage = lilac.extend(Page, function(id) {
+	this.__super__.constructor(this, id, 'template/credential.html');
+});
+CredentialPage.prototype.customizePage = function(page) {
+	$('#credential-update').click($.proxy(function(event) {
+		event.preventDefault();
+		var password = $('#credential-password').val();
+		var passwordConfirm = $('#credential-password-confirm').val();
+		if(password && password == passwordConfirm) {
+			lilac.api.account.setCredential(lilac.session.username, password)
+				.done($.proxy(function() {
+					$.mobile.loading('show', {
+						theme: "a",
+						text: "認証情報を更新しました",
+						textVisible: true,
+						textonly: true});
+					setTimeout($.proxy(function() {
+						$.mobile.loading('hide');
+						this.close();
+					}, this), 1500 );
+				}, this))
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					lilac.showErrorMsg("認証情報の更新に失敗: " + textStatus);
+				});
+		}
+		else {
+			lilac.showErrorMsg("入力されたパスワードが不正です");
+		}
+		return false;
+	}, this));
+	$('#credential-cancel').click($.proxy(function(event) {
+		event.preventDefault();
+		this.close();
+		return false;
+	}, this));
+};
+CredentialPage.prototype.close = function() {
+	$.mobile.changePage('#account', {
+		transition: 'pop',
+		reverse: true,
+		fromPage: this.page
+	});
 };
 
 InformationPage = lilac.extend(Page, function(id) {
@@ -586,6 +673,8 @@ lilac.actions = [
 	new Action('#login', LoginPage),
 	new Action('#admin', AdminPage),
 	new Action('#info', InformationPage),
+	new Action('#account', AccountPage, true),
+	new Action('#credential', CredentialPage, true),
 	new Action('#export', ExportPage, true),
 	new Action('#import', ImportPage, true)
 ];

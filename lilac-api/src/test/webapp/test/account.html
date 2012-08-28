@@ -184,7 +184,7 @@
 				$.ajax("/api/account/" + username + "/credential", {
 					contentType: 'application/json',
 					dataType: 'json',
-					data: $("#setCredential-password").val(),
+					data: JSON.stringify($("#setCredential-password").val()),
 					processData: false,
 					type: 'POST'
 				}).done(function(data, textStatus, jqXHR) {
