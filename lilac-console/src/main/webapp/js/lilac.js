@@ -83,6 +83,13 @@ Page.prototype.finalize = $.noop;
 Page.prototype.prefixedId = function(attrName) {
 	return '#' + this.id + "-" + attrName;		
 };
+Page.prototype.setEntityProperty = function(entity, key, defaultValue) {
+	var value = entity[key];
+	if(value == null) {
+		value = defaultValue || '-';
+	}
+	$(this.prefixedId(key)).text(value);
+};
 
 
 

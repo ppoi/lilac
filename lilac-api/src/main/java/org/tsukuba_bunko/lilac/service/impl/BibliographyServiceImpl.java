@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.seasar.extension.jdbc.AutoSelect;
 import org.seasar.extension.jdbc.JdbcManager;
-import org.seasar.extension.jdbc.where.SimpleWhere;
 import org.seasar.framework.util.StringUtil;
 import org.tsukuba_bunko.lilac.entity.Bibliography;
 import org.tsukuba_bunko.lilac.service.BibliographyService;
@@ -31,8 +30,9 @@ import org.tsukuba_bunko.lilac.service.SearchResult;
 
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * {@link BibliographyService} 実装
+ * @author ppoi
+ * @version 2012.04
  */
 public class BibliographyServiceImpl implements BibliographyService {
 
@@ -43,12 +43,22 @@ public class BibliographyServiceImpl implements BibliographyService {
 	 */
 	@Override
 	public Bibliography get(int id) {
-		return jdbcManager.from(Bibliography.class)
-			.innerJoin("authors")
-			.innerJoin("authors.author")
-			.where(new SimpleWhere()
-				.eq("id", id)
-			).getSingleResult();
+		return get(id, false);
+	}
+
+	/**
+	 * @see org.tsukuba_bunko.lilac.service.BibliographyService#get(int, boolean)
+	 */
+	@Override
+	public Bibliography get(int id, boolean withBooks) {
+		AutoSelect<Bibliography> select = jdbcManager.from(Bibliography.class)
+				.innerJoin("authors")
+				.innerJoin("authors.author");
+		if(withBooks) {
+			select.leftOuterJoin("books");
+			select.leftOuterJoin("books.location");
+		}
+		return select.where("id=?", id).getSingleResult();
 	}
 
 	/**

@@ -1,4 +1,9 @@
 
+/**
+ * 共通ユーティリティ
+ */
+Utility = {
+};
 
 /**
  * 書籍一覧ページ共通
@@ -43,7 +48,7 @@ BookListPageBase.prototype.listBooks = function(options) {
 		$.mobile.loading('show');
 	}
 
-	lilac.api.book.list(options.condition, options.page)
+	lilac.api.bibliography.list(options.condition, options.page)
 		.done($.proxy(function (data, textStatus, jqXHR) {
 			this.makeResultList(data, (options.page == 0));
 			this.search.condition = options.condition;
@@ -562,24 +567,46 @@ BibliographyPage.prototype.prepare = function(path, options) {
 		deferred.resolve(this.page);
 	}
 	else {
-		lilac.api.book.get(path.bid)
+		lilac.api.bibliography.get(path.bid)
 			.done($.proxy(function(data) {
-				this.setBookProperty(data, "label", " ");
-				this.setBookProperty(data, "title");
-				this.setBookProperty(data, "subtitle", " ");
-				this.setBookProperty(data, "isbn");
-				this.setBookProperty(data, "publicationDate");
-				this.setBookProperty(data, "price");
+				this.setEntityProperty(data, "label", " ");
+				this.setEntityProperty(data, "title");
+				this.setEntityProperty(data, "subtitle", " ");
+				this.setEntityProperty(data, "isbn");
+				this.setEntityProperty(data, "publicationDate");
+				this.setEntityProperty(data, "price");
 	
 				var authorList = $(this.prefixedId('authors'), this.page);
-				$.each(data.authors, function(index, entity){
-					var item = $('<li>').attr('id', this.id + '-author-' + entity.id).append(
-						$('<a>').attr('href', '#author' + entity.id)
-							.text(entity.name + '(' + entity.role + ')')
-					);
-					authorList.append(item);
-				});
+				$.each(data.authors, $.proxy(function(index, entity){
+					authorList.append(
+						$('<li>').append(
+							$('<a>').attr('href', '#author' + entity.id)
+								.text(entity.name + '(' + this.roleName(entity.role) + ')')));
+				}, this));
 				authorList.listview('refresh');
+
+				var bookList = $(this.prefixedId('books'), this.page);
+				$.each(data.books, $.proxy(function(index, entity) {
+					var item = $('<li>');
+					if(entity.location) {
+						item.append($('<span>').text('[' + entity.owner + '] ' + entity.location.label));
+					}
+					else {
+						item.append(
+							$('<span>').text('[' + entity.owner + '] '),
+							$('<span class="li-book-orphan">(未整理)</span>'));
+					}							
+					if(entity.acquisitionDate || entity.purchaseShop) {
+						item.append(
+							$('<br>'),
+							$('<span class="li-book-acuisition">').text(
+								(entity.acquisitionDate ? entity.acquisitionDate : '')
+								+ (entity.purchaseShop ? ' @' + entity.purchaseShop : '')));
+					}
+					bookList.append(item);
+				}, this));
+				bookList.listview('refresh');
+
 				this.rendered = true;
 				deferred.resolve(this.page);
 			}, this))
@@ -590,13 +617,19 @@ BibliographyPage.prototype.prepare = function(path, options) {
 	}
 	return deferred.promise();
 };
-BibliographyPage.prototype.setBookProperty = function(entity, key, defaultValue){
-	var value = entity[key];
-	if(value == null) {
-		value = defaultValue || '-';
+BibliographyPage.prototype.roleName = function(role) {
+	switch(role) {
+	case "author":
+		return "著者";
+	case "illustrator":
+		return "イラスト";
+	case "originator":
+		return "原作";
+	default:
+		return role;
 	}
-	$(this.prefixedId(key)).text(value);
 };
+
 
 AuthorPage = lilac.extend(BookListPageBase, function(id){
 	this.__super__.constructor(this, id, 'template/author.html');
@@ -637,9 +670,9 @@ AuthorPage.prototype.getAuthor = function(aid) {
 	var deferred = $.Deferred();
 	lilac.api.author.get(aid)
 		.done($.proxy(function(data, textStatus) {
-			this.setAuthorProperty(data, "name");
-			this.setAuthorProperty(data, "website");
-			this.setAuthorProperty(data, "twitter");
+			this.setEntityProperty(data, "name");
+			this.setEntityProperty(data, "website");
+			this.setEntityProperty(data, "twitter");
 	
 			var synonymList = $(this.prefixedId('synonymlist'), this.page);
 			$.each(data.synonym, function(index, entity){
@@ -656,13 +689,6 @@ AuthorPage.prototype.getAuthor = function(aid) {
 			deferred.reject();
 		});
 	return deferred.promise();
-};
-AuthorPage.prototype.setAuthorProperty = function(entity, key, defaultValue) {
-	var value = entity[key];
-	if(value == null) {
-		value = defaultValue || '-';
-	}
-	$(this.prefixedId(key)).text(value);
 };
 
 

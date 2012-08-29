@@ -1,6 +1,6 @@
 /*
  * All Rights Reserved.
- * Copyright (C) 2011-2012 Tsukuba Bunko.
+ * Copyright (C) 2012 Tsukuba Bunko.
  *
  * Licensed under the BSD License ("the License"); you may not use
  * this file except in compliance with the License.
@@ -13,24 +13,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * $Id:　$
  */
 package org.tsukuba_bunko.lilac.service;
 
-import org.tsukuba_bunko.lilac.entity.Bibliography;
+import org.tsukuba_bunko.lilac.entity.Book;
 
 
 /**
- * 書誌情報管理Service
+ * 蔵書情報管理Service
  * @author ppoi
  * @version 2012.04
  */
-public interface BibliographyService {
+public interface BookService {
 
-	public Bibliography get(int id);
-
-	public Bibliography get(int id, boolean withBooks);
-
-	public SearchResult<Bibliography> list(BookSearchCondition condition, int offset, int limit);
-	
-	public long count(BookSearchCondition condition);
+	public Book get(int id);
 }

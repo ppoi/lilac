@@ -14,38 +14,52 @@ lilac.api = {
 };
 
 ///////////////////////////////////////////////////////////
+//Label API
+lilac.api.label = {
+	list: function() {
+		return $.ajax('/api/label', {
+			dataType: 'json',
+			type: 'GET'
+		});
+	}
+};
+
+///////////////////////////////////////////////////////////
+//Author API
+lilac.api.author = {
+	get: function(id) {
+		return $.ajax('/api/author/' + id, {
+			dataType: 'json',
+			type: 'GET'
+		});
+	}
+};
+
+///////////////////////////////////////////////////////////
+// Bibliography API
+lilac.api.bibliography = {
+	get: function(id) {
+		return $.ajax('/api/bibliography/' + id, {
+			dataType: 'json',
+			type: 'GET'
+		});
+	},
+
+	list: function(params, page) {
+		return $.ajax('/api/bibliography/list/' + page, {
+			data: params,
+			dataType: 'json',
+			type: 'GET'
+		});
+	}
+};
+
+///////////////////////////////////////////////////////////
 // Book API
 lilac.api.book = {
 	get: function(id) {
 		return $.ajax('/api/book/' + id, {
 			dataType: 'json',
-		});
-	},
-
-	list: function(params, page) {
-		return $.ajax('/api/book/list/' + page, {
-			data: params,
-			dataType: 'json',
-		});
-	}
-};
-
-///////////////////////////////////////////////////////////
-// Author API
-lilac.api.author = {
-	get: function(id) {
-		return $.ajax('/api/author/' + id, {
-			dataType: 'json'
-		});
-	}
-};
-
-///////////////////////////////////////////////////////////
-// Label API
-lilac.api.label = {
-	list: function() {
-		return $.ajax('/api/label', {
-			dataType: 'json'
 		});
 	}
 };

@@ -17,9 +17,11 @@ css/images/icons-18-white.png
 css/images/icons-36-black.png
 css/images/icons-36-white.png
 template/admin.html
+template/account.html
 template/author.html
 template/bibliography.html
 template/books.html
+template/credential.html
 template/export.html
 template/import.html
 template/loginform.html

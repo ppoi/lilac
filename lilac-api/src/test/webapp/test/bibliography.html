@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html" charset="UTF-8">
+		<title>API Test(Bibliography)</title>
+	</head>
+	<body>
+		<h1>Bibliography API</h1>
+		<h2 id="list">List</h2>
+		<div>
+			<form id="list-form">
+				<button id="execute-list">実行</button>
+				<div id="list-result">
+					<textarea rows="12" cols="60"></textarea>
+				</div>
+			</form>
+		</div>
+		<hr />
+		<h2 id="get">Get</h2>
+		<div>
+			<form id="get-form">
+				<input type="text" id="get-bibliography-id" size="24" /><button id="execute-get">取得</button>
+				<div id="get-result">
+					<textarea rows="12" cols="60"></textarea>
+				</div>
+			</form>
+		</div>
+		<script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript">
+			function showErrorMsg(jqXHR, textStatus, errorThrown) {
+				alert(textStatus + ":" + errorThrown);
+			}
+
+			$("#list-form").submit(function(event) {
+				event.preventDefault();
+				$.ajax("/api/bibliography/list", {
+					dataType: 'json',
+					type: 'GET'
+				}).done(function(data, textStatus, jqXHR) {
+					$("#list-result textarea").val(JSON.stringify(data));
+				}).fail(showErrorMsg);
+				return false;
+			});
+
+			$("#get-form").submit(function(event) {
+				event.preventDefault();
+				var bibliographyId = $("#get-bibliography-id").val();
+				$.ajax("/api/bibliography/" + bibliographyId, {
+					dataType: 'json',
+					type: 'GET'
+				}).done(function(data, textStatus, jqXHR) {
+					$("#get-result textarea").val(JSON.stringify(data));
+				}).fail(showErrorMsg);
+				return false;
+			});
+		</script>
+	</body>
+</html>

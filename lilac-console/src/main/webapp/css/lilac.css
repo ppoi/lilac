@@ -9,6 +9,15 @@
 	max-width: 30px;
 }
 
+.li-book-acuisition {
+	font-size: 12px;
+	font-weight: lighter;
+}
+.li-book-orphan {
+	font-size: 14px;
+	font-weight: lighter;
+}
+
 .header-buttons {
 	display: inline;
 	top: 1px;
