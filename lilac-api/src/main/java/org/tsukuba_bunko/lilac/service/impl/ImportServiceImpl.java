@@ -194,7 +194,7 @@ public class ImportServiceImpl implements ImportService {
 		ImportFile importFileEntity = jdbcManager.from(ImportFile.class)
 									.where(new SimpleWhere()
 										.eq("id", fileId)
-										.eq("user", userId)
+										.eq("username", userId)
 									).getSingleResult();
 		if(importFileEntity != null) {
 			File importFile = new File(importFileStore, String.format("%016d", importFileEntity.id));
