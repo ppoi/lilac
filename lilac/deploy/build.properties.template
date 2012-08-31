@@ -7,3 +7,5 @@ database.username=lilac_ct
 database.password=ci.lilac
 database.collate=ja_JP.UTF8
 database.ctype=ja_JP.UTF8
+
+lilac.api.importFileStore=/tmp
