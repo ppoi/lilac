@@ -51,11 +51,11 @@ Page.prototype.initialize = function () {
 		deferred.resolve();
 	}
 	else {
-		lilac.templates.get(this.templateURL)
+		lilac.loadTemplate(this.templateURL)
 			.done($.proxy(function(templates){
 				var page = $('#page-template', templates);
 				if(page.length) {
-					this.page = page.clone().attr('id', this.id).appendTo($.mobile.pageContainer);
+					this.page = page.attr('id', this.id).appendTo($.mobile.pageContainer);
 					this.customizePage(this.page);
 					this.page.page();
 					deferred.resolve();
@@ -180,12 +180,33 @@ var lilac = {
 		}
 	},
 
+	/**
+	 * りら初期化処理
+	 * @param eventData jQM初期化イベント
+	 */
 	initialize: function(eventData) {
 		lilac.api.session.get()
 			.done(function(session) {
 				lilac.session = session;
 				$.mobile.changePage(eventData.toPage, eventData.options);
 			});
+	},
+
+	/**
+	 * テンプレートをロードします
+	 */
+	loadTemplate: function(templateUrl) {
+		var deferred = $.Deferred();
+		var templateHolder = $('<div>');
+		templateHolder.load(templateUrl + " #templates > div", function(contents, textStatus){
+			if(textStatus == 'success' || textStatus == 'notmodified') {
+				deferred.resolve(templateHolder);
+			}
+			else {
+				deferred.reject();
+			}
+		});
+		return deferred.promise();
 	},
 
 	/**
@@ -255,34 +276,6 @@ PageCache.prototype = {
 	}
 };
 lilac.cache = new PageCache(10);
-
-///////////////////////////////////////////////////////////
-// Templates
-function TemplateManager(){
-	this.templates = {};
-};
-TemplateManager.prototype = {
-	get: function(templateUrl) {
-		var deferred = $.Deferred();
-		if(templateUrl in this.templates) {
-			deferred.resolve(this.templates[templateUrl]);
-		}
-		else {
-			var templateHolder = $('<div>');
-			templateHolder.load(templateUrl + " #templates > div", $.proxy(function(contents, textStatus){
-				if(textStatus == 'success' || textStatus == 'notmodified') {
-					this.templates[templateUrl] = templateHolder;
-					deferred.resolve(templateHolder);
-				}
-				else {
-					deferred.reject();
-				}
-			}, this));
-		}
-		return deferred.promise();
-	}
-};
-lilac.templates = new TemplateManager();
 
 
 ///////////////////////////////////////////////////////////
