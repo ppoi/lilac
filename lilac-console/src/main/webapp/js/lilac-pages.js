@@ -675,13 +675,18 @@ AuthorPage.prototype.getAuthor = function(aid) {
 			this.setEntityProperty(data, "twitter");
 	
 			var synonymList = $(this.prefixedId('synonymlist'), this.page);
-			$.each(data.synonym, function(index, entity){
-				var item = $('<li>').attr('id', 'author-' + entity.id).append(
-						$('<a>').attr('href', '#author' + entity.id).text(entity.name)
-					);
-				synonymList.append(item);
-			});
-			synonymList.listview('refresh');
+			if(!data.synonym.length) {
+				synonymList.remove();
+			}
+			else {
+				$.each(data.synonym, function(index, entity){
+					var item = $('<li>').attr('id', 'author-' + entity.id).append(
+							$('<a>').attr('href', '#author' + entity.id).text(entity.name)
+						);
+					synonymList.append(item);
+				});
+				synonymList.listview('refresh');
+			}
 			deferred.resolve();
 		}, this))
 		.fail(function(jqXHR, textStatus){

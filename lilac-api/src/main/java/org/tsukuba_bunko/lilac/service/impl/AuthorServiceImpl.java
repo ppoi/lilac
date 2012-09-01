@@ -1,6 +1,6 @@
 /*
  * All Rights Reserved.
- * Copyright (C) 2011 Tsukuba Bunko.
+ * Copyright (C) 2011-2012 Tsukuba Bunko.
  *
  * Licensed under the BSD License ("the License"); you may not use
  * this file except in compliance with the License.
@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.service.impl;
 
@@ -27,8 +25,9 @@ import org.tsukuba_bunko.lilac.service.AuthorService;
 import org.tsukuba_bunko.lilac.service.TextSearchWhere;
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * {@link AuthorService}実装
+ * @author ppoi
+ * @version 2012.05
  */
 public class AuthorServiceImpl implements AuthorService {
 
@@ -54,7 +53,7 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	public List<Author> synonym(int id) {
 		return jdbcManager.selectBySql(Author.class,
-				"SELECT DISTINCT a.* FROM author a JOIN author b ON a.synonym_key=b.synonym_key AND a.id!=b.id AND b.id=?", id)
+				"SELECT DISTINCT a.* FROM author a JOIN author b ON a.synonym_key=b.synonym_key AND a.synonym_key!=0 AND a.id!=b.id AND b.id=?", id)
 				.getResultList();
 	}
 
