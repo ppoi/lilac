@@ -671,8 +671,14 @@ AuthorPage.prototype.getAuthor = function(aid) {
 	lilac.api.author.get(aid)
 		.done($.proxy(function(data, textStatus) {
 			this.setEntityProperty(data, "name");
-			this.setEntityProperty(data, "website");
-			this.setEntityProperty(data, "twitter");
+			if(data.website) {
+				$(this.prefixedId('website')).empty().append(
+						$('<a target="_blank">').attr('href', data.website).text(data.website));
+			}
+			if(data.twitter) {
+				$(this.prefixedId('twitter')).empty().append(
+						$('<a target="_blank">').attr('href', 'http://twitter.com/' + data.twitter).text('@' + data.twitter));
+			}
 	
 			var synonymList = $(this.prefixedId('synonymlist'), this.page);
 			if(!data.synonym.length) {
