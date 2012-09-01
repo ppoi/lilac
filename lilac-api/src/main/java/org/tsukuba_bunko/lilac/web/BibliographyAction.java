@@ -19,6 +19,8 @@ package org.tsukuba_bunko.lilac.web;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.seasar.cubby.action.Accept;
 import org.seasar.cubby.action.ActionClass;
 import org.seasar.cubby.action.ActionResult;
@@ -33,53 +35,21 @@ import org.tsukuba_bunko.lilac.entity.BibAuthor;
 import org.tsukuba_bunko.lilac.entity.Bibliography;
 import org.tsukuba_bunko.lilac.entity.Book;
 import org.tsukuba_bunko.lilac.service.BibliographyService;
-import org.tsukuba_bunko.lilac.service.BookSearchCondition;
-import org.tsukuba_bunko.lilac.service.SearchResult;
-import org.tsukuba_bunko.lilac.web.converter.TextConverter;
 
 
 /**
  * Bibliography API
  * @author ppoi
- * @version 2012.04
+ * @version 2012.05
  */
 @ActionClass
 public class BibliographyAction {
 
-	@RequestParameter
-	public Integer id;
-
-	@RequestParameter(converter=TextConverter.class)
-	public String keyword;
-
-	@RequestParameter
-	public Integer authorId;
-
-	@RequestParameter(converter=TextConverter.class)
-	public String author;
-
-	@RequestParameter(converter=TextConverter.class)
-	public String label;
-
-	@RequestParameter
-	public boolean excludeRead = false;
-
-	@RequestParameter
-	public List<BookSearchCondition.OrderBy> orderBy;
-
+	@Resource
 	public BibliographyService bibliographyService;
 
 	@RequestParameter
-	public Integer page;
-
-	public int itemsPerPage = 10;
-
-	@Path("/bibliography")
-	@Accept(RequestMethod.GET)
-	public ActionResult index() throws Exception {
-		page = 0;
-		return list();
-	}
+	public Integer id;
 
 	@Path("/bibliography/{id,\\d+}")
 	@Accept(RequestMethod.GET)
@@ -113,45 +83,5 @@ public class BibliographyAction {
 		}
 		bibDto.put("books", books);
 		return new Json(bibDto);
-	}
-
-	@Path("/bibliography/list/{page,\\d*}")
-	public ActionResult list() {
-		if(page == null) {
-			page = 0;
-		}
-
-		BookSearchCondition condition = new BookSearchCondition();
-		condition.keyword = keyword;
-		condition.authorId = authorId;
-		condition.authorKeyword = author;
-		condition.label = label;
-		condition.orderBy = orderBy;
-		condition.excludeRead = excludeRead;
-		SearchResult<Bibliography> result = bibliographyService.list(condition, page * itemsPerPage, itemsPerPage); 
-
-		BeanMap dto = new BeanMap();
-		
-		dto.put("count", result.count);
-
-		List<BeanMap> bibDtoList = new java.util.ArrayList<BeanMap>();
-		for(Bibliography bib : result.items) {
-			BeanMap bibDto = Beans.createAndCopy(BeanMap.class, bib)
-					.dateConverter("yyyy/MM/dd", "publicationDate")
-					.excludes("authors", "books").execute();
-			List<BeanMap> authors = new java.util.ArrayList<BeanMap>(); 
-			for(BibAuthor bibauth : bib.authors) {
-				BeanMap bibauthDto = new BeanMap();
-				bibauthDto.put("id", bibauth.authorId);
-				bibauthDto.put("name", bibauth.author.name);
-				bibauthDto.put("role", bibauth.role);
-				authors.add(bibauthDto);
-			}
-			bibDto.put("authors", authors);
-			bibDtoList.add(bibDto);
-		}
-		dto.put("items", bibDtoList);
-
-		return new Json(dto);
 	}
 }

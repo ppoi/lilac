@@ -42,7 +42,7 @@ BookListPageBase.prototype.listBooks = function(options) {
 		$.mobile.loading('show');
 	}
 
-	lilac.api.bibliography.list(options.condition, options.page)
+	lilac.api.booksearch.list(options.condition, options.page)
 		.done($.proxy(function (data, textStatus, jqXHR) {
 			this.makeResultList(data, (options.page == 0));
 			this.search.condition = options.condition;

@@ -36,6 +36,19 @@ lilac.api.author = {
 };
 
 ///////////////////////////////////////////////////////////
+// BookSearch API
+lilac.api.booksearch = {
+		list: function(params, page) {
+			return $.ajax('/api/booksearch/' + page, {
+				data: params,
+				dataType: 'json',
+				type: 'GET'
+			});
+		}
+};
+
+
+///////////////////////////////////////////////////////////
 // Bibliography API
 lilac.api.bibliography = {
 	get: function(id) {
@@ -44,14 +57,6 @@ lilac.api.bibliography = {
 			type: 'GET'
 		});
 	},
-
-	list: function(params, page) {
-		return $.ajax('/api/bibliography/list/' + page, {
-			data: params,
-			dataType: 'json',
-			type: 'GET'
-		});
-	}
 };
 
 ///////////////////////////////////////////////////////////

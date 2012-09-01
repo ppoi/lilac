@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html" charset="UTF-8">
+		<title>API Test(Book Search)</title>
+	</head>
+	<body>
+		<h1>Book Search API</h1>
+		<h2 id="list">List</h2>
+		<div>
+			<form id="list-form">
+				<label for="search-isbn">ISBN</label>
+				<input type="text" id="search-isbn" name="isbn" /><br />
+				<label for="search-keyword">キーワード</label>
+				<input type="text" id="search-keyword" name="title" /><br />
+				<label for="search-author">著者</label>
+				<input type="text" id="search-author" name="author" /><br />
+				<label for="search-author">著者(ID)</label>
+				<input type="text" id="search-authorId" name="authorId" /><br />
+				<label for="search-label">レーベル</label>
+				<input type="text" id="search-label" name="label" /><br />
+				<label for="search-acquisitionDate">出版日</label>
+				<input type="date" id="search-publicationDateBegin" name="publicationDateBegin" /> ～ <input type="date" id="search-publicationDateEnd" name="publicationDateEnd" /><br />
+				<label for="search-acquisitionDate">購入日</label>
+				<input type="date" id="search-acquisitionDateBegin" name="acquisitionBegin" /> ～ <input type="date" id="search-acquisitionDateEnd" name="acquisitionDateEnd" /><br />
+				<label for="search-page">#</label>
+				<input type="number" id="search-page" value="0" />
+				<button id="execute-list">実行</button>
+				<div id="list-result">
+					<textarea rows="12" cols="60"></textarea>
+				</div>
+			</form>
+		</div>
+		<hr />
+		<script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript">
+			function showErrorMsg(jqXHR, textStatus, errorThrown) {
+				alert(textStatus + ":" + errorThrown);
+			}
+
+			$("#list-form").submit(function(event) {
+				event.preventDefault();
+				var condition = {
+					isbn: $('#search-isbn').val(),
+					keyword: $('#search-keyword').val(),
+					author: $('#search-author').val(),
+					authorId: $('#search-authorId').val(),
+					label: $('#search-label').val(),
+					publicationDateBegin: $('#search-publicationDateBegin').val(),
+					publicationDateEnd: $('#search-publicationDateEnd').val(),
+					acquisitionDateBegin: $('#search-acquisitionDateBegin').val(),
+					acquisitionDateEnd: $('#search-acquisitionDateEnd').val(),
+				};
+				var page = $('#search-page').val();
+				$.ajax("/api/booksearch/" + page, {
+					dataType: 'json',
+					data: condition,
+					type: 'GET'
+				}).done(function(data, textStatus, jqXHR) {
+					$("#list-result textarea").val(JSON.stringify(data));
+				}).fail(showErrorMsg);
+				return false;
+			});
+		</script>
+	</body>
+</html>
