@@ -1,11 +1,5 @@
 
 /**
- * 共通ユーティリティ
- */
-Utility = {
-};
-
-/**
  * 書籍一覧ページ共通
  */
 BookListPageBase = lilac.extend(Page, function(self, id, template) {
@@ -422,13 +416,16 @@ ImportPage = lilac.extend(Page, function(id) {
 ImportPage.prototype.customizePage = function(page) {
 	$("#execute-upload").click($.proxy(function(event) {
 		event.preventDefault();
+		$.mobile.loading('show');
 		$('#upload-file').upload("/api/import", $.proxy(function(data){
 			lilac.api.importData.list()
 				.done($.proxy(function(data, textStatus, jqXHR) {
 					this.refleshFileList(data);
+					$.mobile.loading('hide');
 				}, this))
 				.fail(function (jqXHR, textStatus, errorThrown) {
 					window.alert("インポートファイルの取得に失敗: " + textStatus);
+					$.mobile.loading('hide');
 				});
 		}, this), "html");
 		return false;
@@ -446,13 +443,16 @@ ImportPage.prototype.customizePage = function(page) {
 			var fileLabel = $('label[for="importfile-' + fileId + '"]').text();
 			var confirmMessage = this.action == 'importData' ? "以下のファイルをインポートします" : "以下のファイルを削除します";
 			if(window.confirm(confirmMessage + "\n" + fileLabel)) {
+				$.mobile.loading('show');
 				lilac.api.importData[this.action](fileId);
 					lilac.api.importData.list()
 					.done($.proxy(function(data, textStatus, jqXHR) {
 						this.refleshFileList(data);
+						$.mobile.loading('hide');
 					}, this))
 					.fail(function (jqXHR, textStatus, errorThrown) {
 						window.alert("インポートファイルの取得に失敗: " + textStatus);
+						$.mobile.loading('hide');
 					});
 			}
 		}
