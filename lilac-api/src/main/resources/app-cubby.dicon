@@ -22,4 +22,7 @@
 
 	<component class="org.apache.commons.fileupload.servlet.ServletRequestContext" instance="prototype"/>
 
+	<component class="org.seasar.cubby.controller.impl.DefaultFormatPattern">
+	</component>
+
 </components>

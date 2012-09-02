@@ -1,6 +1,6 @@
 /*
  * All Rights Reserved.
- * Copyright (C) 2011 Tsukuba Bunko.
+ * Copyright (C) 2011-2012 Tsukuba Bunko.
  *
  * Licensed under the BSD License ("the License"); you may not use
  * this file except in compliance with the License.
@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.service;
 
@@ -23,29 +21,65 @@ import java.util.List;
 
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * 蔵書検索条件
+ * @author ppoi
+ * @version 2012.05
  */
 public class BookSearchCondition {
 
+	/**
+	 * 検索キーワード(タイトル/サブタイトル/著者名)
+	 */
 	public String keyword;
 
+	/**
+	 * 著者(ID)
+	 */
 	public Integer authorId;
 
-	public String authorKeyword;
-
+	/**
+	 * レーベル
+	 */
 	public String label;
 
+	/**
+	 * ISBN
+	 */
 	public String isbn;
 
+	/**
+	 * 読了書籍の除外フラグ
+	 */
 	public boolean excludeRead;
 
+	/**
+	 * 出版日(範囲開始)
+	 */
 	public Date publicationDateBegin;
 
+	/**
+	 * 出版日(範囲終了)
+	 */
 	public Date publicationDateEnd;
 
-	public String user;
+	/**
+	 * 購入日(範囲開始)
+	 */
+	public Date acquisitionDateBegin;
 
+	/**
+	 * 購入日(範囲終了)
+	 */
+	public Date acquisitionDateEnd;
+
+	/**
+	 * 蔵書オーナー
+	 */
+	public String owner;
+
+	/**
+	 * ソート条件
+	 */
 	public List<OrderBy> orderBy;
 
 	public static enum OrderBy {

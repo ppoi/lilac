@@ -13,8 +13,6 @@
 				<input type="text" id="search-isbn" name="isbn" /><br />
 				<label for="search-keyword">キーワード</label>
 				<input type="text" id="search-keyword" name="title" /><br />
-				<label for="search-author">著者</label>
-				<input type="text" id="search-author" name="author" /><br />
 				<label for="search-author">著者(ID)</label>
 				<input type="text" id="search-authorId" name="authorId" /><br />
 				<label for="search-label">レーベル</label>
@@ -43,7 +41,6 @@
 				var condition = {
 					isbn: $('#search-isbn').val(),
 					keyword: $('#search-keyword').val(),
-					author: $('#search-author').val(),
 					authorId: $('#search-authorId').val(),
 					label: $('#search-label').val(),
 					publicationDateBegin: $('#search-publicationDateBegin').val(),

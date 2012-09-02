@@ -16,6 +16,7 @@
  */
 package org.tsukuba_bunko.lilac.web;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -55,10 +56,19 @@ public class BookSearchAction {
 	public Integer authorId;
 
 	@RequestParameter(converter=TextConverter.class)
-	public String author;
-
-	@RequestParameter(converter=TextConverter.class)
 	public String label;
+
+	@RequestParameter
+	public Date publicationDateBegin;
+
+	@RequestParameter
+	public Date publicationDateEnd;
+
+	@RequestParameter
+	public Date acquisitionDateBegin;
+
+	@RequestParameter
+	public Date acquisitionDateEnd;
 
 	@RequestParameter
 	public List<BookSearchCondition.OrderBy> orderBy;
@@ -85,8 +95,11 @@ public class BookSearchAction {
 		BookSearchCondition condition = new BookSearchCondition();
 		condition.keyword = keyword;
 		condition.authorId = authorId;
-		condition.authorKeyword = author;
 		condition.label = label;
+		condition.publicationDateBegin = publicationDateBegin;
+		condition.publicationDateEnd = publicationDateEnd;
+		condition.acquisitionDateBegin = acquisitionDateBegin;
+		condition.acquisitionDateEnd = acquisitionDateEnd;
 		condition.orderBy = orderBy;
 		SearchResult<Bibliography> result = bibliographyService.list(condition, page * itemsPerPage, itemsPerPage); 
 

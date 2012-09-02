@@ -1,6 +1,6 @@
 /*
  * All Rights Reserved.
- * Copyright (C) 2011 Tsukuba Bunko.
+ * Copyright (C) 2011-2012 Tsukuba Bunko.
  *
  * Licensed under the BSD License ("the License"); you may not use
  * this file except in compliance with the License.
@@ -13,12 +13,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.service.impl;
 
 import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.seasar.extension.jdbc.AutoSelect;
 import org.seasar.extension.jdbc.JdbcManager;
@@ -32,10 +32,11 @@ import org.tsukuba_bunko.lilac.service.SearchResult;
 /**
  * {@link BibliographyService} 実装
  * @author ppoi
- * @version 2012.04
+ * @version 2012.05
  */
 public class BibliographyServiceImpl implements BibliographyService {
 
+	@Resource
 	public JdbcManager jdbcManager;
 
 	/**
@@ -145,26 +146,43 @@ public class BibliographyServiceImpl implements BibliographyService {
 			whereClause.add("(s_b.label=?)");
 			query.params.add(condition.label);
 		}
+		if(condition.publicationDateBegin != null) {
+			whereClause.add("(s_b.publication_date>=?)");
+			query.params.add(condition.publicationDateBegin);
+		}
+		if(condition.publicationDateEnd != null) {
+			whereClause.add("(s_b.publication_date<=?)");
+			query.params.add(condition.publicationDateEnd);
+		}
 		if(!StringUtil.isBlank(condition.keyword)) {
-			whereClause.add("(s_b.title %% ? OR s_b.subtitle %% ?)");
+			fromClause.add("JOIN bib_author AS s_ba ON s_ba.bibliography_id=s_b.id ");
+			fromClause.add("JOIN author AS s_a ON s_ba.author_id=s_a.id ");
+			whereClause.add("(s_b.title %% ? OR s_b.subtitle %% ? OR s_a.name %% ?)");
+			query.params.add(condition.keyword);
 			query.params.add(condition.keyword);
 			query.params.add(condition.keyword);
 		}
-		if(!StringUtil.isBlank(condition.authorKeyword) || (condition.authorId != null)) {
-			fromClause.add("JOIN bib_author AS s_ba ON s_ba.bibliography_id=s_b.\"id\" ");
-			if(condition.authorId != null) {
-				whereClause.add("(s_ba.author_id=?)");
-				query.params.add(condition.authorId);				
+		if(condition.authorId != null) {
+			if(StringUtil.isBlank(condition.keyword)) {
+				fromClause.add("JOIN bib_author AS s_ba ON s_ba.bibliography_id=s_b.id ");
 			}
-			else {
-				fromClause.add("JOIN author AS s_a ON s_ba.author_id=s_a.\"id\" ");
-				whereClause.add("(s_a.name %% ?)");
-				query.params.add(condition.authorKeyword);
+			whereClause.add("(s_ba.author_id=?)");
+			query.params.add(condition.authorId);				
+		}
+		if(condition.acquisitionDateBegin != null || condition.acquisitionDateEnd != null) {
+			fromClause.add("JOIN book AS s_bk ON s_b.id=s_bk.bibliography_id ");
+			if(condition.acquisitionDateBegin != null) {
+				whereClause.add("(s_bk.acquisition_date>=?)");
+				query.params.add(condition.acquisitionDateBegin);
+			}
+			if(condition.acquisitionDateEnd != null) {
+				whereClause.add("(s_bk.acquisition_date<=?)");
+				query.params.add(condition.acquisitionDateEnd);
 			}
 		}
 		if(condition.excludeRead) {
-			whereClause.add("s_b.id IN (SELECT DISTINCT rr.bibliography_id FROM read_record AS rr WHERE rr.\"user\"=?)");
-			query.params.add(condition.user);
+			whereClause.add("s_b.id IN (SELECT DISTINCT rr.bibliography_id FROM read_record AS rr WHERE rr.reader=?)");
+			query.params.add(condition.owner);
 		}
 		
 		StringBuilder sink = new StringBuilder();
