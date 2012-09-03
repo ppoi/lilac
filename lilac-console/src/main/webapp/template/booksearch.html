@@ -16,13 +16,20 @@
 		<div data-role="collapsible" data-theme="e" data-content-theme="c">
 			<h3 id="booksearchform-title">検索条件</h3>
 			<form id="booksearchform" data-ajax="false">
-				<label for="booksearch-keyword">キーワード</label><input type="search" id="booksearch-keyword" name="keyword" /><br />
-				<label for="booksearch-label">レーベル</label><select id="booksearch-label" name="label" data-theme="c">
-					<option value=""> </option>
-				</select><br />
-				<hr />
-				<label>出版日</label><input type="date" id="booksearch-publicationDateBegin" /> ～ <input type="date" id="booksearch-publicationDateEnd" /><br />
-				<label>購入日</label><input type="date" id="booksearch-acquisitionDateBegin" /> ～ <input type="date" id="booksearch-acquisitionDateEnd" /><br />
+				<div data-role="fieldcontain" class="ui-hide-label">
+					<input type="search" id="booksearch-keyword" name="keyword" placeholder="キーワード" /><br />
+					<label for="booksearch-label">レーベル</label><select id="booksearch-label" name="label" data-theme="c">
+						<option value=""></option>
+					</select>
+				</div>
+				<div data-role="collapsible">
+					<h4>出版日</h4>
+					<input type="date" id="booksearch-publicationDateBegin" /> ～ <input type="date" id="booksearch-publicationDateEnd" />
+				</div>
+				<div data-role="collapsible">
+					<h4>購入日</h4>
+					<input type="date" id="booksearch-acquisitionDateBegin" /> ～ <input type="date" id="booksearch-acquisitionDateEnd" />
+				</div>
 				<input type="submit" value="検索" data-theme="b" />
 				<input type="reset" value="クリア" data-theme="c" />
 			</form>

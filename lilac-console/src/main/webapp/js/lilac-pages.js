@@ -560,6 +560,75 @@ BookSearchPage.prototype.updateLabelOptions = function() {
 	return deferred.promise();
 };
 
+/**
+ * 蔵書更新情報ページ
+ */
+ArrivalPage = lilac.extend(BookListPageBase, function(id){
+	this.__super__.constructor(this, id, 'template/arrival.html');
+	this.prepared = false;
+});
+ArrivalPage.prototype.customizePage = function(page) {
+	this.__super__.customizePage.apply(this, arguments);
+	$('#arrival-selectform').submit($.proxy(function(event) {
+		event.preventDefault();
+		$('#arrival-month').click();
+		$.mobile.loading('show');
+		this.updateArrival($('#arrival-select-year').val(), $('#arrival-select-month').val())
+			.done(function() {
+				$.mobile.loading('hide');
+			})
+			.fail(function() {
+				$.mobile.loading('hide');
+			});
+		return false;
+	}, this));
+};
+ArrivalPage.prototype.prepare = function(path, options) {
+	var deferred = $.Deferred();
+	if(this.prepared) {
+		deferred.resolve(this.page);
+	}
+	else {
+		var now = new Date();
+		this.updateArrival(now.getFullYear(), now.getMonth() + 1)
+			.done($.proxy(function() {
+				this.prepared = true;
+				deferred.resolve(this.page);
+			}, this))
+			.fail(function() {
+				deferred.reject();
+			});
+	}
+	return deferred.promise();
+};
+ArrivalPage.prototype.updateArrival = function(year, month) {
+	var deferred = $.Deferred();
+
+	var lastDayOfMonth = new Date(year, month, 0);
+	var searchOptions = {
+		condition: {
+			acquisitionDateBegin: this.dateToString(year, month, 1),
+			acquisitionDateEnd: this.dateToString(lastDayOfMonth.getFullYear(), lastDayOfMonth.getMonth() + 1, lastDayOfMonth.getDate())
+		},
+		page: 0,
+		showLoadingMsg: false
+	};
+	this.listBooks(searchOptions)
+		.done($.proxy(function() {
+			$('#arrival-select-year').val(year);
+			$('#arrival-select-month').val(month);
+			$('#arrival-select-year').selectmenu('refresh');
+			$('#arrival-select-month').selectmenu('refresh');
+			deferred.resolve();
+		}, this))
+		.fail(function() {
+			deferred.reject();
+		});
+	return deferred.promise();
+};
+ArrivalPage.prototype.dateToString = function(year, month, day) {
+	return '' + year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+};
 
 /**
  * 書誌情報ページ
@@ -722,6 +791,7 @@ AuthorPage.prototype.getAuthor = function(aid) {
 lilac.actions = [
 	new Action('#main', MainPage),
 	new Action('#booksearch', BookSearchPage),
+	new Action('#arrival', ArrivalPage),
 	new Action('#bib(?<bid>\\d+)', BibliographyPage),
 	new Action('#author(?<aid>\\d+)', AuthorPage),
 	new Action('#login', LoginPage),
