@@ -20,7 +20,7 @@ template/admin.html
 template/account.html
 template/author.html
 template/bibliography.html
-template/books.html
+template/booksearch.html
 template/credential.html
 template/export.html
 template/import.html

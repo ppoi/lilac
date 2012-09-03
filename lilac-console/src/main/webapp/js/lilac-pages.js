@@ -488,22 +488,33 @@ ImportPage.prototype.refleshFileList = function(data) {
 };
 
 /**
- * 書籍検索
+ * 蔵書検索ページ
  */
 BookSearchPage = lilac.extend(BookListPageBase, function(id){
-	this.__super__.constructor(this, id, 'template/books.html');
+	this.__super__.constructor(this, id, 'template/booksearch.html');
 });
 BookSearchPage.prototype.customizePage = function(page) {
 	this.__super__.customizePage.apply(this, arguments);
 	$('form#booksearchform', page).submit($.proxy(function(event) {
 		event.preventDefault();
-		$('#booksearch').click();
+		var condition = {};
+		var value;
+		(value = $('#booksearch-keyword').val()) && (condition['keyword'] = value);
+		(value = $('#booksearch-label').val()) && (condition['label'] = value);
+		(value = $('#booksearch-publicationDateBegin').val()) && (condition['publicationDateBegin'] = value);
+		(value = $('#booksearch-publicationDateEnd').val()) && (condition['publicationDateEnd'] = value);
+		(value = $('#booksearch-acquisitionDateBegin').val()) && (condition['acquisitionDateBegin'] = value);
+		(value = $('#booksearch-acquisitionDateEnd').val()) && (condition['acquisitionDateEnd'] = value);
 		var searchOptions = {
-			condition: $('#booksearchform').serialize(),
+			condition: condition,
 			page: 0,
 			showLoadingMsg: true
 		};
-		this.listBooks(searchOptions);
+		this.listBooks(searchOptions)
+			.done(function() {
+				$('#booksearchform-title').click();
+				$.mobile.silentScroll();
+			});
 		return false;
 	}, this));
 };
@@ -532,7 +543,7 @@ BookSearchPage.prototype.updateLabelOptions = function() {
 	var deferred = $.Deferred();
 	lilac.api.label.list()
 		.done($.proxy(function (data, textStatus, jqXHR) {
-			var select = $('#labeloptions', this.page);
+			var select = $('#booksearch-label', this.page);
 			if(select.length > 0) {
 				$('option:first ~ option', select).remove();
 				$.each(data, function(index, entity){
@@ -549,6 +560,10 @@ BookSearchPage.prototype.updateLabelOptions = function() {
 	return deferred.promise();
 };
 
+
+/**
+ * 書誌情報ページ
+ */
 BibliographyPage = lilac.extend(Page, function(id){
 	this.__super__.constructor(this, id, 'template/bibliography.html');
 	this.rendered = false;
@@ -706,7 +721,7 @@ AuthorPage.prototype.getAuthor = function(aid) {
 // Action定義
 lilac.actions = [
 	new Action('#main', MainPage),
-	new Action('#list', BookSearchPage),
+	new Action('#booksearch', BookSearchPage),
 	new Action('#bib(?<bid>\\d+)', BibliographyPage),
 	new Action('#author(?<aid>\\d+)', AuthorPage),
 	new Action('#login', LoginPage),
