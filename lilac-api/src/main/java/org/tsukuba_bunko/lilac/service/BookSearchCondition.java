@@ -89,6 +89,16 @@ public class BookSearchCondition {
 	 */
 	public static enum OrderBy {
 		/**
+		 * レーベル(昇順)
+		 */
+		labelAsc("label", "label", "ASC"),
+
+		/**
+		 * レーベル(昇順)
+		 */
+		labelDesc("label", "label", "DESC"),
+
+		/**
 		 * タイトル(昇順)
 		 */
 		titleAsc("title", "title", "ASC"),
