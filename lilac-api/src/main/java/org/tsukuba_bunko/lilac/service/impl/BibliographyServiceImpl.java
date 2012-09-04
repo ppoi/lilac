@@ -182,12 +182,7 @@ public class BibliographyServiceImpl implements BibliographyService {
 			query.params.add(condition.authorId);				
 		}
 		if(isIncludeBookProperty(condition)) {
-			if(condition.acquisitionDateBegin != null || condition.acquisitionDateEnd != null) {
-				fromClause.add("JOIN book AS s_bk ON s_b.id=s_bk.bibliography_id ");
-			}
-			else {
-				fromClause.add("LEFT OUTER JOIN book AS s_bk ON s_b.id=s_bk.bibliography_id ");
-			}
+			fromClause.add("JOIN book AS s_bk ON s_b.id=s_bk.bibliography_id ");
 			if(condition.acquisitionDateBegin != null) {
 				whereClause.add("(s_bk.acquisition_date>=?)");
 				query.params.add(condition.acquisitionDateBegin);
