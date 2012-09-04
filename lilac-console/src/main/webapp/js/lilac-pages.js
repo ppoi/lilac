@@ -571,10 +571,11 @@ ArrivalPage.prototype.customizePage = function(page) {
 	this.__super__.customizePage.apply(this, arguments);
 	$('#arrival-selectform').submit($.proxy(function(event) {
 		event.preventDefault();
-		$('#arrival-month').click();
 		$.mobile.loading('show');
 		this.updateArrival($('#arrival-select-year').val(), $('#arrival-select-month').val())
 			.done(function() {
+				$('#arrival-month-title').click();
+				$.mobile.silentScroll();
 				$.mobile.loading('hide');
 			})
 			.fail(function() {
@@ -609,7 +610,9 @@ ArrivalPage.prototype.updateArrival = function(year, month) {
 		condition: {
 			acquisitionDateBegin: this.dateToString(year, month, 1),
 			acquisitionDateEnd: this.dateToString(lastDayOfMonth.getFullYear(), lastDayOfMonth.getMonth() + 1, lastDayOfMonth.getDate()),
-			sort1: 'acquisitionDateAsc'
+			sort1: 'acquisitionDateAsc',
+			sort2: 'labelAsc',
+			sort3: 'titleAsc'
 		},
 		page: 0,
 		showLoadingMsg: false
