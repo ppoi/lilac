@@ -608,7 +608,8 @@ ArrivalPage.prototype.updateArrival = function(year, month) {
 	var searchOptions = {
 		condition: {
 			acquisitionDateBegin: this.dateToString(year, month, 1),
-			acquisitionDateEnd: this.dateToString(lastDayOfMonth.getFullYear(), lastDayOfMonth.getMonth() + 1, lastDayOfMonth.getDate())
+			acquisitionDateEnd: this.dateToString(lastDayOfMonth.getFullYear(), lastDayOfMonth.getMonth() + 1, lastDayOfMonth.getDate()),
+			sort1: 'acquisitionDateAsc'
 		},
 		page: 0,
 		showLoadingMsg: false
@@ -619,6 +620,7 @@ ArrivalPage.prototype.updateArrival = function(year, month) {
 			$('#arrival-select-month').val(month);
 			$('#arrival-select-year').selectmenu('refresh');
 			$('#arrival-select-month').selectmenu('refresh');
+			$('#arrival-month').text('' + year + '年' + month + '月');
 			deferred.resolve();
 		}, this))
 		.fail(function() {
