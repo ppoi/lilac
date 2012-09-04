@@ -26,6 +26,7 @@ import org.seasar.framework.util.StringUtil;
 import org.tsukuba_bunko.lilac.entity.Bibliography;
 import org.tsukuba_bunko.lilac.service.BibliographyService;
 import org.tsukuba_bunko.lilac.service.BookSearchCondition;
+import org.tsukuba_bunko.lilac.service.BookSearchCondition.OrderBy;
 import org.tsukuba_bunko.lilac.service.SearchResult;
 
 
@@ -35,6 +36,8 @@ import org.tsukuba_bunko.lilac.service.SearchResult;
  * @version 2012.05
  */
 public class BibliographyServiceImpl implements BibliographyService {
+
+	public static final List<OrderBy> DEFAULT_ORDERBY_LIST = java.util.Arrays.asList(OrderBy.titleAsc, OrderBy.publicationDateAsc);
 
 	@Resource
 	public JdbcManager jdbcManager;
@@ -56,8 +59,8 @@ public class BibliographyServiceImpl implements BibliographyService {
 				.innerJoin("authors")
 				.innerJoin("authors.author");
 		if(withBooks) {
-			select.leftOuterJoin("books");
-			select.leftOuterJoin("books.location");
+			select.leftOuterJoin("books")
+				.leftOuterJoin("books.location");
 		}
 		return select.where("id=?", id).getSingleResult();
 	}
@@ -69,12 +72,15 @@ public class BibliographyServiceImpl implements BibliographyService {
 	public SearchResult<Bibliography> list(BookSearchCondition condition, int offset, int limit) {
 		SearchResult<Bibliography> result = new SearchResult<Bibliography>();
 		result.count = count(condition);
-		result.items = prepare(
-				jdbcManager.from(Bibliography.class)
-						.innerJoin("authors")
-						.innerJoin("authors.author"),
-				condition, offset, limit
-			).getResultList();
+
+		AutoSelect<Bibliography> select = jdbcManager.from(Bibliography.class)
+				.innerJoin("authors")
+				.innerJoin("authors.author");
+		if(isIncludeBookProperty(condition)) {
+			select.leftOuterJoin("books", false);
+		}
+		result.items = query(select, condition, offset, limit).getResultList();
+
 		return result;
 	}
 
@@ -83,12 +89,16 @@ public class BibliographyServiceImpl implements BibliographyService {
 	 */
 	@Override
 	public long count(BookSearchCondition condition) {
-		SearchQuery query = createSearchQuery(condition);
+		SearchQuery query = createSearchQuery(condition, false);
 		return jdbcManager.getCountBySql(query.sql, query.params.toArray());
 	}
 
-	public AutoSelect<Bibliography> prepare(AutoSelect<Bibliography> select, BookSearchCondition condition, int offset, int limit) {
-		SearchQuery query = createSearchQuery(condition);
+	public AutoSelect<Bibliography> query(AutoSelect<Bibliography> select, BookSearchCondition condition, int offset, int limit) {
+		if(condition.orderBy == null || condition.orderBy.isEmpty()) {
+			condition.orderBy = DEFAULT_ORDERBY_LIST;
+		}
+
+		SearchQuery query = createSearchQuery(condition, true);
 
 		StringBuilder sink = new StringBuilder();
 		sink.append("id IN (SELECT __IDCOL FROM (");
@@ -108,25 +118,25 @@ public class BibliographyServiceImpl implements BibliographyService {
 		sink.append(") SELECT_)");
 
 		select.where(new String(sink), query.params.toArray());
-		
-		if(condition.orderBy == null || condition.orderBy.isEmpty()) {
-			select.orderBy(BookSearchCondition.OrderBy.titleAsc.getS2JDBCExpression());
-		}
-		else {
-			StringBuilder orderByClause = new StringBuilder();
-			int count = 0;
-			for(BookSearchCondition.OrderBy orderBy : condition.orderBy) {
-				if(orderBy == null) {
-					continue;
-				}
-				if(count != 0) {
-					orderByClause.append(", ");
-				}
-				orderByClause.append(orderBy.getS2JDBCExpression());
-				count++;
+
+		StringBuilder orderByClause = new StringBuilder();
+		int count = 0;
+		for(OrderBy orderBy : condition.orderBy) {
+			if(orderBy == null) {
+				continue;
 			}
-			select.orderBy(new String(orderByClause));
+			if(count != 0) {
+				orderByClause.append(", ");
+			}
+			if(orderBy == OrderBy.acquisitionDateAsc || orderBy == OrderBy.acquisitionDateDesc) {
+				orderByClause.append(orderBy.getS2JDBCExpression("books"));
+			}
+			else {
+				orderByClause.append(orderBy.getS2JDBCExpression());
+			}
+			count++;
 		}
+		select.orderBy(new String(orderByClause));
 
 		return select;
 	}
@@ -135,11 +145,13 @@ public class BibliographyServiceImpl implements BibliographyService {
 		List<Object> params = new java.util.ArrayList<Object>();
 		String sql;
 	}
-	protected SearchQuery createSearchQuery(BookSearchCondition condition) {
+	protected SearchQuery createSearchQuery(BookSearchCondition condition, boolean withOrderByClause) {
 		SearchQuery query = new SearchQuery();
 
+		List<String> selectClause = new java.util.ArrayList<String>();
 		List<String> fromClause = new java.util.ArrayList<String>();
 		List<String> whereClause = new java.util.ArrayList<String>();
+		List<String> orderByClause = new java.util.ArrayList<String>();
 
 		fromClause.add("FROM bibliography AS s_b ");
 		if(!StringUtil.isBlank(condition.label)) {
@@ -169,8 +181,13 @@ public class BibliographyServiceImpl implements BibliographyService {
 			whereClause.add("(s_ba.author_id=?)");
 			query.params.add(condition.authorId);				
 		}
-		if(condition.acquisitionDateBegin != null || condition.acquisitionDateEnd != null) {
-			fromClause.add("JOIN book AS s_bk ON s_b.id=s_bk.bibliography_id ");
+		if(isIncludeBookProperty(condition)) {
+			if(condition.acquisitionDateBegin != null || condition.acquisitionDateEnd != null) {
+				fromClause.add("JOIN book AS s_bk ON s_b.id=s_bk.bibliography_id ");
+			}
+			else {
+				fromClause.add("LEFT OUTER JOIN book AS s_bk ON s_b.id=s_bk.bibliography_id ");
+			}
 			if(condition.acquisitionDateBegin != null) {
 				whereClause.add("(s_bk.acquisition_date>=?)");
 				query.params.add(condition.acquisitionDateBegin);
@@ -184,58 +201,86 @@ public class BibliographyServiceImpl implements BibliographyService {
 			whereClause.add("s_b.id IN (SELECT DISTINCT rr.bibliography_id FROM read_record AS rr WHERE rr.reader=?)");
 			query.params.add(condition.owner);
 		}
-		
-		StringBuilder sink = new StringBuilder();
-		sink.append("SELECT DISTINCT s_b.\"id\" __IDCOL");
-		if(condition.orderBy == null || condition.orderBy.isEmpty()) {
-			sink.append(", s_b.title");
-		}
-		else {
-			for(BookSearchCondition.OrderBy orderBy : condition.orderBy) {
+
+		if(withOrderByClause) {
+			for(OrderBy orderBy : condition.orderBy) {
 				if(orderBy == null) {
 					continue;
 				}
-				sink.append(", ");
-				sink.append("s_b." + orderBy.getColumnName());
+				if(orderBy == OrderBy.acquisitionDateAsc || orderBy == OrderBy.acquisitionDateDesc) {
+					selectClause.add("s_bk." + orderBy.getColumnName());
+					orderByClause.add(orderBy.getSql("s_bk"));
+				}
+				else {
+					selectClause.add("s_b." + orderBy.getColumnName());
+					orderByClause.add(orderBy.getSql("s_b"));
+				}
 			}
 		}
-		sink.append(" ");
 
+		StringBuilder sink = new StringBuilder();
+
+		sink.append("SELECT DISTINCT s_b.id __IDCOL");
+		for(String column : selectClause) {
+			sink.append(", ");
+			sink.append(column);
+		}
+
+		sink.append(" ");
 		for(String entry : fromClause) {
 			sink.append(entry);
 		}
-		int count = 0;
-		for(String entry : whereClause) {
-			if(count == 0) {
+
+		int whereClauseSize = whereClause.size();
+		for(int i = 0; i < whereClauseSize; ++i) {
+			if(i == 0) {
 				sink.append("WHERE ");
 			}
 			else {
 				sink.append(" AND ");
 			}
-			sink.append(entry);
-			count++;
+			sink.append(whereClause.get(i));
 		}
 
-		sink.append(" ORDER BY ");
-		if(condition.orderBy == null || condition.orderBy.isEmpty()) {
-			sink.append(BookSearchCondition.OrderBy.titleAsc.getSql("s_b"));
-		}
-		else {
-			count = 0;
-			for(BookSearchCondition.OrderBy orderBy : condition.orderBy) {
-				if(orderBy == null) {
-					continue;
+		int orderByClauseSize = orderByClause.size();
+		if(orderByClauseSize > 0) {
+			for(int i = 0; i < orderByClauseSize; ++i) {
+				if(i == 0) {
+					sink.append(" ORDER BY ");
 				}
-				if(count > 0 ) {
+				else {
 					sink.append(", ");
 				}
-				sink.append(orderBy.getSql("s_b"));
-				count++;
+				sink.append(orderByClause.get(i));
 			}
 		}
 
 		query.sql = new String(sink);
 
 		return query;
+	}
+
+	protected boolean isIncludeBookProperty(BookSearchCondition condition) {
+		if(condition.acquisitionDateBegin != null) {
+			return true;
+		}
+		else if(condition.acquisitionDateEnd != null) {
+			return true;
+		}
+		else if(condition.owner != null) {
+			return true;
+		}
+		else if(condition.orderBy == null || condition.orderBy.isEmpty()) {
+			return false;
+		}
+		else if(condition.orderBy.contains(OrderBy.acquisitionDateAsc)) {
+			return true;
+		}
+		else if(condition.orderBy.contains(OrderBy.acquisitionDateDesc)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }

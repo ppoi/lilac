@@ -38,12 +38,12 @@ public class BookSearchCondition {
 	public Integer authorId;
 
 	/**
-	 * レーベル
+	 * レーベル(完全一致)
 	 */
 	public String label;
 
 	/**
-	 * ISBN
+	 * ISBN(前方一致)
 	 */
 	public String isbn;
 
@@ -73,7 +73,7 @@ public class BookSearchCondition {
 	public Date acquisitionDateEnd;
 
 	/**
-	 * 蔵書オーナー
+	 * 蔵書オーナー(完全一致)
 	 */
 	public String owner;
 
@@ -82,11 +82,41 @@ public class BookSearchCondition {
 	 */
 	public List<OrderBy> orderBy;
 
+	/**
+	 * ソート式
+	 * @author ppoi
+	 * @version 2012.05
+	 */
 	public static enum OrderBy {
+		/**
+		 * タイトル(昇順)
+		 */
 		titleAsc("title", "title", "ASC"),
+
+		/**
+		 * タイトル(降順)
+		 */
 		titleDesc("title", "title",  "DESC"),
+
+		/**
+		 * 出版日(昇順)
+		 */
 		publicationDateAsc("publicationDate", "publication_date", "ASC"),
-		publicationDateDesc("publicationDate", "publication_date", "DESC");
+
+		/**
+		 * 出版日(降順)
+		 */
+		publicationDateDesc("publicationDate", "publication_date", "DESC"),
+
+		/**
+		 * 購入日(昇順)
+		 */
+		acquisitionDateAsc("acquisitionDate", "acquisition_date", "ASC"),
+
+		/**
+		 * 購入日(降順)
+		 */
+		acquisitionDateDesc("acquisitionDate", "acquisition_date", "DESC");
 
 		private String propertyName;
 		private String columnName;
@@ -98,22 +128,52 @@ public class BookSearchCondition {
 			this.direction = direction;
 		}
 
+		/**
+		 * SQL式を取得します。
+		 * @param tableName テーブル名
+		 * @return SQL式
+		 */
 		public String getSql(String tableName) {
 			return tableName + "." + columnName + " " + direction;
 		}
-		
+
+		/**
+		 * S2JDBC式を取得します。
+		 * @return S2JDBC式
+		 */
 		public String getS2JDBCExpression() {
 			return propertyName + " " + direction;
 		}
 
+		/**
+		 * S2JDBC式を取得します。
+		 * @param entityPropertyName プロパティをもっているエンティティプロパティ名
+		 * @return S2JDBC式
+		 */
+		public String getS2JDBCExpression(String entityPropertyName) {
+			return entityPropertyName + "." + propertyName + " " + direction;
+		}
+
+		/**
+		 * プロパティ名を取得します。
+		 * @return プロパティ名
+		 */
 		public String getPropertyName() {
 			return propertyName;
 		}
-		
+
+		/**
+		 * カラム名を取得します。
+		 * @return カラム名
+		 */
 		public String getColumnName() {
 			return columnName;
 		}
-		
+
+		/**
+		 * ソート方向を取得します。
+		 * @return ソート方向(ASC/DESC)
+		 */
 		public String getDirection() {
 			return direction;
 		}

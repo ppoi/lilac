@@ -34,7 +34,9 @@ import org.tsukuba_bunko.lilac.entity.BibAuthor;
 import org.tsukuba_bunko.lilac.entity.Bibliography;
 import org.tsukuba_bunko.lilac.service.BibliographyService;
 import org.tsukuba_bunko.lilac.service.BookSearchCondition;
+import org.tsukuba_bunko.lilac.service.BookSearchCondition.OrderBy;
 import org.tsukuba_bunko.lilac.service.SearchResult;
+import org.tsukuba_bunko.lilac.web.converter.OrderByConverter;
 import org.tsukuba_bunko.lilac.web.converter.TextConverter;
 
 
@@ -70,8 +72,14 @@ public class BookSearchAction {
 	@RequestParameter
 	public Date acquisitionDateEnd;
 
-	@RequestParameter
-	public List<BookSearchCondition.OrderBy> orderBy;
+	@RequestParameter(converter=OrderByConverter.class)
+	public OrderBy sort1;
+
+	@RequestParameter(converter=OrderByConverter.class)
+	public OrderBy sort2;
+
+	@RequestParameter(converter=OrderByConverter.class)
+	public OrderBy sort3;
 
 	@RequestParameter
 	public Integer page;
@@ -90,6 +98,17 @@ public class BookSearchAction {
 	public ActionResult list() {
 		if(page == null) {
 			page = 0;
+		}
+
+		List<OrderBy> orderBy = new java.util.ArrayList<OrderBy>();
+		if(sort1 != null) {
+			orderBy.add(sort1);
+		}
+		if(sort2 != null) {
+			orderBy.add(sort2);
+		}
+		if(sort3 != null) {
+			orderBy.add(sort3);
 		}
 
 		BookSearchCondition condition = new BookSearchCondition();

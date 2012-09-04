@@ -21,6 +21,36 @@
 				<input type="date" id="search-publicationDateBegin" name="publicationDateBegin" /> ～ <input type="date" id="search-publicationDateEnd" name="publicationDateEnd" /><br />
 				<label for="search-acquisitionDate">購入日</label>
 				<input type="date" id="search-acquisitionDateBegin" name="acquisitionBegin" /> ～ <input type="date" id="search-acquisitionDateEnd" name="acquisitionDateEnd" /><br />
+				<label for="search-sort1">ソート[1]</label>
+				<select id="search-sort1" name="sort1">
+					<option value="">(なし)</option>
+					<option>titleAsc</option>
+					<option>titleDesc</option>
+					<option>publicationDateAsc</option>
+					<option>publicationDateDesc</option>
+					<option>acquisitionDateAsc</option>
+					<option>acquisitionDateDesc</option>
+				</select><br />
+				<label for="search-sort2">ソート[2]</label>
+				<select id="search-sort2" name="sort2">
+					<option value="">(なし)</option>
+					<option>titleAsc</option>
+					<option>titleDesc</option>
+					<option>publicationDateAsc</option>
+					<option>publicationDateDesc</option>
+					<option>acquisitionDateAsc</option>
+					<option>acquisitionDateDesc</option>
+				</select><br />
+				<label for="search-sort3">ソート[3]</label>
+				<select id="search-sort3" name="sort3">
+					<option value="">(なし)</option>
+					<option>titleAsc</option>
+					<option>titleDesc</option>
+					<option>publicationDateAsc</option>
+					<option>publicationDateDesc</option>
+					<option>acquisitionDateAsc</option>
+					<option>acquisitionDateDesc</option>
+				</select><br />
 				<label for="search-page">#</label>
 				<input type="number" id="search-page" value="0" />
 				<button id="execute-list">実行</button>
@@ -47,6 +77,9 @@
 					publicationDateEnd: $('#search-publicationDateEnd').val(),
 					acquisitionDateBegin: $('#search-acquisitionDateBegin').val(),
 					acquisitionDateEnd: $('#search-acquisitionDateEnd').val(),
+					sort1: $('#search-sort1').val(),
+					sort2: $('#search-sort2').val(),
+					sort3: $('#search-sort3').val()
 				};
 				var page = $('#search-page').val();
 				$.ajax("/api/booksearch/" + page, {
