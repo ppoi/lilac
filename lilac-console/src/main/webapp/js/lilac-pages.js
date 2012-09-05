@@ -740,7 +740,11 @@ AuthorPage.prototype.prepare = function(path, options){
 	}
 	else {
 		var searchOptions = {
-			condition: 'authorId=' + path.aid,
+			condition: {
+				authorId: path.aid,
+				sort1: 'publicationDateAsc',
+				sort2: 'titleAsc'
+			},
 			page: 0,
 			showLoadingMsg: false
 		};
