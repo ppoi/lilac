@@ -136,7 +136,7 @@ public class BookSearchAction {
 				BeanMap bibauthDto = new BeanMap();
 				bibauthDto.put("id", bibauth.authorId);
 				bibauthDto.put("name", bibauth.author.name);
-				bibauthDto.put("role", bibauth.role);
+				bibauthDto.put("role", bibauth.authorRole);
 				authors.add(bibauthDto);
 			}
 			bibDto.put("authors", authors);

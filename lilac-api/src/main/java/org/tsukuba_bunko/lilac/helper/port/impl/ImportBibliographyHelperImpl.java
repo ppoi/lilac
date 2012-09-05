@@ -87,7 +87,7 @@ public class ImportBibliographyHelperImpl extends ImportDataHelperBase {
 				Matcher m = AUTHOR_PATTERN.matcher(line);
 				if(m.matches()) {
 					BibAuthor bibauthor = new BibAuthor();
-					bibauthor.role = m.group(2);
+					bibauthor.authorRole = m.group(2);
 					if(StringUtil.isNotBlank(m.group(1))) {
 						bibauthor.authorId = Integer.parseInt(m.group(1));
 					}

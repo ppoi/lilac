@@ -139,7 +139,7 @@ public class ExportBibliographyHelperImpl extends ExportDataHelperBase<Bibliogra
 			sink.append(bibauthor.author.id);
 			sink.append(")");
 			sink.append("[");
-			sink.append(bibauthor.role);
+			sink.append(bibauthor.authorRole);
 			sink.append(']');
 			sink.append(bibauthor.author.name);
 			sink.append("\r\n");

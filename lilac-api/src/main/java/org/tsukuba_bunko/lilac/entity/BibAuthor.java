@@ -63,5 +63,5 @@ public class BibAuthor {
 	/**
 	 * 役割
 	 */
-	public String role;
+	public String authorRole;
 }
