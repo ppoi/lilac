@@ -2,7 +2,7 @@ CACHE MANIFEST
 #@project.artifactId@ @project.version@
 
 CACHE:
-js/lib/jquery-1.8.0.min.js
+js/lib/jquery-1.8.1.min.js
 js/lib/jquery.mobile-1.2.0-pre.min.js
 js/lib/jquery.upload-1.0.2.min.js
 js/lib/xregexp-min.js
@@ -18,14 +18,15 @@ css/images/icons-36-black.png
 css/images/icons-36-white.png
 template/admin.html
 template/account.html
+template/arrival.html
 template/author.html
 template/bibliography.html
 template/booksearch.html
 template/credential.html
 template/export.html
 template/import.html
-template/loginform.html
 template/info.html
+template/loginform.html
 template/main.html
 
 NETWORK:
