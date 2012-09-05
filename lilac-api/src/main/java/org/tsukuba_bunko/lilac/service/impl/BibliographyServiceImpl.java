@@ -168,8 +168,7 @@ public class BibliographyServiceImpl implements BibliographyService {
 		}
 		if(!StringUtil.isBlank(condition.keyword)) {
 			fromClause.add("JOIN bib_author AS s_ba ON s_ba.bibliography_id=s_b.id ");
-			fromClause.add("JOIN author AS s_a ON s_ba.author_id=s_a.id ");
-			whereClause.add("(s_b.title %% ? OR s_b.subtitle %% ? OR s_a.name %% ?)");
+			whereClause.add("(s_b.title %% ? OR s_b.subtitle %% ? OR s_ba.author_id IN (SELECT DISTINCT s_a.id FROM author AS s_a JOIN author AS s_as ON s_a.id=s_as.id OR (s_as.synonym_key!=0 AND s_as.synonym_key=s_a.synonym_key) WHERE s_as.name %% ?))");
 			query.params.add(condition.keyword);
 			query.params.add(condition.keyword);
 			query.params.add(condition.keyword);
