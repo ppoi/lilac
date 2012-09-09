@@ -18,6 +18,7 @@ package org.tsukuba_bunko.lilac.web;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -32,6 +33,7 @@ import org.seasar.framework.beans.util.BeanMap;
 import org.seasar.framework.beans.util.Beans;
 import org.tsukuba_bunko.lilac.entity.BibAuthor;
 import org.tsukuba_bunko.lilac.entity.Bibliography;
+import org.tsukuba_bunko.lilac.entity.Book;
 import org.tsukuba_bunko.lilac.service.BibliographyService;
 import org.tsukuba_bunko.lilac.service.BookSearchCondition;
 import org.tsukuba_bunko.lilac.service.BookSearchCondition.OrderBy;
@@ -140,6 +142,20 @@ public class BookSearchAction {
 				authors.add(bibauthDto);
 			}
 			bibDto.put("authors", authors);
+			
+			if(bib.books != null) {
+				List<Map<String, Object>> bookList = new java.util.ArrayList<Map<String, Object>>();
+				for(Book book : bib.books) {
+					Map<String, Object> bookDto = new java.util.HashMap<String, Object>();
+					Beans.copy(book, bookDto)
+						.excludes("bibliography", "bibliographyId", "locationId")
+						.dateConverter("yyyy/MM/dd", "acquisitionDate")
+						.execute();
+					bookList.add(bookDto);
+				}
+				bibDto.put("books", bookList);
+			}
+
 			bibDtoList.add(bibDto);
 		}
 		dto.put("items", bibDtoList);

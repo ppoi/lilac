@@ -77,7 +77,7 @@ public class BibliographyServiceImpl implements BibliographyService {
 				.innerJoin("authors")
 				.innerJoin("authors.author");
 		if(isIncludeBookProperty(condition)) {
-			select.leftOuterJoin("books", false);
+			select.leftOuterJoin("books");
 		}
 		result.items = query(select, condition, offset, limit).getResultList();
 

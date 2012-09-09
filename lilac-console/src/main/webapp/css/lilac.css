@@ -18,6 +18,13 @@
 	font-weight: lighter;
 }
 
+p.booklist-authors {
+	margin: 5px 0px 0px 0px;
+}
+p.booklist-description {
+	margin: 0.5em 0px 0px 0px;
+}
+
 .header-buttons {
 	display: inline;
 	top: 1px;

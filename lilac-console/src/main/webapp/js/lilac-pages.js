@@ -6,10 +6,10 @@ BookListPageBase = lilac.extend(Page, function(self, id, template) {
 	this.__super__.constructor(self, id, template);
 	self.search = {
 		condition: null,
-		page: 0,
+		page: -1,
 		showLoadingMsg: false
 	};
-	self.count = null;
+	self.count = 0;
 });
 BookListPageBase.prototype.customizePage = function(page) {
 	var booklistHolder = $('.booklist-holder', this.page);
@@ -21,19 +21,8 @@ BookListPageBase.prototype.customizePage = function(page) {
 		'data-role': 'listview',
 		'data-theme': 'd',
 		'data-inset': 'true'
-		}).append($('<li>').attr('data-role', 'list-divider').append(
-			document.createTextNode("一覧"),
-			$('<span>').addClass('ui-li-count')
-		)
-	).appendTo(booklistHolder);
-	this.morebuttonHolder = $('<div>').addClass('morebutton-holder').appendTo(booklistHolder);
-	this.morebutton = $('<a>').attr({
-		'href': '#',
-		'data-role': 'button',
-		'data-icon': 'forward',
-		'data-iconpos': 'bottom',
-		'data-theme': 'd'
-	}).text('さらに表示...').button();
+		}).appendTo(booklistHolder);
+	this.nextMoreButtonHolder = $('<div>').addClass('morebutton-holder').appendTo(booklistHolder);
 };
 BookListPageBase.prototype.listBooks = function(options) {
 	var deferred = $.Deferred();
@@ -44,9 +33,9 @@ BookListPageBase.prototype.listBooks = function(options) {
 
 	lilac.api.booksearch.list(options.condition, options.page)
 		.done($.proxy(function (data, textStatus, jqXHR) {
-			this.makeResultList(data, (options.page == 0));
+			this.makeResultList(data, options);
 			this.search.condition = options.condition;
-			this.search.page = options.page + 1;
+			this.search.page = options.page;
 			if(options.showLoadingMsg) {
 				$.mobile.loading('hide');
 			}
@@ -59,53 +48,63 @@ BookListPageBase.prototype.listBooks = function(options) {
 
 	return deferred.promise();			
 };
-BookListPageBase.prototype.makeResultList = function(result, clear) {
-	var listview = this.booklist;
-	var dividers = $('li[data-role="list-divider"]', listview);
-	var items = $('li[data-role!="list-divider"]', listview);
-	var previous;
-	if(clear) {
-		items.remove();
-		previous = $(dividers[0]);
-		this.count = null;
+BookListPageBase.prototype.makeResultList = function(result, options) {
+	if(options.page == 0) {
+		this.booklist.empty().append(this.createDivider());
+		this.count = 0;
 	}
-	else {
-		previous = $(items[items.length - 1]);
+
+	$.each(result.items, $.proxy(function(index, entity){
+		entity.index = this.count + index + 1;
+		this.booklist.append(this.createItem(index, entity));
+	}, this));
+	this.count += result.items.length;
+
+	if(this.count >= result.count) {
+		if(this.nextMoreButton) {
+			this.nextMoreButton.unbind().remove();
+			this.nextMoreButton = null;
+		}
 	}
-	var count = this.count || 0;
-	$.each(result.items, function(index, entity){
-		entity.index = count + 1;
-		var item = $('<li>').append(
-			$('<span>').addClass("li-index").text(entity.index),
-			document.createTextNode(" "),
-			$('<a>').attr("href", "#bib" + entity.id).append(
-					$('<p>').append($('<small>').text(entity.label)),
-					$('<p>').append($('<strong>').text(entity.title)),
-					$('<p>').text(entity.subtitle)
-			)
-		);
-		previous.after(item);
-		previous = item;
-		count++;
-	});
-	this.count = count;
-	$('span.ui-li-count', listview).text(count + "/" + result.count);
-	if(count >= result.count) {
-		this.morebutton.unbind().remove();
-	}
-	else if(!this.morebutton[0].parentNode) {
-		this.morebuttonHolder.append(this.morebutton);
-		this.morebutton.bind('vclick', $.proxy(function(event) {
+	else if(!this.nextMoreButton) {
+		this.nextMoreButton = this.createMoreButton().appendTo(this.nextMoreButtonHolder).button();
+		this.nextMoreButton.bind('vclick', $.proxy(function(event) {
 			event.preventDefault();
 			var options = {
 				condition: this.search.condition,
-				page: this.search.page,
+				page: this.search.page + 1,
 				showLoadingMsg: true
 			};
 			this.listBooks(options);
 		}, this));
 	}
-	listview.listview('refresh');
+
+	$('span.booklist-count', this.page).text(result.count);
+	this.booklist.listview('refresh');
+};
+BookListPageBase.prototype.createDivider = function() {
+	return $('<li>').attr('data-role', 'list-divider').append(
+		document.createTextNode("一覧"),
+		$('<span>').addClass('booklist-count').addClass('ui-li-count'));
+};
+BookListPageBase.prototype.createItem = function(index, entity) {
+	return $('<li>').append(
+		$('<span>').addClass("li-index").text(entity.index),
+		document.createTextNode(" "),
+		$('<a>').attr("href", "#bib" + entity.id).append(
+			$('<p>').append($('<small>').text(entity.label)),
+			$('<p>').append($('<strong>').text(entity.title)),
+			$('<p>').text(entity.subtitle))
+	);
+};
+BookListPageBase.prototype.createMoreButton = function() {
+	return $('<a>').attr({
+		'href': '#',
+		'data-role': 'button',
+		'data-icon': 'forward',
+		'data-iconpos': 'bottom',
+		'data-theme': 'd'
+	}).text('さらに表示... ').append($('<span class="booklist-count-button">(<span class="booklist-count"></span>件)</span>'));
 };
 
 
@@ -512,7 +511,7 @@ BookSearchPage.prototype.customizePage = function(page) {
 		};
 		this.listBooks(searchOptions)
 			.done(function() {
-				$('#booksearchform-title').click();
+				$('#booksearch-condition').trigger('collapse');
 				$.mobile.silentScroll();
 			});
 		return false;
@@ -520,7 +519,7 @@ BookSearchPage.prototype.customizePage = function(page) {
 };
 BookSearchPage.prototype.prepare = function(path, options) {
 	var deferred = $.Deferred();
-	if(this.count != null) {
+	if(this.search.page >= 0) {
 		deferred.resolve(this.page);
 	}
 	else {
@@ -538,6 +537,25 @@ BookSearchPage.prototype.prepare = function(path, options) {
 			});
 	}
 	return deferred.promise();
+};
+BookSearchPage.prototype.createItem = function(index, entity) {
+	var item = $('<a>').attr("href", "#bib" + entity.id);
+	item.append($('<p>').append($('<small>').text(entity.label)));
+	item.append($('<p>').append($('<strong>').text(entity.title)));
+	if(entity.subtitle) {
+		item.append($('<p>').text(entity.subtitle));
+	}
+	var authors = $('<p class="booklist-authors">').text("著者: ").appendTo(item);
+	for(var i = 0; i < entity.authors.length; ++i) {
+		if(i != 0) {
+			authors.append(document.createTextNode(', '));
+		}
+		authors.append($('<span>').text(entity.authors[i].name));
+	}
+	return $('<li>').append(
+		$('<span>').addClass("li-index").text(entity.index),
+		document.createTextNode(" "),
+		item);
 };
 BookSearchPage.prototype.updateLabelOptions = function() {
 	var deferred = $.Deferred();
@@ -601,6 +619,27 @@ ArrivalPage.prototype.prepare = function(path, options) {
 			});
 	}
 	return deferred.promise();
+};
+ArrivalPage.prototype.createItem = function(index, entity) {
+	var item = $('<a>').attr("href", "#bib" + entity.id);
+	item.append($('<p>').append($('<small>').text(entity.label)));
+	item.append($('<p>').append($('<strong>').text(entity.title)));
+	if(entity.subtitle) {
+		item.append($('<p>').text(entity.subtitle));
+	}
+	var authors = $('<p class="booklist-authors">').text("著者: ").appendTo(item);
+	for(var i = 0; i < entity.authors.length; ++i) {
+		if(i != 0) {
+			authors.append(document.createTextNode(', '));
+		}
+		authors.append($('<span>').text(entity.authors[i].name));
+	}
+	item.append($('<p class="booklist-description">').append(
+			$('<small>').text('購入日: ' + entity.books[0].acquisitionDate)));
+	return $('<li>').append(
+		$('<span>').addClass("li-index").text(entity.index),
+		document.createTextNode(" "),
+		item);
 };
 ArrivalPage.prototype.updateArrival = function(year, month) {
 	var deferred = $.Deferred();
@@ -714,6 +753,10 @@ BibliographyPage.prototype.roleName = function(role) {
 		return "イラスト";
 	case "originator":
 		return "原作";
+	case "supervisor":
+		return "監修";
+	case "editor":
+		return "編集";
 	default:
 		return role;
 	}
