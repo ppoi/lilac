@@ -64,4 +64,40 @@ public class BibliographyServiceImplTest {
 		assertEquals((Integer)390001, result.items.get(0).id);
 		assertEquals((Integer)390002, result.items.get(1).id);
 	}
+
+	@Test
+	public void listWithSortedAuthor() {
+		BookSearchCondition condition = new BookSearchCondition();
+		condition.keyword = "タイトルlistWithSortedAuthor";
+		SearchResult<Bibliography> result = service.list(condition, 0, 100);
+		assertNotNull(result);
+		assertEquals(3, result.count);
+		assertEquals((Integer)390011, result.items.get(0).id);
+		assertEquals((Integer)390012, result.items.get(1).id);
+		assertEquals((Integer)390013, result.items.get(2).id);
+
+		assertEquals(2, result.items.get(0).authors.size());
+		assertEquals((Long)390014L, result.items.get(0).authors.get(0).id);
+		assertEquals((Long)390013L, result.items.get(0).authors.get(1).id);
+
+		assertEquals(2, result.items.get(1).authors.size());
+		assertEquals((Long)390012L, result.items.get(1).authors.get(0).id);
+		assertEquals((Long)390011L, result.items.get(1).authors.get(1).id);
+
+		assertEquals(4, result.items.get(2).authors.size());
+		assertEquals((Long)390017L, result.items.get(2).authors.get(0).id);
+		assertEquals((Long)390018L, result.items.get(2).authors.get(1).id);
+		assertEquals((Long)390016L, result.items.get(2).authors.get(2).id);
+		assertEquals((Long)390015L, result.items.get(2).authors.get(3).id);
+	}
+
+	@Test
+	public void getWithSortedAuthor() {
+		Bibliography entity = service.get(390013);
+		assertEquals(4, entity.authors.size());
+		assertEquals((Long)390017L, entity.authors.get(0).id);
+		assertEquals((Long)390018L, entity.authors.get(1).id);
+		assertEquals((Long)390016L, entity.authors.get(2).id);
+		assertEquals((Long)390015L, entity.authors.get(3).id);
+	}
 }

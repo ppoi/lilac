@@ -1,6 +1,6 @@
 /*
  * All Rights Reserved.
- * Copyright (C) 2011-2012 Tsukuba Bunko.
+ * Copyright (C) 2012 Tsukuba Bunko.
  *
  * Licensed under the BSD License ("the License"); you may not use
  * this file except in compliance with the License.
@@ -16,54 +16,31 @@
  */
 package org.tsukuba_bunko.lilac.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
 
 /**
- * 書誌情報 - 著者情報
+ * 著者ロール
  * @author ppoi
  * @version 2012.05
  */
-@Entity
-public class BibAuthor {
-
+public enum AuthorRole {
 	/**
-	 * 主キー
+	 * 著者
 	 */
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	public Long id;
-
+	author,
 	/**
-	 * 書誌情報ID
+	 * イラスト
 	 */
-	public Integer bibliographyId;
-	
+	illustrator,
 	/**
-	 * 書誌情報
+	 * 編集
 	 */
-	@ManyToOne
-	public Bibliography bibliography;
-	
+	editor,
 	/**
-	 * 著者情報ID
+	 * 監修
 	 */
-	public Integer authorId;
-
+	supervisor,
 	/**
-	 * 著者情報
+	 * 原作
 	 */
-	@ManyToOne
-	public Author author;
-
-	/**
-	 * 役割
-	 */
-	@Enumerated
-	public AuthorRole authorRole;
+	originator
 }

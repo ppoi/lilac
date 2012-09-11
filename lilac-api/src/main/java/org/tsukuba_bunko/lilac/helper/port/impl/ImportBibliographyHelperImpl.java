@@ -13,8 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * $Id:　$
  */
 package org.tsukuba_bunko.lilac.helper.port.impl;
 
@@ -31,14 +29,17 @@ import org.seasar.framework.beans.util.Beans;
 import org.seasar.framework.log.Logger;
 import org.seasar.framework.util.StringUtil;
 import org.tsukuba_bunko.lilac.entity.Author;
+import org.tsukuba_bunko.lilac.entity.AuthorRole;
 import org.tsukuba_bunko.lilac.entity.BibAuthor;
 import org.tsukuba_bunko.lilac.entity.Bibliography;
 import org.tsukuba_bunko.lilac.entity.Label;
+import org.tsukuba_bunko.lilac.helper.port.ImportDataHelper;
 
 
 /**
- * @author $Author: $
- * @version $Revision: $ $Date: $
+ * 書誌情報インポート用 {@link ImportDataHelper} 実装
+ * @author ppoi
+ * @version 2012.05
  */
 public class ImportBibliographyHelperImpl extends ImportDataHelperBase {
 
@@ -87,7 +88,7 @@ public class ImportBibliographyHelperImpl extends ImportDataHelperBase {
 				Matcher m = AUTHOR_PATTERN.matcher(line);
 				if(m.matches()) {
 					BibAuthor bibauthor = new BibAuthor();
-					bibauthor.authorRole = m.group(2);
+					bibauthor.authorRole = AuthorRole.valueOf(m.group(2));
 					if(StringUtil.isNotBlank(m.group(1))) {
 						bibauthor.authorId = Integer.parseInt(m.group(1));
 					}

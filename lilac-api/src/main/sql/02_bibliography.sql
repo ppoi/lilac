@@ -51,7 +51,8 @@ CREATE TABLE bib_author (
 	id bigserial NOT NULL PRIMARY KEY,
 	bibliography_id integer NOT NULL REFERENCES bibliography ON DELETE CASCADE,
 	author_id integer NOT NULL REFERENCES author,
-	author_role varchar(256) NOT NULL
+	author_role integer NOT NULL
 );
 CREATE INDEX idx_bib_author_bibliography ON bib_author(bibliography_id);
 CREATE INDEX idx_bib_author_author ON bib_author(author_id);
+CREATE INDEX idx_bib_author_role ON bib_author(author_role);

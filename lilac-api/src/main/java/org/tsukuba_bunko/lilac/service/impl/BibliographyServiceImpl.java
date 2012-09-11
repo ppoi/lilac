@@ -62,7 +62,7 @@ public class BibliographyServiceImpl implements BibliographyService {
 			select.leftOuterJoin("books")
 				.leftOuterJoin("books.location");
 		}
-		return select.where("id=?", id).getSingleResult();
+		return select.where("id=?", id).orderBy("authors.authorRole ASC, authors.author.name ASC").getSingleResult();
 	}
 
 	/**
@@ -70,7 +70,12 @@ public class BibliographyServiceImpl implements BibliographyService {
 	 */
 	@Override
 	public SearchResult<Bibliography> list(BookSearchCondition condition, int offset, int limit) {
+		if(condition.orderBy == null || condition.orderBy.isEmpty()) {
+			condition.orderBy = DEFAULT_ORDERBY_LIST;
+		}
 		SearchResult<Bibliography> result = new SearchResult<Bibliography>();
+
+		//総件数取得
 		result.count = count(condition);
 
 		AutoSelect<Bibliography> select = jdbcManager.from(Bibliography.class)
@@ -79,7 +84,43 @@ public class BibliographyServiceImpl implements BibliographyService {
 		if(isIncludeBookProperty(condition)) {
 			select.leftOuterJoin("books");
 		}
-		result.items = query(select, condition, offset, limit).getResultList();
+
+		//Where句の組み立て
+		SearchQuery query = createSearchQuery(condition, true);
+		StringBuilder whereClause = new StringBuilder();
+		whereClause.append("id IN (SELECT __IDCOL FROM (");
+		whereClause.append(query.sql);
+		if(offset != -1) {
+			whereClause.append(" OFFSET ");
+			whereClause.append(offset);
+			whereClause.append(" ROWS");
+		}
+		if(limit != -1) {
+			whereClause.append(" FETCH FIRST ");
+			whereClause.append(limit);
+			whereClause.append(" ROWS ONLY");
+		}
+		whereClause.append(") SELECT_)");
+		select.where(new String(whereClause), query.params.toArray());
+
+		//ORDER BY句の組み立て
+		StringBuilder orderByClause = new StringBuilder();
+		for(OrderBy orderBy : condition.orderBy) {
+			if(orderBy == null) {
+				continue;
+			}
+			if(orderBy == OrderBy.acquisitionDateAsc || orderBy == OrderBy.acquisitionDateDesc) {
+				orderByClause.append(orderBy.getS2JDBCExpression("books"));
+			}
+			else {
+				orderByClause.append(orderBy.getS2JDBCExpression());
+			}
+			orderByClause.append(", ");
+		}
+		orderByClause.append("authors.authorRole ASC, authors.author.name ASC");
+		select.orderBy(new String(orderByClause));
+
+		result.items = select.getResultList();
 
 		return result;
 	}
@@ -91,54 +132,6 @@ public class BibliographyServiceImpl implements BibliographyService {
 	public long count(BookSearchCondition condition) {
 		SearchQuery query = createSearchQuery(condition, false);
 		return jdbcManager.getCountBySql(query.sql, query.params.toArray());
-	}
-
-	public AutoSelect<Bibliography> query(AutoSelect<Bibliography> select, BookSearchCondition condition, int offset, int limit) {
-		if(condition.orderBy == null || condition.orderBy.isEmpty()) {
-			condition.orderBy = DEFAULT_ORDERBY_LIST;
-		}
-
-		SearchQuery query = createSearchQuery(condition, true);
-
-		StringBuilder sink = new StringBuilder();
-		sink.append("id IN (SELECT __IDCOL FROM (");
-
-		sink.append(query.sql);
-		if(offset != -1) {
-			sink.append(" OFFSET ");
-			sink.append(offset);
-			sink.append(" ROWS");
-		}
-		if(limit != -1) {
-			sink.append(" FETCH FIRST ");
-			sink.append(limit);
-			sink.append(" ROWS ONLY");
-		}
-
-		sink.append(") SELECT_)");
-
-		select.where(new String(sink), query.params.toArray());
-
-		StringBuilder orderByClause = new StringBuilder();
-		int count = 0;
-		for(OrderBy orderBy : condition.orderBy) {
-			if(orderBy == null) {
-				continue;
-			}
-			if(count != 0) {
-				orderByClause.append(", ");
-			}
-			if(orderBy == OrderBy.acquisitionDateAsc || orderBy == OrderBy.acquisitionDateDesc) {
-				orderByClause.append(orderBy.getS2JDBCExpression("books"));
-			}
-			else {
-				orderByClause.append(orderBy.getS2JDBCExpression());
-			}
-			count++;
-		}
-		select.orderBy(new String(orderByClause));
-
-		return select;
 	}
 
 	class SearchQuery { 
