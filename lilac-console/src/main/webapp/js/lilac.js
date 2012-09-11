@@ -240,40 +240,45 @@ var lilac = {
 
 ///////////////////////////////////////////////////////////
 // ページキャッシュ
+/**
+ * ページキャッシュのインスタンスを作成します。
+ * @param capacity キャッシュのキャパシティ(最大ページ数)
+ */
 function PageCache(capacity) {
 	this.capacity = capacity;
-	this.cache = new Array(this.capacity);
-	this.index = 0;
+	this.cache = [];
 };
-PageCache.prototype = {
-	add: function(page) {
-		var old = this.cache[this.index];
-		if(old != undefined) {
-			if(old.page == $.mobile.activePage) {
-				this.index++;
-				if(this.index == this.capacity) {
-					this.index = 0;
-				}
-			}
-			else {
-				old.remove();
-			}
-		}
-		this.cache[this.index] = page;
-		this.index++;
-		if(this.index == this.capacity) {
-			this.index = 0;
-		}
-	},
-	
-	get: function(id) {
-		for(var i = 0; i < this.capacity; ++i) {
-			var page = this.cache[i];
-			if(page && page.id == id) {
-				return page;
-			}
+/**
+ * キャッシュにページを追加します。
+ * @param page 追加するPageオブジェクト
+ */
+PageCache.prototype.add = function(page) {
+	if(this.cache.length >= this.capacity) {
+		//一番アクセスタイムスタンプが古いページ(キャッシュリストの最後尾)を削除
+		this.cache.pop().remove();
+	}
+	//キャッシュリストの先頭に追加
+	page.timestamp = new Date().getTime();
+	this.cache.unshift(page);
+};
+/**
+ * キャッシュからidで識別されるページを取得します。
+ * @param id Page ID
+ * @returns idで識別されるキャッシュされたPageオブジェクト。存在しない場合 null
+ */
+PageCache.prototype.get = function(id) {
+	for(var i = 0; i < this.cache.length; ++i) {
+		var page = this.cache[i];
+		if(page.id == id) {
+			//ページのアクセスタイムスタンプを更新し、キャッシュリストをタイムスタンプの逆順でソート
+			page.timestamp = new Date().getTime();
+			this.cache.sort(function(a, b) {
+				return b.timestamp - a.timestamp;
+			});
+			return page;
 		}
 	}
+	return null;
 };
 lilac.cache = new PageCache(10);
 
