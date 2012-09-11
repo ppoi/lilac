@@ -80,6 +80,7 @@ BookListPageBase.prototype.makeResultList = function(result, options) {
 	}
 
 	$('span.booklist-count', this.page).text(result.count);
+	$('span.booklist-remaining-count', this.page).text(result.count - this.count);
 	this.booklist.listview('refresh');
 };
 BookListPageBase.prototype.createDivider = function() {
@@ -104,7 +105,7 @@ BookListPageBase.prototype.createMoreButton = function() {
 		'data-icon': 'forward',
 		'data-iconpos': 'bottom',
 		'data-theme': 'd'
-	}).text('さらに表示... ').append($('<span class="booklist-count-button">(<span class="booklist-count"></span>件)</span>'));
+	}).text('さらに表示... ').append($('<span class="booklist-count-button">(<span class="booklist-remaining-count"></span>件)</span>'));
 };
 
 
