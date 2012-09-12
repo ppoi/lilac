@@ -1,5 +1,5 @@
 CACHE MANIFEST
-#@project.artifactId@ @project.version@
+#@project.artifactId@ @project.version@ @env.GIT_COMMIT@
 
 CACHE:
 js/lib/jquery-1.8.1.min.js
