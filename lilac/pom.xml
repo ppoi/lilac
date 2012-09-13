@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.tsukuba-bunko.lilac</groupId>
   <artifactId>lilac</artifactId>
-  <version>2012.05</version>
+  <version>2012.05b-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Lilac</name>
   <description>りら(Lilac)： 書架共有システム</description>
