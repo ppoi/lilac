@@ -16,6 +16,12 @@
 				<filtersfile file="${settingsfile}" />
 			</filterset>
 		</copy>
+		<copy encoding="UTF-8" filtering="on" overwrite="true"
+			tofile="${workspace}/lilac-api/src/main/webapp/META-INF/context.xml" file="tomcat-context.xml.template">
+			<filterset>
+				<filtersfile file="${settingsfile}" />
+			</filterset>
+		</copy>
 	</target>
 
 	<target name="database.create">

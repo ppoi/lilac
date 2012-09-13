@@ -55,6 +55,13 @@
   				</excludes>
   			</configuration>
   		</plugin>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-war-plugin</artifactId>
+  			<configuration>
+	  			<containerConfigXML>src/main/webapp/META-INF/context.xml</containerConfigXML>
+  			</configuration>
+  		</plugin>
   	</plugins>
   </build>
   <dependencies>
