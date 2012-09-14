@@ -428,76 +428,85 @@ ImportPage = lilac.extend(Page, function(id) {
 });
 ImportPage.prototype.customizePage = function(page) {
 	$("#execute-upload").click($.proxy(function(event) {
-		event.preventDefault();
-		$.mobile.loading('show');
-		$('#upload-file').upload("/api/import", $.proxy(function(data){
-			lilac.api.importData.list()
-				.done($.proxy(function(data, textStatus, jqXHR) {
-					this.refleshFileList(data);
-					$.mobile.loading('hide');
-				}, this))
-				.fail(function (jqXHR, textStatus, errorThrown) {
-					window.alert("インポートファイルの取得に失敗: " + textStatus);
-					$.mobile.loading('hide');
-				});
-		}, this), "html");
+		this.uploadFile();
 		return false;
 	}, this));
 	$('#import-data').click($.proxy(function(event) {
-		this.action = 'importData';
+		this.executeImportAction('importData', $('#import-files input:radio:checked').val());
+		return false;
 	}, this));
 	$('#cancel').click($.proxy(function(event) {
-		this.action = 'cancel';
+		this.executeImportAction('cancel', $('#import-files input:radio:checked').val());
+		return false;
 	}, this));
 	$('#import-form').submit($.proxy(function(event) {
-		var selectedItem = $('#import-files input:radio:checked');
-		if(selectedItem.length) {
-			var fileId= selectedItem.val();
-			var fileLabel = $('label[for="importfile-' + fileId + '"]').text();
-			var confirmMessage = this.action == 'importData' ? "以下のファイルをインポートします" : "以下のファイルを削除します";
-			if(window.confirm(confirmMessage + "\n" + fileLabel)) {
-				$.mobile.loading('show');
-				lilac.api.importData[this.action](fileId);
-					lilac.api.importData.list()
-					.done($.proxy(function(data, textStatus, jqXHR) {
-						this.refleshFileList(data);
-						$.mobile.loading('hide');
-					}, this))
-					.fail(function (jqXHR, textStatus, errorThrown) {
-						window.alert("インポートファイルの取得に失敗: " + textStatus);
-						$.mobile.loading('hide');
-					});
-			}
-		}
 		return false;
 	}, this));
 };
 ImportPage.prototype.prepare = function(path, option) {
 	var deferred = new $.Deferred();
+	this.listImportFiles().done($.proxy(function() {
+		deferred.resolve(this.page);
+	}, this)).fail(function() {
+		deferred.reject();
+	});
+	return deferred.promise();
+};
+ImportPage.prototype.uploadFile = function() {
+	$.mobile.loading('show');
+	$('#upload-file').upload("/api/import", $.proxy(function(data){
+		this.listImportFiles().then(function() {
+			$.mobile.loading('hide');
+		});
+	}, this), "html");
+};
+ImportPage.prototype.executeImportAction = function(action, fileId) {
+	var selectedItem = $('#import-files input:radio:checked');
+	if(!selectedItem.length) {
+		lilac.showErrorMsg('インポートファイルを選択してください。');
+		return;
+	}
+
+	var fileId = selectedItem.val();
+	var fileLabel = $('label[for="importfile-' + fileId + '"]').text();
+	var confirmMessage = (action == 'importData') ? "以下のファイルをインポートします" : "以下のファイルを削除します";
+	if(window.confirm(confirmMessage + "\n" + fileLabel)) {
+		$.mobile.loading('show');
+		lilac.api.importData[action](fileId)
+			.done($.proxy(function() {
+				this.listImportFiles().then(function() {
+					$.mobile.loading('hide');
+				});
+			}, this))
+			.fail(function() {
+				window.alert("インポートファイルの取得に失敗: " + textStatus);
+				$.mobile.loading('hide');
+			});
+	}
+};
+ImportPage.prototype.listImportFiles = function() {
+	var deferred = $.Deferred();
 	lilac.api.importData.list()
 		.done($.proxy(function(data, textStatus, jqXHR) {
-			this.refleshFileList(data);
-			deferred.resolve(this.page);
+			var container = $('#import-files');
+			$('input:radio,label', container).remove();
+			$.each(data, function(index, item) {
+				container.append($('<input type="radio" />').attr({
+					name: "fileId",
+					"id": 'importfile-' + item.id,
+					value: item.id
+				}));
+				container.append($('<label>').attr('for', "importfile-" + item.id)
+						.text("[" + item.id + "] " + item.fileName + " (" + item.createdTimestamp + ")"));
+			});
+			this.page.trigger("create");
+			deferred.resolve();
 		}, this))
 		.fail(function (jqXHR, textStatus, errorThrown) {
 			window.alert("インポートファイルの取得に失敗: " + textStatus);
 			deferred.reject();
 		});
 	return deferred.promise();
-};
-ImportPage.prototype.refleshFileList = function(data) {
-	var container = $('#import-files');
-	$('input:radio,label', container).remove();
-	$.each(data, function(index, item) {
-		container.append($('<input type="radio" />').attr({
-			name: "fileId",
-			"id": 'importfile-' + item.id,
-			value: item.id
-		}));
-		container.append($('<label>').attr('for', "importfile-" + item.id)
-				.text("[" + item.id + "] " + item.fileName + " (" + item.createdTimestamp + ")"));
-	});
-	this.page.trigger("create");
 };
 
 /**
