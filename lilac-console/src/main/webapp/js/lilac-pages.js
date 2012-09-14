@@ -341,11 +341,18 @@ CredentialPage.prototype.close = function() {
 	});
 };
 
+/**
+ * りらシステム情報ページ
+ */
 InformationPage = lilac.extend(Page, function(id) {
 	this.__super__.constructor(this, id, 'template/info.html');
 });
 InformationPage.prototype.customizePage = function(page) {
 	$('#console-version').text(lilac.version);
+	$('#check-update').click(function() {
+		window.applicationCache.update();
+		return false;
+	});
 };
 InformationPage.prototype.prepare = function(path, options) {
 	var deferred = $.Deferred();
