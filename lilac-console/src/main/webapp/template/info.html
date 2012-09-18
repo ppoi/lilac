@@ -15,13 +15,22 @@
 	<div data-role="content">
 		<div class="ui-body ui-body-d">
 			<h4>りら(Lilac): 蔵書管理システム</h4>
-			<p>&copy; Tsukuba Bunko. All Rights Reserverd.</p>
+			<p>&copy; <span id="lilac-copyright-year">2012</span> Tsukuba Bunko.<br />All Rights Reserverd.</p>
 		</div>
 		<ul data-role="listview" data-inset="true" data-theme="d">
 			<li data-role="list-divider">バージョン情報</li>
 			<li>UI: <span id="console-version"></span></li>
 			<li>API: <span id="api-version"></span></li>
 		</ul>
+
+		<ul data-role="listview" data-inset="true" data-theme="d">
+			<li data-role="list-divider">利用ライブラリ</li>
+			<li><p><a href="http://xregexp.com/" target="_blank">XRegExp 1.5.0</a></p><p>&copy; 2007-2012 Steven Levithan</p><p>MIT License</p></li>
+			<li><p><a href="http://jquery.com/" target="_blank">jQuery 1.8.1</a></p><p>&copy; The jQuery Foundation</p><p>MIT License</p></li>
+			<li><p><a href="http://jquerymobile.com/" target="_blank">jQuery Mobile 1.2.0-pre</a></p><p>&copy; The jQuery Foundation</p><p>MIT License</p></li>
+			<li><p><a href="http://lagoscript.org/jquery/upload" target="_blank">jQuery Upload 1.0.2</a></p><p>&copy; 2010 lagos</p><p>MIT License</p></li>
+		</ul>
+
 		<button id="check-update" data-theme="e">更新の確認</button>
 	</div>
 </div>
