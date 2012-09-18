@@ -350,6 +350,24 @@ InformationPage = lilac.extend(Page, function(id) {
 InformationPage.prototype.customizePage = function(page) {
 	$('#console-version').text(lilac.version);
 	$('#check-update').click(function() {
+		$.mobile.loading('show');
+		lilac.checkUpdate()
+			.done(function(result) {
+				$.mobile.loading('hide');
+				if(result) {
+					window.applicationCache.swapCache();
+					if(window.confirm("更新のためにアプリケーションをリロードします。")) {
+						window.location.reload();
+					}
+				}
+				else {
+					window.alert("更新はありませんでした。");
+				}
+			})
+			.fail(function(reasonText) {
+				$.mobile.loading('hide');
+				window.alert("確認中にエラーが発生しました(" + reasonText + ")");
+			});
 		window.applicationCache.update();
 		return false;
 	});

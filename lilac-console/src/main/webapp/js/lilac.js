@@ -193,6 +193,15 @@ var lilac = {
 	},
 
 	/**
+	 * 更新チェックを実行します。
+	 */
+	checkUpdate: function() {
+		lilac.updateDeferred = $.Deferred();
+		window.applicationCache.update();
+		return lilac.updateDeferred.promise();
+	},
+
+	/**
 	 * テンプレートをロードします
 	 */
 	loadTemplate: function(templateUrl) {
@@ -286,5 +295,28 @@ lilac.cache = new PageCache(10);
 ///////////////////////////////////////////////////////////
 // 初期フック
 (function() {
+	var appCache = window.applicationCache;
+	appCache.addEventListener('updateready', function() {
+		lilac.updateDeferred.resolve(true);
+	}, false);
+	appCache.addEventListener('noupdate', function() {
+		lilac.updateDeferred.resolve(false);
+	}, false);
+	appCache.addEventListener('obsolete', function() {
+		lilac.updateDeferred.reject('obsolete');
+	}, false);
+	appCache.addEventListener('error', function() {
+		lilac.updateDeferred.reject('error');
+	}, false);
+	lilac.checkUpdate()
+		.done(function(result) {
+			if(result) {
+				appCache.swapCache();
+				window.location.reload();
+			}
+		})
+		.fail(function(reasonText) {
+			window.alert("アプリケーションの更新に失敗しました(" + reasonText + ")");
+		});
 	$(document).bind('mobileinit', lilac.mobileinitHandler);
 })();
