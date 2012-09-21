@@ -197,7 +197,12 @@ var lilac = {
 	 */
 	checkUpdate: function() {
 		lilac.updateDeferred = $.Deferred();
-		window.applicationCache.update();
+		try {
+			window.applicationCache.update();
+		}
+		catch(e) {
+			lilac.updateDeferred.resolve('none');
+		}
 		return lilac.updateDeferred.promise();
 	},
 
