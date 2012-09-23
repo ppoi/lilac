@@ -30,19 +30,30 @@ import org.seasar.cubby.action.Path;
 /**
  * Service Inforamtion API
  * @author ppoi
- * @version 2012.04
+ * @version 2012.06
  */
 @ActionClass
 @Path("/")
 public class ServiceInfoAction {
 
+	/**
+	 * API リスト
+	 */
+	public static final String[] API_LIST = {
+		"label", "author", "bibliograpy", "book", "booksearch", "readrecord",
+		"session", "account", "export", "import"
+	};
+
+	/**
+	 * API バージョン
+	 */
 	@Resource
 	public String lilacApiVersion;
 
 	public ActionResult index() {
 		Map<String, Object> dto = new java.util.HashMap<String, Object>();
 		dto.put("version", lilacApiVersion);
-		dto.put("api", new String[]{"label", "author", "bibliograpy", "book", "session", "export", "import"});
+		dto.put("api", API_LIST);
 		return new Json(dto);
 	}
 	
