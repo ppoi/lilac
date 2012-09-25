@@ -5,7 +5,9 @@
 
 	<include path="lilac-api.dicon" />
 	
-	<component name="context" class="org.seasar.framework.unit.impl.InternalTestContextImpl"/>
+	<component name="context" class="org.seasar.framework.unit.impl.InternalTestContextImpl">
+		<property name="preparationType">@org.seasar.framework.unit.PreparationType@ALL_REPLACE</property>
+	</component>
 
 	<component class="org.seasar.framework.unit.impl.DataAccessorImpl" />
 

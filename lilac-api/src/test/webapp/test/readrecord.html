@@ -54,7 +54,7 @@
 					completionDateBegin: $('#list-completionDateBegin').val(),
 					completionDateEnd: $('#list-completionDateEnd').val()
 				};
-				$.ajax("/api/readrecord", {
+				$.ajax("/api/readrecord/list/" + $('#list-page').val(), {
 					dataType: 'json',
 					data: condition,
 					type: 'GET'
