@@ -22,6 +22,9 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.seasar.extension.jdbc.JdbcManager;
+import org.seasar.framework.beans.util.Beans;
+import org.seasar.framework.log.Logger;
 import org.seasar.framework.unit.Seasar2;
 import org.tsukuba_bunko.lilac.entity.AuthorRole;
 import org.tsukuba_bunko.lilac.entity.ReadingRecord;
@@ -42,10 +45,15 @@ public class ReadingRecordServiceImplTest {
 	@Resource
 	private ReadingRecordServiceImpl service;
 
+	@Resource
+	private JdbcManager jdbcManager;
+
 	@Test
 	public void listAll() {
+		printAllRecord();
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
 		SearchResult<ReadingRecord> result = service.list(condition, -1, -1);
+		printSearchResult(result);
 		assertEquals(6, result.count);
 		assertEquals(6, result.items.size());
 		assertEquals((Integer)390001, result.items.get(0).id);
@@ -74,6 +82,7 @@ public class ReadingRecordServiceImplTest {
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
 		condition.isbn = "999-0000000001";
 		SearchResult<ReadingRecord> result = service.list(condition, -1, -1);
+		printSearchResult(result);
 		assertEquals(3, result.count);
 		assertEquals(3, result.items.size());
 		assertEquals((Integer)390001, result.items.get(0).id);
@@ -86,6 +95,7 @@ public class ReadingRecordServiceImplTest {
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
 		condition.reader = "user1";
 		SearchResult<ReadingRecord> result = service.list(condition, -1, -1);
+		printSearchResult(result);
 		assertEquals(4, result.count);
 		assertEquals(4, result.items.size());
 		assertEquals((Integer)390001, result.items.get(0).id);
@@ -99,6 +109,7 @@ public class ReadingRecordServiceImplTest {
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
 		condition.completionDateBegin = new SimpleDateFormat("yyyy/MM/dd").parse("2012/09/02");
 		SearchResult<ReadingRecord> result = service.list(condition, -1, -1);
+		printSearchResult(result);
 		assertEquals(4, result.count);
 		assertEquals(4, result.items.size());
 		assertEquals((Integer)390003, result.items.get(0).id);
@@ -112,6 +123,7 @@ public class ReadingRecordServiceImplTest {
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
 		condition.completionDateEnd = new SimpleDateFormat("yyyy/MM/dd").parse("2012/09/02");
 		SearchResult<ReadingRecord> result = service.list(condition, -1, -1);
+		printSearchResult(result);
 		assertEquals(2, result.count);
 		assertEquals(2, result.items.size());
 		assertEquals((Integer)390001, result.items.get(0).id);
@@ -124,6 +136,7 @@ public class ReadingRecordServiceImplTest {
 		condition.completionDateBegin = new SimpleDateFormat("yyyy/MM/dd").parse("2012/09/01");
 		condition.completionDateEnd = new SimpleDateFormat("yyyy/MM/dd").parse("2012/09/30");
 		SearchResult<ReadingRecord> result = service.list(condition, -1, -1);
+		printSearchResult(result);
 		assertEquals(3, result.count);
 		assertEquals(3, result.items.size());
 		assertEquals((Integer)390001, result.items.get(0).id);
@@ -137,6 +150,7 @@ public class ReadingRecordServiceImplTest {
 		condition.completionDateBegin = new SimpleDateFormat("yyyy/MM/dd").parse("2012/09/01");
 		condition.completionDateEnd = new SimpleDateFormat("yyyy/MM/dd").parse("2012/09/01");
 		SearchResult<ReadingRecord> result = service.list(condition, -1, -1);
+		printSearchResult(result);
 		assertEquals(1, result.count);
 		assertEquals(1, result.items.size());
 		assertEquals((Integer)390001, result.items.get(0).id);
@@ -150,6 +164,7 @@ public class ReadingRecordServiceImplTest {
 		condition.completionDateEnd = new SimpleDateFormat("yyyy/MM/dd").parse("2012/09/30");
 		condition.reader = "user1";
 		SearchResult<ReadingRecord> result = service.list(condition, -1, -1);
+		printSearchResult(result);
 		assertEquals(1, result.count);
 		assertEquals(1, result.items.size());
 		assertEquals((Integer)390001, result.items.get(0).id);
@@ -159,6 +174,7 @@ public class ReadingRecordServiceImplTest {
 	public void listOffset() {
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
 		SearchResult<ReadingRecord> result = service.list(condition, 2, -1);
+		printSearchResult(result);
 		assertEquals(6, result.count);
 		assertEquals(4, result.items.size());
 		assertEquals((Integer)390002, result.items.get(0).id);
@@ -171,6 +187,7 @@ public class ReadingRecordServiceImplTest {
 	public void listLimmit() {
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
 		SearchResult<ReadingRecord> result = service.list(condition, -1, 2);
+		printSearchResult(result);
 		assertEquals(6, result.count);
 		assertEquals(2, result.items.size());
 		assertEquals((Integer)390001, result.items.get(0).id);
@@ -181,6 +198,7 @@ public class ReadingRecordServiceImplTest {
 	public void listOffsetLimmit() {
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
 		SearchResult<ReadingRecord> result = service.list(condition, 2, 2);
+		printSearchResult(result);
 		assertEquals(6, result.count);
 		assertEquals(2, result.items.size());
 		assertEquals((Integer)390002, result.items.get(0).id);
@@ -191,6 +209,7 @@ public class ReadingRecordServiceImplTest {
 	public void listOffsetZero() {
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
 		SearchResult<ReadingRecord> result = service.list(condition, 0, -1);
+		printSearchResult(result);
 		assertEquals(6, result.count);
 		assertEquals(6, result.items.size());
 		assertEquals((Integer)390001, result.items.get(0).id);
@@ -260,5 +279,32 @@ public class ReadingRecordServiceImplTest {
 		assertNotNull(service.get(390001));
 		service.delete(390001);
 		assertNull(service.get(390001));
+	}
+
+	private static final Logger log = Logger.getLogger(ReadingRecordServiceImplTest.class);
+	private void printSearchResult(SearchResult<ReadingRecord> result) {
+		StringBuilder sink = new StringBuilder();
+		sink.append("count=");
+		sink.append(result.count);
+		sink.append(", ");
+		sink.append("[");
+		int itemsLength = result.items.size();
+		for(int i = 0; i < itemsLength; ++i) {
+			ReadingRecord entity = result.items.get(i);
+			if(i > 0) {
+				sink.append(",");
+			}
+			sink.append(entity.id);
+		}
+		sink.append("]");
+		log.debug(new String(sink));
+	}
+	private void printAllRecord() {
+		StringBuilder sink = new StringBuilder();
+		for(ReadingRecord entity : jdbcManager.from(ReadingRecord.class).orderBy("completionDate ASC").getResultList()) {
+			sink.append(Beans.createAndCopy(java.util.HashMap.class, entity).execute().toString());
+			sink.append(", ");
+			log.debug(new String(sink));
+		}
 	}
 }

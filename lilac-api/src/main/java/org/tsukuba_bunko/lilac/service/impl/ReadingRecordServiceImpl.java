@@ -28,6 +28,7 @@ import org.tsukuba_bunko.lilac.service.ReadingRecordSearchCondition;
 import org.tsukuba_bunko.lilac.service.ReadingRecordService;
 import org.tsukuba_bunko.lilac.service.SearchResult;
 
+import static org.seasar.extension.jdbc.parameter.Parameter.*;
 
 /**
  * {@link ReadingRecordService} 実装
@@ -65,11 +66,11 @@ public class ReadingRecordServiceImpl implements ReadingRecordService {
 		}
 		if(condition.completionDateBegin != null) {
 			whereClause.add("s_r.completion_date>=?");
-			params.add(condition.completionDateBegin);
+			params.add(date(condition.completionDateBegin));
 		}
 		if(condition.completionDateEnd != null) {
 			whereClause.add("s_r.completion_date<=?");
-			params.add(condition.completionDateEnd);
+			params.add(date(condition.completionDateEnd));
 		}
 		if(StringUtil.isNotBlank(condition.reader)) {
 			whereClause.add("s_r.reader=?");
