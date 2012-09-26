@@ -304,7 +304,7 @@ public class ReadingRecordServiceImplTest {
 		for(ReadingRecord entity : jdbcManager.from(ReadingRecord.class).orderBy("completionDate ASC").getResultList()) {
 			sink.append(Beans.createAndCopy(java.util.HashMap.class, entity).execute().toString());
 			sink.append(", ");
-			log.debug(new String(sink));
 		}
+		log.debug(new String(sink));
 	}
 }
