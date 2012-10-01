@@ -201,7 +201,7 @@ var lilac = {
 			window.applicationCache.update();
 		}
 		catch(e) {
-			lilac.updateDeferred.resolve('none');
+			lilac.updateDeferred.resolve(false);
 		}
 		return lilac.updateDeferred.promise();
 	},
