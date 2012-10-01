@@ -38,9 +38,9 @@ public class ReadingRecordSearchCondition implements Serializable {
 	public String reader;
 
 	/**
-	 * ISBN
+	 * 書誌情報ID
 	 */
-	public String isbn;
+	public Integer bibliogprahyId;
 
 	/**
 	 * 読了日(範囲開始)
@@ -51,4 +51,9 @@ public class ReadingRecordSearchCondition implements Serializable {
 	 * 読了日(範囲終了)
 	 */
 	public Date completionDateEnd;
+
+	/**
+	 * 未読のみ
+	 */
+	public boolean incomplete = false;
 }

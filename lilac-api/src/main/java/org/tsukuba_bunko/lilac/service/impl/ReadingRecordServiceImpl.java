@@ -49,28 +49,33 @@ public class ReadingRecordServiceImpl implements ReadingRecordService {
 		result.count = jdbcManager.from(ReadingRecord.class)
 				.innerJoin("bibliography", false)
 				.where(new SimpleWhere()
-					.eq("bibliography.isbn", condition.isbn)
+					.eq("bibliographyId", condition.bibliogprahyId)
 					.ge("completionDate", condition.completionDateBegin)
 					.le("completionDate", condition.completionDateEnd)
 					.eq("reader", condition.reader)
+					.isNull("completionDate", condition.incomplete ? Boolean.TRUE : null)
 				).getCount();
 
 		List<String> fromClause = new java.util.ArrayList<String>();
 		List<String> whereClause = new java.util.ArrayList<String>();
 		List<Object> params = new java.util.ArrayList<Object>();
 		fromClause.add("FROM reading_record AS s_r ");
-		if(StringUtil.isNotBlank(condition.isbn)) {
-			fromClause.add("JOIN \"bibliography\" AS s_b ON s_r.bibliography_id=s_b.id ");
-			whereClause.add("s_b.isbn=?");
-			params.add(condition.isbn);
+		if(condition.bibliogprahyId != null) {
+			whereClause.add("s_r.bibliography_id=?");
+			params.add(condition.bibliogprahyId);
 		}
-		if(condition.completionDateBegin != null) {
-			whereClause.add("s_r.completion_date>=?");
-			params.add(date(condition.completionDateBegin));
+		if(condition.incomplete) {
+			whereClause.add("s_r.completion_date IS NULL");
 		}
-		if(condition.completionDateEnd != null) {
-			whereClause.add("s_r.completion_date<=?");
-			params.add(date(condition.completionDateEnd));
+		else {
+			if(condition.completionDateBegin != null) {
+				whereClause.add("s_r.completion_date>=?");
+				params.add(date(condition.completionDateBegin));
+			}
+			if(condition.completionDateEnd != null) {
+				whereClause.add("s_r.completion_date<=?");
+				params.add(date(condition.completionDateEnd));
+			}
 		}
 		if(StringUtil.isNotBlank(condition.reader)) {
 			whereClause.add("s_r.reader=?");

@@ -29,8 +29,8 @@ import org.seasar.cubby.action.Json;
 import org.seasar.cubby.action.Path;
 import org.seasar.cubby.action.RequestMethod;
 import org.seasar.cubby.action.RequestParameter;
+import org.seasar.cubby.action.SendError;
 import org.seasar.framework.beans.util.Beans;
-import org.seasar.framework.util.StringUtil;
 import org.tsukuba_bunko.lilac.annotation.Auth;
 import org.tsukuba_bunko.lilac.entity.BibAuthor;
 import org.tsukuba_bunko.lilac.entity.ReadingRecord;
@@ -51,98 +51,133 @@ public class ReadingRecordAction {
 	public ReadingRecordService readingRecordService;
 
 	@RequestParameter
-	public String isbn;
+	public Integer recordId;
 
 	@RequestParameter
-	public Date comeleteDateBegin;
+	public Integer bibliographyId;
 
 	@RequestParameter
-	public Date comeleteDateEnd;
+	public Date completionDateBegin;
+
+	@RequestParameter
+	public Date completionDateEnd;
 
 	@RequestParameter
 	public Integer page;
 
-	@Path("/readrecord$")
+	@RequestParameter
+	public boolean incomplete;
+
+	@RequestParameter
+	public Object requestData;
+
+	@Path("/reading-record")
+	@Accept(RequestMethod.GET)
+	public ActionResult index() {
+		return listFirstPage();
+	}
+
+	@Path("/reading-record/list")
 	@Accept(RequestMethod.GET)
 	public ActionResult listFirstPage() {
 		this.page = 0;
 		return list();
 	}
 
-	@Path("/readrecord/list/{page,\\d+}")
+	@Path("/reading-record/list/{page,\\d+}")
 	@Accept(RequestMethod.GET)
 	public ActionResult list() {
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
-		condition.isbn = StringUtil.isNotBlank(isbn) ? isbn : null;
-		condition.completionDateBegin = comeleteDateBegin;
-		condition.completionDateEnd = comeleteDateEnd;
+		condition.bibliogprahyId = bibliographyId;
+		condition.completionDateBegin = completionDateBegin;
+		condition.completionDateEnd = completionDateEnd;
+		condition.incomplete = incomplete;
 		SearchResult<ReadingRecord> searchResult = readingRecordService.list(condition, page * 10, 10);
 
 		Map<String, Object> dto = new java.util.HashMap<String, Object>();
 		dto.put("count", searchResult.count);
 		List<Map<String, Object>> itemsDto = new java.util.ArrayList<Map<String, Object>>();
 		for(ReadingRecord entity : searchResult.items) {
-			Map<String, Object> entityDto = new java.util.HashMap<String, Object>();
-			Beans.copy(entity, entityDto).excludes("bibliography")
-				.dateConverter("yyyy/MM/dd", "startDate", "completionDate").execute();
-			Map<String, Object> bibDto = new java.util.HashMap<String, Object>();
-			Beans.copy(entity.bibliography, bibDto)
-					.dateConverter("yyyy/MM/dd", "publicationDate")
-					.excludes("authors", "books").execute();
-			List<Map<String, Object>> authors = new java.util.ArrayList<Map<String, Object>>(); 
-			for(BibAuthor bibauth : entity.bibliography.authors) {
-				Map<String, Object> bibauthDto = new java.util.HashMap<String, Object>();
-				bibauthDto.put("id", bibauth.authorId);
-				bibauthDto.put("name", bibauth.author.name);
-				bibauthDto.put("role", bibauth.authorRole);
-				authors.add(bibauthDto);
-			}
-			bibDto.put("authors", authors);
-			entityDto.put("bibliography", bibDto);
-			itemsDto.add(entityDto);
+			itemsDto.add(entityToDto(entity));
 		}
 		dto.put("items", itemsDto);
 
 		return new Json(dto);
 	}
 
-	@Path("/readrecord/incomplete")
-	@Accept(RequestMethod.GET)
-	public ActionResult listIncompleted() {
-		return new Json(null);
-	}
-
-	@Path("/readrecord/{recordId,\\d+}")
+	@Path("/reading-record/{recordId,\\d+}")
 	@Accept(RequestMethod.GET)
 	public ActionResult get() {
-		return new Json(null);
+		if(recordId == null) {
+			return new SendError(400);
+		}
+		ReadingRecord entity = readingRecordService.get(recordId);
+		if(entity == null) {
+			return new SendError(404);
+		}
+		return new Json(entityToDto(entity));
 	}
 
-	@Path("/readrecord")
+	@Path("/reading-record")
 	@Auth
 	@Accept(RequestMethod.PUT)
 	public ActionResult create() {
-		return new Json(null);
+		ReadingRecord entity = Beans.createAndCopy(ReadingRecord.class, requestData)
+				.dateConverter("yyyy-MM-dd", "startDate", "completionDate").execute();
+		readingRecordService.create(entity);
+		return new Json(entityToDto(readingRecordService.get(entity.id)));
 	}
 
-	@Path("/readrecord/{recordId,\\d+}$")
+	@Path("/reading-record/{recordId,\\d+}")
 	@Auth
 	@Accept(RequestMethod.POST)
 	public ActionResult update() {
-		return null;
+		if(recordId == null) {
+			return new SendError(400);
+		}
+		ReadingRecord entity = readingRecordService.get(recordId);
+		if(entity == null) {
+			return new SendError(404);
+		}
+		Beans.copy(requestData, entity).dateConverter("yyyy-MM-dd", "completionDate", "startDate").execute();
+		if(!recordId.equals(entity.id)) {
+			return new SendError(400);
+		}
+		readingRecordService.update(entity);
+		return new Json(entityToDto(entity));
 	}
 
-	@Path("/readrecord/start$")
+	@Path("/reading-record/{recordId,\\d+}")
 	@Auth
-	@Accept(RequestMethod.PUT)
-	public ActionResult start() {
-		return null;
+	@Accept(RequestMethod.DELETE)
+	public ActionResult delete() {
+		if(recordId == null) {
+			return new SendError(400);
+		}
+		readingRecordService.delete(recordId);
+		return new Json(Boolean.TRUE);
 	}
 
-	@Path("/readrecord/{recordId,\\d+}/complete$")
-	@Auth
-	@Accept(RequestMethod.POST)
-	public ActionResult complete() {
-		return null;
+	public Map<String, Object> entityToDto(ReadingRecord entity) {
+		Map<String, Object> entityDto = new java.util.HashMap<String, Object>();
+
+		Beans.copy(entity, entityDto).excludes("bibliography")
+			.dateConverter("yyyy/MM/dd", "startDate", "completionDate").execute();
+		Map<String, Object> bibDto = new java.util.HashMap<String, Object>();
+		Beans.copy(entity.bibliography, bibDto)
+				.dateConverter("yyyy/MM/dd", "publicationDate")
+				.excludes("authors", "books").execute();
+		List<Map<String, Object>> authors = new java.util.ArrayList<Map<String, Object>>(); 
+		for(BibAuthor bibauth : entity.bibliography.authors) {
+			Map<String, Object> bibauthDto = new java.util.HashMap<String, Object>();
+			bibauthDto.put("id", bibauth.authorId);
+			bibauthDto.put("name", bibauth.author.name);
+			bibauthDto.put("role", bibauth.authorRole);
+			authors.add(bibauthDto);
+		}
+		bibDto.put("authors", authors);
+		entityDto.put("bibliography", bibDto);
+
+		return entityDto;
 	}
 }

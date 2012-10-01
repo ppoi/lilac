@@ -40,7 +40,7 @@ public class ServiceInfoAction {
 	 * API リスト
 	 */
 	public static final String[] API_LIST = {
-		"label", "author", "bibliograpy", "book", "booksearch", "readrecord",
+		"label", "author", "bibliograpy", "book", "booksearch", "reading-record",
 		"session", "account", "export", "import"
 	};
 
