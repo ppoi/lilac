@@ -92,6 +92,52 @@ lilac.api.account = {
 };
 
 ///////////////////////////////////////////////////////////
+// Reading Record API
+lilac.api.readingRecord = {
+	list: function(params, page) {
+		return $.ajax('/api/reading-record/list/' + page, {
+			dataType: 'json',
+			data: params,
+			type: 'GET'
+		});
+	},
+
+	get: function(recordId) {
+		return $.ajax('/api/reading-record/' + recordId, {
+			dataType: 'json',
+			type: 'GET'
+		});
+	},
+
+	createRecord: function(record) {
+		return $.ajax('/api/reading-record', {
+			contentType: 'application/json',
+			dataType: 'json',
+			data: JSON.stringify(record),
+			processData: false,
+			type: 'PUT'
+		});		
+	},
+
+	updateRecord: function(recordId, record) {
+		return $.ajax('/api/reading-record/' + recordId, {
+			contentType: 'application/json',
+			dataType: 'json',
+			data: JSON.stringify(record),
+			processData: false,
+			type: 'POST'
+		});
+	},
+
+	deleteRecord: function(recordId) {
+		return $.ajax('/api/reading-record/' + recordId, {
+			dataType: 'json',
+			type: 'DELETE'
+		});
+	}
+};
+
+///////////////////////////////////////////////////////////
 // Session API
 lilac.api.session = {
 	login: function(userId, password) {

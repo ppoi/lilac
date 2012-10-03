@@ -28,6 +28,7 @@ template/import.html
 template/info.html
 template/loginform.html
 template/main.html
+template/readingrecord.html
 
 NETWORK:
 *
