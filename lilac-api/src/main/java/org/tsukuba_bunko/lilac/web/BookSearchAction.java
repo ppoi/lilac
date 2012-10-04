@@ -74,6 +74,12 @@ public class BookSearchAction {
 	@RequestParameter
 	public Date acquisitionDateEnd;
 
+	@RequestParameter
+	public Boolean excludesRead;
+
+	@RequestParameter
+	public String owner;
+
 	@RequestParameter(converter=OrderByConverter.class)
 	public OrderBy sort1;
 
@@ -121,6 +127,8 @@ public class BookSearchAction {
 		condition.publicationDateEnd = publicationDateEnd;
 		condition.acquisitionDateBegin = acquisitionDateBegin;
 		condition.acquisitionDateEnd = acquisitionDateEnd;
+		condition.excludesRead = (excludesRead != null ? excludesRead.booleanValue() : false);
+		condition.owner = owner;
 		condition.orderBy = orderBy;
 		SearchResult<Bibliography> result = bibliographyService.list(condition, page * itemsPerPage, itemsPerPage); 
 

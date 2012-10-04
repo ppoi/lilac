@@ -184,8 +184,8 @@ public class BibliographyServiceImpl implements BibliographyService {
 				query.params.add(condition.acquisitionDateEnd);
 			}
 		}
-		if(condition.excludeRead) {
-			whereClause.add("s_b.id IN (SELECT DISTINCT rr.bibliography_id FROM read_record AS rr WHERE rr.reader=?)");
+		if(condition.excludesRead) {
+			whereClause.add("s_b.id NOT IN (SELECT DISTINCT rr.bibliography_id FROM reading_record AS rr WHERE rr.reader=?)");
 			query.params.add(condition.owner);
 		}
 

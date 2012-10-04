@@ -92,6 +92,19 @@ public class BibliographyServiceImplTest {
 	}
 
 	@Test
+	public void listExcludesRead() {
+		BookSearchCondition condition = new BookSearchCondition();
+		condition.owner = "user1";
+		condition.excludesRead = true;
+		SearchResult<Bibliography> result = service.list(condition, -1, -1);
+		assertEquals(4, result.count);
+		assertEquals((Integer)390011, result.items.get(0).id);
+		assertEquals((Integer)390012, result.items.get(1).id);
+		assertEquals((Integer)390013, result.items.get(2).id);
+		assertEquals((Integer)390004, result.items.get(3).id);
+	}
+
+	@Test
 	public void getWithSortedAuthor() {
 		Bibliography entity = service.get(390013);
 		assertEquals(4, entity.authors.size());

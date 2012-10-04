@@ -767,6 +767,39 @@ IncompletesPage.prototype.prepare = function(path, options) {
 	return deferred.promise();
 };
 
+/**
+ * 未読一覧
+ */
+UnreadPage = lilac.extend(BookListPageBase, function(id) {
+	this.__super__.constructor(this, id , 'template/unread.html');
+	this.prepared = false;
+});
+UnreadPage.prototype.prepare = function(id) {
+	var deferred = $.Deferred();
+	if(this.prepared) {
+		return deferred.resolve(this.page);
+	}
+	else {
+		var searchOptions = {
+			condition: {excludesRead: true, owner: lilac.session.username},
+			page: 0,
+			showLoadingMsg: false
+		};
+		$.mobile.loading('show');
+		this.listBooks(searchOptions)
+			.done($.proxy(function(){
+				$.mobile.loading('hide');
+				this.preapred = true;
+				deferred.resolve(this.page);
+			}, this))
+			.fail(function() {
+				$.mobile.loading('hide');
+				deferred.reject();
+			});
+	}
+
+	return deferred.promise();
+};
 
 /**
  * 蔵書検索ページ
@@ -1102,5 +1135,6 @@ lilac.actions = [
 	new Action('#export', ExportPage, true),
 	new Action('#import', ImportPage, true),
 	new Action('#reading-record', ReadingRecordPage, true),
-	new Action('#incompletes', IncompletesPage, true)
+	new Action('#incompletes', IncompletesPage, true),
+	new Action('#unread', UnreadPage, true)
 ];

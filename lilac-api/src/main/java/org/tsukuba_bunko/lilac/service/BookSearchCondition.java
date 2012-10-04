@@ -50,7 +50,7 @@ public class BookSearchCondition {
 	/**
 	 * 読了書籍の除外フラグ
 	 */
-	public boolean excludeRead;
+	public boolean excludesRead = false;
 
 	/**
 	 * 出版日(範囲開始)
