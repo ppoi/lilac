@@ -534,19 +534,19 @@ ImportPage.prototype.listImportFiles = function() {
 	return deferred.promise();
 };
 
+
 /**
- * 
+ * 読書履歴共通
  */
-ReadingRecordPage = lilac.extend(Page, function(id) {
-	this.__super__.constructor(this, id, 'template/readingrecord.html');
-	this.prepared = false;
+ReadingRecordPageBase = lilac.extend(Page, function(self, id, template) {
+	this.__super__.constructor(self, id, template);
 	this.searchOptions = {
 		condition: null,
 		page: -1,
 		showLoadingMsg: false
 	};
 });
-ReadingRecordPage.prototype.customizePage = function(page) {
+ReadingRecordPageBase.prototype.customizePage = function(page) {
 	var resultlistHolder = $('.resultlist-holder', this.page);
 	if(!resultlistHolder.length) {
 		return;
@@ -558,71 +558,8 @@ ReadingRecordPage.prototype.customizePage = function(page) {
 		'data-inset': 'true'
 		}).appendTo(resultlistHolder);
 	this.nextMoreButtonHolder = $('<div>').addClass('morebutton-holder').appendTo(resultlistHolder);
-
-	$('#readingrecord-selectform').submit($.proxy(function(event) {
-		event.preventDefault();
-		$.mobile.loading('show');
-		this.updateResultList($('#readingrecord-select-year').val(), $('#readingrecord-select-month').val())
-			.done(function() {
-				$('#readingrecord-month-title').click();
-				$.mobile.silentScroll();
-				$.mobile.loading('hide');
-			})
-			.fail(function() {
-				$.mobile.loading('hide');
-			});
-		return false;
-	}, this));
-
 };
-ReadingRecordPage.prototype.prepare = function(path, options) {
-	var deferred = $.Deferred();
-	if(this.prepared) {
-		deferred.resolve(this.page);
-	}
-	else {
-		var now = new Date();
-		this.updateResultList(now.getFullYear(), now.getMonth() + 1)
-			.done($.proxy(function() {
-				this.prepared = true;
-				deferred.resolve(this.page);
-			}, this))
-			.fail(function() {
-				deferred.reject();
-			});
-	}
-	return deferred.promise();
-};
-ReadingRecordPage.prototype.updateResultList = function(year, month) {
-	var deferred = $.Deferred();
-
-	var lastDayOfMonth = new Date(year, month, 0);
-	var searchOptions = {
-		condition: {
-			completionDateBegin: this.dateToString(year, month, 1),
-			completionDateEnd: this.dateToString(lastDayOfMonth.getFullYear(), lastDayOfMonth.getMonth() + 1, lastDayOfMonth.getDate()),
-		},
-		page: 0,
-		showLoadingMsg: false
-	};
-	this.search(searchOptions)
-		.done($.proxy(function() {
-			$('#readingrecord-select-year').val(year);
-			$('#readingrecord-select-month').val(month);
-			$('#readingrecord-select-year').selectmenu('refresh');
-			$('#readingrecord-select-month').selectmenu('refresh');
-			$('#readingrecord-month').text('' + year + '年' + month + '月');
-			deferred.resolve();
-		}, this))
-		.fail(function() {
-			deferred.reject();
-		});
-	return deferred.promise();
-};
-ReadingRecordPage.prototype.dateToString = function(year, month, day) {
-	return '' + year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
-};
-ReadingRecordPage.prototype.search = function(options) {
+ReadingRecordPageBase.prototype.search = function(options) {
 	var deferred = $.Deferred();
 
 	if(options.showLoadingMsg) {
@@ -646,7 +583,7 @@ ReadingRecordPage.prototype.search = function(options) {
 
 	return deferred.promise();			
 };
-ReadingRecordPage.prototype.makeResultList = function(result, options) {
+ReadingRecordPageBase.prototype.makeResultList = function(result, options) {
 	if(options.page == 0) {
 		this.resultlist.empty().append(this.createDivider());
 		this.count = 0;
@@ -681,19 +618,19 @@ ReadingRecordPage.prototype.makeResultList = function(result, options) {
 	$('span.resultlist-remaining-count', this.page).text(result.count - this.count);
 	this.resultlist.listview('refresh');
 };
-ReadingRecordPage.prototype.createDivider = function() {
+ReadingRecordPageBase.prototype.createDivider = function() {
 	return $('<li>').attr('data-role', 'list-divider').append(
 		document.createTextNode("一覧"),
 		$('<span>').addClass('resultlist-count').addClass('ui-li-count'));
 };
-ReadingRecordPage.prototype.createItem = function(index, entity) {
+ReadingRecordPageBase.prototype.createItem = function(index, entity) {
 	return $('<li>').append(
 		$('<span>').addClass("li-index").text(entity.index),
 		document.createTextNode(" "),
 		this.createItemContent(index, entity)
 	);
 };
-ReadingRecordPage.prototype.createItemContent = function(index, entity) {
+ReadingRecordPageBase.prototype.createItemContent = function(index, entity) {
 	var bib = entity.bibliography;
 	var item = $('<a>').attr("href", "#bib" + bib.id);
 	item.append($('<p>').append($('<small>').text(bib.label + (bib.publicationDate ? ' (' + bib.publicationDate + ')' : ''))));
@@ -708,11 +645,9 @@ ReadingRecordPage.prototype.createItemContent = function(index, entity) {
 		}
 		authors.append($('<span>').text(bib.authors[i].name));
 	}
-	item.append($('<p class="booklist-description">').append(
-			$('<small>').text('読了日: ' + entity.completionDate)));
 	return item;
 };
-ReadingRecordPage.prototype.createMoreButton = function() {
+ReadingRecordPageBase.prototype.createMoreButton = function() {
 	return $('<a>').attr({
 		'href': '#',
 		'data-role': 'button',
@@ -721,6 +656,117 @@ ReadingRecordPage.prototype.createMoreButton = function() {
 		'data-theme': 'd'
 	}).text('さらに表示... ').append($('<span class="resultlist-count-button">(<span class="resultlist-remaining-count"></span>件)</span>'));
 };
+
+/**
+ * 読書履歴
+ */
+ReadingRecordPage = lilac.extend(ReadingRecordPageBase, function(id) {
+	this.__super__.constructor(this, id, 'template/readingrecord.html');
+	this.prepared = false;
+});
+ReadingRecordPage.prototype.customizePage = function(page) {
+	this.__super__.customizePage.apply(this, arguments);
+	$('#readingrecord-selectform').submit($.proxy(function(event) {
+		event.preventDefault();
+		$.mobile.loading('show');
+		this.updateResultList($('#readingrecord-select-year').val(), $('#readingrecord-select-month').val())
+			.done(function() {
+				$('#readingrecord-month-title').click();
+				$.mobile.silentScroll();
+				$.mobile.loading('hide');
+			})
+			.fail(function() {
+				$.mobile.loading('hide');
+			});
+		return false;
+	}, this));
+};
+ReadingRecordPage.prototype.createItemContent = function(index, entity) {
+	var item = this.__super__.createItemContent.apply(this, arguments);
+	item.append($('<p class="booklist-description">').append(
+			$('<small>').text('読了日: ' + entity.completionDate)));
+	return item;
+};
+ReadingRecordPage.prototype.prepare = function(path, options) {
+	var deferred = $.Deferred();
+	if(this.prepared) {
+		deferred.resolve(this.page);
+	}
+	else {
+		var now = new Date();
+		this.updateResultList(now.getFullYear(), now.getMonth() + 1)
+			.done($.proxy(function() {
+				this.prepared = true;
+				deferred.resolve(this.page);
+			}, this))
+			.fail(function() {
+				deferred.reject();
+			});
+	}
+	return deferred.promise();
+};
+ReadingRecordPage.prototype.updateResultList = function(year, month) {
+	var deferred = $.Deferred();
+
+	var lastDayOfMonth = new Date(year, month, 0);
+	var searchOptions = {
+		condition: {
+			completionDateBegin: this.dateToString(year, month, 1),
+			completionDateEnd: this.dateToString(lastDayOfMonth.getFullYear(), lastDayOfMonth.getMonth() + 1, lastDayOfMonth.getDate()),
+		},
+		page: 0,
+		showLoadingMsg: false
+	};
+	this.search(searchOptions)
+		.done(function() {
+			$('#readingrecord-select-year').val(year);
+			$('#readingrecord-select-month').val(month);
+			$('#readingrecord-select-year').selectmenu('refresh');
+			$('#readingrecord-select-month').selectmenu('refresh');
+			$('#readingrecord-month').text('' + year + '年' + month + '月');
+			deferred.resolve();
+		})
+		.fail(function() {
+			deferred.reject();
+		});
+	return deferred.promise();
+};
+ReadingRecordPage.prototype.dateToString = function(year, month, day) {
+	return '' + year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+};
+
+/**
+ * 読書中一覧ページ
+ */
+IncompletesPage = lilac.extend(ReadingRecordPageBase, function(id) {
+	this.__super__.constructor(this, id, 'template/incompletes.html');
+});
+IncompletesPage.prototype.createItemContent = function(index, entity) {
+	var item = this.__super__.createItemContent.apply(this, arguments);
+	item.append($('<p class="booklist-description">').append(
+			$('<small>').text('開始日: ' + (entity.startDate ? entity.startDate : '-'))));
+	return item;
+};
+IncompletesPage.prototype.prepare = function(path, options) {
+	var deferred = $.Deferred();
+	var searchOptions = {
+		condition: {incomplete: true},
+		page: 0,
+		showLoadingMsg: false
+	};
+	$.mobile.loading('show');
+	this.search(searchOptions)
+		.done($.proxy(function() {
+			$.mobile.loading('hide');
+			deferred.resolve(this.page);
+		}, this))
+		.fail(function() {
+			$.mobile.loading('hide');
+			deferred.reject();
+		});
+	return deferred.promise();
+};
+
 
 /**
  * 蔵書検索ページ
@@ -1055,5 +1101,6 @@ lilac.actions = [
 	new Action('#credential', CredentialPage, true),
 	new Action('#export', ExportPage, true),
 	new Action('#import', ImportPage, true),
-	new Action('#reading-record', ReadingRecordPage, true)
+	new Action('#reading-record', ReadingRecordPage, true),
+	new Action('#incompletes', IncompletesPage, true)
 ];
