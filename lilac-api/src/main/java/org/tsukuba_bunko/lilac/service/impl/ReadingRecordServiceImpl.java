@@ -47,39 +47,40 @@ public class ReadingRecordServiceImpl implements ReadingRecordService {
 	public SearchResult<ReadingRecord> list(ReadingRecordSearchCondition condition, int offset, int limit) {
 		SearchResult<ReadingRecord> result = new SearchResult<ReadingRecord>();
 		result.count = jdbcManager.from(ReadingRecord.class)
-				.innerJoin("bibliography", false)
 				.where(new SimpleWhere()
 					.eq("bibliographyId", condition.bibliogprahyId)
 					.ge("completionDate", condition.completionDateBegin)
 					.le("completionDate", condition.completionDateEnd)
 					.eq("reader", condition.reader)
-					.isNull("completionDate", condition.incomplete ? Boolean.TRUE : null)
+					.eq("completed", !condition.incomplete)
+					.eq("registerCode", condition.registerCode)
 				).getCount();
 
 		List<String> fromClause = new java.util.ArrayList<String>();
 		List<String> whereClause = new java.util.ArrayList<String>();
 		List<Object> params = new java.util.ArrayList<Object>();
 		fromClause.add("FROM reading_record AS s_r ");
+		whereClause.add("s_r.completed=?");
+		params.add(!condition.incomplete);
 		if(condition.bibliogprahyId != null) {
 			whereClause.add("s_r.bibliography_id=?");
 			params.add(condition.bibliogprahyId);
 		}
-		if(condition.incomplete) {
-			whereClause.add("s_r.completion_date IS NULL");
+		if(condition.completionDateBegin != null) {
+			whereClause.add("s_r.completion_date>=?");
+			params.add(date(condition.completionDateBegin));
 		}
-		else {
-			if(condition.completionDateBegin != null) {
-				whereClause.add("s_r.completion_date>=?");
-				params.add(date(condition.completionDateBegin));
-			}
-			if(condition.completionDateEnd != null) {
-				whereClause.add("s_r.completion_date<=?");
-				params.add(date(condition.completionDateEnd));
-			}
+		if(condition.completionDateEnd != null) {
+			whereClause.add("s_r.completion_date<=?");
+			params.add(date(condition.completionDateEnd));
 		}
 		if(StringUtil.isNotBlank(condition.reader)) {
 			whereClause.add("s_r.reader=?");
 			params.add(condition.reader);
+		}
+		if(condition.registerCode != null) {
+			whereClause.add("s_r.register_code=?");
+			params.add(condition.registerCode.ordinal());
 		}
 
 		StringBuilder query = new StringBuilder();

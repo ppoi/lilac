@@ -14,53 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tsukuba_bunko.lilac.service;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import org.tsukuba_bunko.lilac.entity.RegisterCode;
+package org.tsukuba_bunko.lilac.entity;
 
 
 /**
- * 読書履歴検索条件
+ * 登録区分
  * @author ppoi
  * @version 2012.06
  */
-public class ReadingRecordSearchCondition implements Serializable {
+public enum RegisterCode {
 
 	/**
-	 * serial version UID
+	 * りら(2012/09～)
 	 */
-	private static final long serialVersionUID = 1L;
+	lilac,
 
 	/**
-	 * 読者
+	 * 管理台帳(2009/07～2011/08)
 	 */
-	public String reader;
+	excel,
 
 	/**
-	 * 書誌情報ID
+	 * 移行期間中(2011/08～2012/08)
 	 */
-	public Integer bibliogprahyId;
+	migrating,
 
 	/**
-	 * 読了日(範囲開始)
+	 * 記録開始前(～2009/06)
 	 */
-	public Date completionDateBegin;
-
-	/**
-	 * 読了日(範囲終了)
-	 */
-	public Date completionDateEnd;
-
-	/**
-	 * 未読のみ
-	 */
-	public boolean incomplete;
-
-	/**
-	 * 登録区分
-	 */
-	public RegisterCode registerCode;
+	prehistory
 }

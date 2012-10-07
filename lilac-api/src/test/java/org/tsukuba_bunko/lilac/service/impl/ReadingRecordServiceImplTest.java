@@ -26,6 +26,7 @@ import org.seasar.extension.jdbc.JdbcManager;
 import org.seasar.framework.unit.Seasar2;
 import org.tsukuba_bunko.lilac.entity.AuthorRole;
 import org.tsukuba_bunko.lilac.entity.ReadingRecord;
+import org.tsukuba_bunko.lilac.entity.RegisterCode;
 import org.tsukuba_bunko.lilac.service.ReadingRecordSearchCondition;
 import org.tsukuba_bunko.lilac.service.SearchResult;
 
@@ -70,7 +71,7 @@ public class ReadingRecordServiceImplTest {
 		assertEquals("author4", result.items.get(2).bibliography.authors.get(2).author.name);
 		assertEquals((Integer)390004, result.items.get(3).id);
 		assertEquals((Integer)390005, result.items.get(4).id);
-		assertEquals((Integer)390006, result.items.get(5).id);
+		assertEquals((Integer)390007, result.items.get(5).id);
 	}
 
 	@Test
@@ -151,9 +152,20 @@ public class ReadingRecordServiceImplTest {
 		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
 		condition.incomplete = true;
 		SearchResult<ReadingRecord> result = service.list(condition, -1, -1);
+		assertEquals(2, result.count);
+		assertEquals(2, result.items.size());
+		assertEquals((Integer)390006, result.items.get(0).id);
+		assertEquals((Integer)390008, result.items.get(1).id);
+	}
+
+	@Test
+	public void listRegisterCode() {
+		ReadingRecordSearchCondition condition = new ReadingRecordSearchCondition();
+		condition.registerCode = RegisterCode.prehistory;
+		SearchResult<ReadingRecord> result = service.list(condition, -1, -1);
 		assertEquals(1, result.count);
 		assertEquals(1, result.items.size());
-		assertEquals((Integer)390006, result.items.get(0).id);
+		assertEquals((Integer)390007, result.items.get(0).id);
 	}
 
 	@Test
@@ -178,7 +190,7 @@ public class ReadingRecordServiceImplTest {
 		assertEquals((Integer)390002, result.items.get(0).id);
 		assertEquals((Integer)390004, result.items.get(1).id);
 		assertEquals((Integer)390005, result.items.get(2).id);
-		assertEquals((Integer)390006, result.items.get(3).id);
+		assertEquals((Integer)390007, result.items.get(3).id);
 	}
 
 	@Test
@@ -212,7 +224,7 @@ public class ReadingRecordServiceImplTest {
 		assertEquals((Integer)390002, result.items.get(2).id);
 		assertEquals((Integer)390004, result.items.get(3).id);
 		assertEquals((Integer)390005, result.items.get(4).id);
-		assertEquals((Integer)390006, result.items.get(5).id);
+		assertEquals((Integer)390007, result.items.get(5).id);
 	}
 
 	@Test

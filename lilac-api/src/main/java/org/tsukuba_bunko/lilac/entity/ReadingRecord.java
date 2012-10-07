@@ -19,6 +19,7 @@ package org.tsukuba_bunko.lilac.entity;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -69,6 +70,17 @@ public class ReadingRecord {
 	 */
 	@Temporal(TemporalType.DATE)
 	public Date completionDate;
+
+	/**
+	 * 読了
+	 */
+	public Boolean completed = Boolean.FALSE;
+
+	/**
+	 * 登録区分
+	 */
+	@Enumerated
+	public RegisterCode registerCode = RegisterCode.lilac;
 
 	/**
 	 * 備考

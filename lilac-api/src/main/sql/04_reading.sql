@@ -9,6 +9,8 @@ CREATE TABLE reading_record (
 	reader varchar(256) NOT NULL REFERENCES account ON DELETE CASCADE ON UPDATE CASCADE,
 	start_date date,
 	completion_date date,
+	completed boolean NOT NULL DEFAULT 'false',
+	register_code integer NOT NULL DEFAULT 0,
 	note varchar(8192)
 );
 CREATE INDEX idx_reading_record_reader ON reading_record(reader);
