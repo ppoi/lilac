@@ -185,6 +185,6 @@
   	<s2.version>2.4.45</s2.version>
   	<cubby.version>2.0.9</cubby.version>
   	<slf4j.version>1.6.4</slf4j.version>
-  	<poi.version>3.8</poi.version>
+  	<poi.version>4.1.1</poi.version>
   </properties>
 </project>
